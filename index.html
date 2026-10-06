@@ -1009,12 +1009,16 @@
 
     <script>
         let currentLang = 'ru';
-        let points = 150;
-        let streak = 5;
+const SUPABASE_URL = 'https://eknhitligfpoqmoxaect.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_qGDiitalluygGxjUDQC_AKg_0Ej1l';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let points = 0;
+        let streak = 0;
         let canSpin = true;
         let dailyClaimed = false;
         let currentChallenge = null; const reportedToday = new Set(); let streakCountedToday = false;
-        let currentDailyDay = 5; // Пользователь на 5-м дне
+        let currentDailyDay = 0; // Пользователь на 5-м дне
 
         const dailyRewards = [
             { day: 1, p: 5, val: "5 🪙" }, { day: 2, p: 10, val: "10 🪙" }, { day: 3, p: 10, val: "10 🪙" },
