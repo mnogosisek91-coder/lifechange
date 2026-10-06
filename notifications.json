@@ -1,0 +1,21 @@
+[
+  {
+    "id": "2026-10-05-start",
+    "title": "Старт LifeChange 🚀",
+    "title_uz": "LifeChange ishga tushdi 🚀",
+    "text": "Платформа открыта. Выберите свой первый челлендж и сделайте первый шаг сегодня.",
+    "text_uz": "Platforma ochildi. Birinchi chellenjingizni tanlang va bugun birinchi qadamni tashlang.",
+    "date": "2026-10-05"
+  },
+  {
+    "id": "2026-10-06-example",
+    "title": "Пример: акция недели",
+    "title_uz": "Namuna: hafta aksiyasi",
+    "text": "Это пример уведомления. Замените его своим текстом. По желанию можно добавить кнопку-ссылку.",
+    "text_uz": "Bu bildirishnoma namunasi. Uni o'z matningiz bilan almashtiring. Xohlasangiz, havola tugmasini qo'shish mumkin.",
+    "date": "2026-10-06",
+    "link": "https://t.me/Sultan_Fortune",
+    "linkText": "Написать нам",
+    "linkText_uz": "Bizga yozing"
+  }
+]
