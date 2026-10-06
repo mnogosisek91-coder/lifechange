@@ -1013,6 +1013,19 @@ const SUPABASE_URL = 'https://eknhitligfpoqmoxaect.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_qGDiitalluygGxjUDQC_AKg_0Ej1l';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        // Автоматическая очистка старого локального хранилища
+if (!localStorage.getItem('v2_migrated')) {
+    localStorage.clear();
+    localStorage.setItem('v2_migrated', 'true');
+}
+
+// Функция сохранения данных в Supabase
+async function saveUserData(userId, xp, level) {
+    const { data, error } = await supabaseClient
+        .from('profiles')
+        .upsert({ id: userId, xp: xp, level: level });
+    if (error) console.error('Ошибка сохранения:', error);
+}
         let points = 0;
         let streak = 0;
         let canSpin = true;
