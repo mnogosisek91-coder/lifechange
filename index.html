@@ -726,105 +726,22 @@
         <div id="tab-feed" class="tab-content">
             <div class="page-banner">
                 <h2 style="margin-bottom: 0.5rem; text-align: center;">📸 Живая Лента Участников</h2>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Поддерживайте участников сообщества, ставьте респекты и делитесь своими победами!</p><p class="notice" style="margin:0 auto 1.5rem;">Пример оформления: здесь появятся реальные отчёты и рейтинг участников после запуска.</p>
-
-                <div style="max-width: 650px; margin: 0 auto;">
-                    
-                    <!-- Пост 1 -->
-                    <div class="feed-post">
-                        <div class="feed-header">
-                            <div class="feed-avatar">СK</div>
-                            <div>
-                                <h4 style="color: #fff;">Сардор Каримов</h4>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Челлендж: Похудение & Кардио • 15 минут назад</p>
-                            </div>
-                        </div>
-                        <p style="font-size: 0.95rem; margin-bottom: 8px;">Сегодня выбил 12 400 шагов в парке Навои! Погода шикарная, стрик 14 дней подряд 🔥</p>
-                        <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80" class="feed-img" onerror="this.style.display='none'" alt="Отчет">
-                        <div class="feed-actions">
-                            <button class="like-btn" onclick="toggleLike(this)">🔥 Респект (<span class="like-count">24</span>)</button>
-                            <span style="font-size: 0.8rem; color: var(--success-color);">✓ Отчёт принят</span>
-                        </div>
-                    </div>
-
-                    <!-- Пост 2 -->
-                    <div class="feed-post">
-                        <div class="feed-header">
-                            <div class="feed-avatar" style="background: #ec4899;">МA</div>
-                            <div>
-                                <h4 style="color: #fff;">Мадина Абдуллаева</h4>
-                                <p style="font-size: 0.75rem; color: var(--text-secondary);">Челлендж: Чтение книг • 2 часа назад</p>
-                            </div>
-                        </div>
-                        <p style="font-size: 0.95rem; margin-bottom: 8px;">Прочитала еще 35 страниц книги «Атомные привычки». Цитата дня: «Вы не поднимаетесь до уровня своих целей, вы опускаетесь до уровня своих систем».</p>
-                        <img src="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=800&q=80" class="feed-img" onerror="this.style.display='none'" alt="Книга">
-                        <div class="feed-actions">
-                            <button class="like-btn" onclick="toggleLike(this)">🔥 Респект (<span class="like-count">41</span>)</button>
-                            <span style="font-size: 0.8rem; color: var(--success-color);">✓ Отчёт принят</span>
-                        </div>
-                    </div>
-
-                </div>
+            <div class="pcard" style="max-width:650px; margin:2rem auto; text-align:center;">
+                <div style="font-size:3rem;">🚀</div>
+                <h3 style="margin:6px 0;">Скоро</h3>
+                <p class="note" style="font-size:0.95rem;">Здесь может быть ваш завершённый челлендж. Выполняйте задания, и ваши результаты появятся в ленте.</p>
+                <button class="btn btn-gold" style="width:auto; margin-top:12px;" onclick="switchTab('challenges')">Выбрать челлендж</button>
             </div>
-        </div>
-
+        </div></div>
         <!-- ================= ВКЛАДКА: РЕЙТИНГ ЛИДЕРОВ ================= -->
         <div id="tab-leaderboard" class="tab-content">
             <div class="page-banner">
                 <h2 style="margin-bottom: 0.5rem; text-align: center;">🏆 Топ Лидеров Недели</h2>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Зарабатывайте баллы за выполнение челленджей и поднимайтесь в рейтинге Ташкента!</p><p class="notice" style="margin:0 auto 1.5rem;">Пример оформления: здесь появятся реальные отчёты и рейтинг участников после запуска.</p>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Зарабатывайте баллы за выполнение челленджей и поднимайтесь в рейтинге Ташкента!</p>
 
                 <div style="max-width: 750px; margin: 0 auto;">
 <div class="pcard" style="border-color: var(--gold-color); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;"><div>👤 Ваш результат: <b id="profileNameDisplay">Вы</b></div><div><b id="leaderboardUserPoints" style="color:#f6dc9a">0 🪙</b> &nbsp;·&nbsp; <span id="lbUserStreak">🔥 Стрик: 0 дн.</span></div></div>
-                    <div class="leaderboard-row top-1">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 1.5rem;">🥇</span>
-                            <div>
-                                <b>Сардор К.</b> <span style="font-size: 0.8rem; color: var(--text-secondary);">(Ташкент)</span>
-                                <div style="font-size: 0.75rem; color: var(--gold-color);">🔥 Стрик: 21 день</div>
-                            </div>
-                        </div>
-                        <span style="font-weight: 800; color: var(--gold-color); font-size: 1.1rem;">420 🪙</span>
-                    </div>
-
-                    <div class="leaderboard-row top-2">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 1.5rem;">🥈</span>
-                            <div>
-                                <b>Мадина А.</b>
-                                <div style="font-size: 0.75rem; color: var(--gold-color);">🔥 Стрик: 14 дней</div>
-                            </div>
-                        </div>
-                        <span style="font-weight: 800; color: #cbd5e1; font-size: 1.1rem;">360 🪙</span>
-                    </div>
-
-                    <div class="leaderboard-row top-3">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-size: 1.5rem;">🥉</span>
-                            <div>
-                                <b>Тимур Б.</b>
-                                <div style="font-size: 0.75rem; color: var(--gold-color);">🔥 Стрик: 5 дней</div>
-                            </div>
-                        </div>
-                        <span style="font-weight: 800; color: #b45309; font-size: 1.1rem;">150 🪙</span>
-                    </div>
-
-                    <div class="leaderboard-row">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-weight: 700; width: 25px; text-align: center;">4</span>
-                            <div><b>Жахонгир Р.</b></div>
-                        </div>
-                        <span style="font-weight: 700; color: var(--text-secondary);">140 🪙</span>
-                    </div>
-
-                    <div class="leaderboard-row">
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <span style="font-weight: 700; width: 25px; text-align: center;">5</span>
-                            <div><b>Елена В.</b></div>
-                        </div>
-                        <span style="font-weight: 700; color: var(--text-secondary);">110 🪙</span>
-                    </div>
-                </div>
+                    <p class="notice lb-empty" style="margin:1rem auto;">Рейтинг загружается…</p></div>
             </div>
         </div>
 
@@ -1036,7 +953,8 @@
             <div class="page-banner">
                 <div class="seg"><button class="seg-btn active" data-v="earn" onclick="rewardsView('earn')">🪙 Заработать баллы</button><button class="seg-btn" data-v="spend" onclick="rewardsView('spend')">🛍️ Потратить</button></div>
 <h2 style="margin-bottom: 0.5rem; text-align: center;">🛍️ Магазин наград</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 1.5rem;">Обменивайте баллы на эспандер, промокоды и мерч или испытайте удачу в мистери-боксах.</p>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 0.6rem;">Обменивайте баллы на эспандер, промокоды и мерч или испытайте удачу в мистери-боксах.</p>
+            <p class="notice" style="margin:0 auto 1.5rem;">Награды открываются после 3 дней с принятыми отчётами, эспандер и худи — после 7 дней.</p>
             <div class="grid">
                 <div class="shop-card" style="border-color: var(--gold-color); background: rgba(245,158,11,0.1);">
                     <img class="exp-img" alt="Кистевой эспандер LifeChange" style="margin-bottom:10px;">
@@ -1156,6 +1074,12 @@
             <button class="btn btn-outline" style="width:auto; border-color:#ef4444; color:#f87171" onclick="adminReset()">Сбросить мой прогресс</button>
           </div>
           <p class="note">Как администратор вы можете повторять отчёты, колесо, награду за вход и видео без дневных ограничений. Тариф включается и выключается кнопками выше, так можно проверять и PRO, и бесплатный режим.</p></div>
+        <div class="pcard"><h4>💎 Выдать тариф клиенту</h4>
+          <div class="rem-row"><input id="grantEmail" type="email" placeholder="Email клиента или @username" style="flex:1;min-width:200px"><select id="grantDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="30">30 дней</option><option value="90">3 месяца</option><option value="365">12 месяцев</option><option value="3">3 дня (пробный)</option></select><button class="btn btn-gold" style="width:auto" onclick="adminGrant()">Выдать PRO</button></div>
+          <h4 style="margin-top:14px">🔑 Одноразовый код активации</h4>
+          <div class="rem-row"><button class="btn btn-outline" style="width:auto" onclick="adminCode(3)">3 дня</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(30)">30 дней</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(90)">3 месяца</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(365)">12 месяцев</button></div>
+          <p class="note" id="adminCodeOut"></p>
+          <p class="note">После оплаты проще всего выдать тариф по email клиента: он активируется сразу. Код нужен, если клиент ещё не зарегистрирован.</p></div>
         <div class="pcard"><h4>🎁 Заказы наград</h4><div id="adminOrders"></div></div>
         <div class="pcard"><h4>📸 Последние отчёты</h4><div id="adminReports"></div></div>
     </div></div>
@@ -1472,6 +1396,11 @@
             </div>
             <button id="authSubmit" class="btn btn-gold" onclick="processRegistration()">Создать профиль</button>
             <p id="authToggle" class="link" style="text-align:center; margin-top:12px; font-size:0.85rem;" onclick="toggleAuthMode()">Уже есть профиль? Войти</p>
+            <div id="tgLoginWrap" style="display:none; text-align:center; margin-top:16px; border-top:1px solid var(--border-color); padding-top:14px;">
+                <p class="note" style="margin:0 0 10px;">или</p>
+                <div id="tgLoginBox" style="display:flex; justify-content:center; min-height:40px;"></div>
+                <p class="note" style="font-size:0.72rem; margin-top:10px;">Продолжая через Telegram, вы подтверждаете, что вам 18+, и принимаете <span class="link" onclick="closeModal('authModal'); showLegal('offer')">оферту</span> и <span class="link" onclick="closeModal('authModal'); showLegal('privacy')">политику конфиденциальности</span>.</p>
+            </div>
         </div>
     </div>
 
@@ -1916,7 +1845,7 @@
           }; }
         try { const sl = localStorage.getItem('lc_lang'); if(sl === 'uz' || (!sl && /^uz/i.test(navigator.language || ''))) toggleLanguage(); } catch(e) {}
 
-        const YM_ID = 0; // номер счётчика Яндекс.Метрики (metrika.yandex.ru): впишите число
+        const YM_ID = 113574122; // номер счётчика Яндекс.Метрики (metrika.yandex.ru)
         (function() {
             if(!YM_ID) return;
             (function(m, e, t, r, i, k, a) { m[i] = m[i] || function() { (m[i].a = m[i].a || []).push(arguments); }; m[i].l = 1 * new Date(); k = e.createElement(t); a = e.getElementsByTagName(t)[0]; k.async = 1; k.src = r; a.parentNode.insertBefore(k, a); })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
@@ -2796,7 +2725,7 @@ function adminRelax() { canSpin = true; dailyClaimed = false; reportedToday.clea
 { const _sa = simulateAIScan; simulateAIScan = function() { if(isAdmin) adminRelax(); return _sa.apply(this, arguments); }; }
 { const _as = applyState;
   applyState = function(st) {
-    _as(st); isAdmin = !!st.is_admin; accountEmail = st.email || '';
+    _as(st); isAdmin = !!st.is_admin; accountEmail = st.tg_username ? '@' + st.tg_username : (st.email || '');
     syncAccount(); if(isAdmin) { adminRelax(); renderDailyRewards(); }
   }; }
 { const _sp = syncProfile; syncProfile = function() { _sp(); syncAccount(); }; }
@@ -2806,7 +2735,7 @@ async function renderAdmin() {
     const o = await rpc('admin_overview');
     document.getElementById('adminWho').textContent = 'Вы вошли как администратор' + (accountEmail ? ': ' + accountEmail : '');
     document.getElementById('adminStats').innerHTML = [['Пользователей', o.users], ['Отчётов сегодня', o.reports_today], ['Новых заказов', o.orders_new]].map(x => `<div><div style="font-size:1.6rem;font-weight:800;color:#f6dc9a">${x[1]}</div><div class="note" style="margin:0">${x[0]}</div></div>`).join('');
-    document.getElementById('adminOrders').innerHTML = o.orders.length ? o.orders.map(r => `<div class="notif-item ${r.status === 'new' ? 'new' : ''}" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.item)} · ${Number(r.price).toLocaleString('ru-RU')} 🪙</b><p>${esc(r.name || '')} ${esc(r.email || '')} · ${fmtD(r.created_at)}</p>${r.status === 'new' ? `<button class="btn btn-gold" style="width:auto;padding:6px 14px;margin-top:6px" onclick="adminOrderDone(${r.id})">Выдано</button>` : '<small>✅ выдано</small>'}</div>`).join('') : '<p class="note">Заказов пока нет.</p>';
+    document.getElementById('adminOrders').innerHTML = o.orders.length ? o.orders.map(r => `<div class="notif-item ${r.status === 'new' ? 'new' : ''}" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.item)} · ${Number(r.price).toLocaleString('ru-RU')} 🪙</b><p>${esc(r.name || '')} ${esc(r.tg_username ? '@' + r.tg_username : (r.email || ''))} · ${fmtD(r.created_at)}</p>${r.status === 'new' ? `<button class="btn btn-gold" style="width:auto;padding:6px 14px;margin-top:6px" onclick="adminOrderDone(${r.id})">Выдано</button>` : '<small>✅ выдано</small>'}</div>`).join('') : '<p class="note">Заказов пока нет.</p>';
     document.getElementById('adminReports').innerHTML = o.reports.length ? o.reports.map(r => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.name || '')} · ${esc((CHALLENGES[r.challenge] || {}).title || r.challenge)}</b><p>${r.day} · +${r.points}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn btn-outline" style="width:auto;padding:6px 14px" onclick="adminProof('${esc(r.file_path || '')}')">Открыть фото</button><button class="btn btn-outline" style="width:auto;padding:6px 14px;border-color:#ef4444;color:#f87171" onclick="adminReject(${r.id})">Отклонить</button></div></div>`).join('') : '<p class="note">Отчётов пока нет.</p>';
   } catch(e) { alert(errMsg(e)); }
 }
@@ -2822,8 +2751,64 @@ async function adminPlan(d) {
   try { const r = await rpc('admin_set_plan', { p_days: d }); planUntil = r ? Date.parse(r) : 0; userPlan = planUntil > Date.now() ? 'pro' : 'free'; await hydrate(); alert(d ? 'PRO включён на ' + d + ' дней.' : 'Тариф: бесплатный.'); } catch(e) { alert(errMsg(e)); }
 }
 async function adminReset() { if(!confirm('Сбросить ваши баллы, отчёты, заказы и тариф как у нового пользователя?')) return; try { await rpc('admin_reset_me'); await hydrate(); alert('Прогресс сброшен.'); } catch(e) { alert(errMsg(e)); } }
-{ const _st = switchTab; switchTab = function(t) { if(t === 'admin' && !isAdmin) return; _st(t); if(t === 'admin') renderAdmin(); }; }
+{ const _st = switchTab; switchTab = function(t) { if(t === 'admin' && !isAdmin) return; _st(t); if(t === 'admin') renderAdmin(); try { if(YM_ID && window.ym) window.ym(YM_ID, 'hit', location.pathname + '#' + t, { title: t }); } catch(e) {} }; }
 syncAccount();
+</script>
+<script>
+// ===================== Антинакрутка наград, выдача тарифов =====================
+Object.assign(UZ_EXACT, {"🚀": "🚀", "Скоро": "Tez orada", "Здесь может быть ваш завершённый челлендж. Выполняйте задания, и ваши результаты появятся в ленте.": "Bu yerda sizning yakunlangan chellenjingiz bo'lishi mumkin. Topshiriqlarni bajaring va natijalaringiz lentada paydo bo'ladi.", "Выбрать челлендж": "Chellenj tanlash", "Рейтинг загружается…": "Reyting yuklanmoqda…", "Награды открываются после 3 дней с принятыми отчётами, эспандер и худи — после 7 дней.": "Sovrinlar hisobotlari qabul qilingan 3 kundan keyin ochiladi, ekspander va hudi esa 7 kundan keyin."});
+Object.assign(ERRMAP, {
+  need_activity_3: 'Награды открываются после 3 дней с принятыми отчётами.',
+  need_activity_7: 'Эспандер и худи открываются после 7 дней с принятыми отчётами.',
+  order_cooldown: 'Эту награду можно получать не чаще раза в 30 дней.',
+  no_user: 'Пользователь с такой почтой не найден.', bad_days: 'Недопустимый срок.'
+});
+Object.assign(UZ_EXACT, {
+  'Награды открываются после 3 дней с принятыми отчётами.': "Sovrinlar hisobotlari qabul qilingan 3 kundan keyin ochiladi.",
+  'Эспандер и худи открываются после 7 дней с принятыми отчётами.': "Ekspander va hudi hisobotlari qabul qilingan 7 kundan keyin ochiladi.",
+  'Эту награду можно получать не чаще раза в 30 дней.': "Bu sovrinni 30 kunda bir martadan ko'p olib bo'lmaydi."
+});
+async function adminGrant() {
+  const email = document.getElementById('grantEmail').value.trim(), days = +document.getElementById('grantDays').value;
+  if(!email) return alert('Введите email клиента.');
+  try { const r = await rpc('admin_grant_plan', { p_email: email, p_days: days }); alert('Готово. PRO у клиента до ' + new Date(r).toLocaleDateString('ru-RU') + '.'); document.getElementById('grantEmail').value = ''; }
+  catch(e) { alert(errMsg(e)); }
+}
+async function adminCode(d) {
+  try {
+    const code = await rpc('admin_create_code', { p_days: d });
+    document.getElementById('adminCodeOut').innerHTML = 'Код на ' + d + ' дн.: <b style="color:#f6dc9a;font-size:1.1rem">' + esc(code) + '</b> (скопирован в буфер обмена). Сохраните его: повторно он не показывается.';
+    try { await navigator.clipboard.writeText(code); } catch(e) {}
+  } catch(e) { alert(errMsg(e)); }
+}
+</script>
+<script>
+// ===================== Вход через Telegram =====================
+const TG_BOT_USERNAME = 'LifeChangeAuth_bot'; // имя бота без @ (создан в @BotFather)
+Object.assign(UZ_EXACT, {"или": "yoki", "Продолжая через Telegram, вы подтверждаете, что вам 18+, и принимаете": "Telegram orqali davom etib, siz 18 yoshdan oshganingizni tasdiqlaysiz va quyidagilarni qabul qilasiz:", "Не удалось войти через Telegram. Попробуйте ещё раз.": "Telegram orqali kirib bo'lmadi. Qayta urinib ko'ring."});
+let tgMounted = false;
+function mountTelegramLogin() {
+  if(!TG_BOT_USERNAME || tgMounted) return;
+  tgMounted = true;
+  document.getElementById('tgLoginWrap').style.display = '';
+  const s = document.createElement('script');
+  s.async = true; s.src = 'https://telegram.org/js/telegram-widget.js?22';
+  s.setAttribute('data-telegram-login', TG_BOT_USERNAME); s.setAttribute('data-size', 'large'); s.setAttribute('data-radius', '10');
+  s.setAttribute('data-userpic', 'false'); s.setAttribute('data-request-access', 'write'); s.setAttribute('data-onauth', 'onTelegramAuth(user)');
+  document.getElementById('tgLoginBox').appendChild(s);
+}
+async function onTelegramAuth(u) {
+  if(!sb) return alert('Нет связи с сервером. Проверьте интернет и повторите.');
+  try {
+    const { data, error } = await sb.functions.invoke('telegram-auth', { body: u });
+    if(error || !data || !data.access_token) throw (error || new Error('tg_fail'));
+    const r = await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
+    if(r.error) throw r.error;
+    sbUid = r.data.session.user.id; await hydrate(); track('login_telegram');
+    closeModal('authModal'); document.getElementById('authNotice').style.display = 'none'; playSound('win');
+  } catch(e) { console.warn(e); alert('Не удалось войти через Telegram. Попробуйте ещё раз.'); }
+}
+{ const _om = openModal; openModal = function(id) { _om(id); if(id === 'authModal') mountTelegramLogin(); }; }
 </script>
 </body>
 </html>
