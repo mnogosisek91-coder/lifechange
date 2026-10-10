@@ -1075,11 +1075,12 @@
           </div>
           <p class="note">Как администратор вы можете повторять отчёты, колесо, награду за вход и видео без дневных ограничений. Тариф включается и выключается кнопками выше, так можно проверять и PRO, и бесплатный режим.</p></div>
         <div class="pcard"><h4>💎 Выдать тариф клиенту</h4>
-          <div class="rem-row"><input id="grantEmail" type="email" placeholder="Email клиента или @username" style="flex:1;min-width:200px"><select id="grantDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="30">30 дней</option><option value="90">3 месяца</option><option value="365">12 месяцев</option><option value="3">3 дня (пробный)</option></select><button class="btn btn-gold" style="width:auto" onclick="adminGrant()">Выдать PRO</button></div>
+          <div class="rem-row"><input id="grantEmail" type="email" placeholder="Email клиента или @username" style="flex:1;min-width:200px"><select id="grantTier" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="pro">PRO</option><option value="vip">VIP</option></select><select id="grantDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="30">30 дней</option><option value="90">3 месяца</option><option value="365">12 месяцев</option><option value="3">3 дня (пробный)</option></select><button class="btn btn-gold" style="width:auto" onclick="adminGrant()">Выдать тариф</button></div>
           <h4 style="margin-top:14px">🔑 Одноразовый код активации</h4>
           <div class="rem-row"><button class="btn btn-outline" style="width:auto" onclick="adminCode(3)">3 дня</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(30)">30 дней</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(90)">3 месяца</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(365)">12 месяцев</button></div>
           <p class="note" id="adminCodeOut"></p>
-          <p class="note">После оплаты проще всего выдать тариф по email клиента: он активируется сразу. Код нужен, если клиент ещё не зарегистрирован.</p></div>
+          <p class="note">Тариф (PRO или VIP) берётся из выбора выше, он действует и для кнопок кодов. Клиента можно указать по email или @username. VIP на сайте открывает то же, что PRO, а куратора и разбор видеоотчётов вы выполняете вручную: список активных VIP-клиентов смотрите ниже.</p></div>
+        <div class="pcard"><h4>⭐ Активные VIP-клиенты</h4><div id="adminVips"></div></div>
         <div class="pcard"><h4>🎁 Заказы наград</h4><div id="adminOrders"></div></div>
         <div class="pcard"><h4>📸 Последние отчёты</h4><div id="adminReports"></div></div>
     </div></div>
@@ -2709,10 +2710,10 @@ renderBadges(false);
 <script>
 // ===================== Аккаунт и администратор =====================
 Object.assign(UZ_EXACT, {"👤 Аккаунт": "👤 Akkaunt", "🛠 Админ": "🛠 Admin", "🛠 Админ-панель": "🛠 Admin paneli", "Вы не вошли в аккаунт": "Siz akkauntga kirmagansiz", "Войти или создать профиль": "Kirish yoki profil yaratish", "Выйти из аккаунта": "Akkauntdan chiqish", "Условия будут объявлены позже.": "Shartlar keyinroq e'lon qilinadi."});
-let isAdmin = false, accountEmail = '';
+let isAdmin = false, accountEmail = '', planTier = 'pro';
 function syncAccount() {
   const info = document.getElementById('accountInfo');
-  if(user) info.textContent = (user.name || '') + (accountEmail ? ' · ' + accountEmail : '') + (isAdmin ? ' · администратор' : '');
+  if(user) info.textContent = (user.name || '') + (accountEmail ? ' · ' + accountEmail : '') + (userPlan === 'pro' && planUntil > Date.now() ? ' · ' + (planTier === 'vip' ? 'VIP' : 'PRO') + ' (' + new Date(planUntil).toLocaleDateString('ru-RU') + ')' : '') + (isAdmin ? ' · администратор' : '');
   else info.textContent = 'Вы не вошли в аккаунт';
   document.getElementById('accountLoginBtn').style.display = user ? 'none' : '';
   document.getElementById('accountLogoutBtn').style.display = user ? '' : 'none';
@@ -2725,7 +2726,7 @@ function adminRelax() { canSpin = true; dailyClaimed = false; reportedToday.clea
 { const _sa = simulateAIScan; simulateAIScan = function() { if(isAdmin) adminRelax(); return _sa.apply(this, arguments); }; }
 { const _as = applyState;
   applyState = function(st) {
-    _as(st); isAdmin = !!st.is_admin; accountEmail = st.tg_username ? '@' + st.tg_username : (st.email || '');
+    _as(st); planTier = st.plan_tier || 'pro'; isAdmin = !!st.is_admin; accountEmail = st.tg_username ? '@' + st.tg_username : (st.email || '');
     syncAccount(); if(isAdmin) { adminRelax(); renderDailyRewards(); }
   }; }
 { const _sp = syncProfile; syncProfile = function() { _sp(); syncAccount(); }; }
@@ -2737,6 +2738,7 @@ async function renderAdmin() {
     document.getElementById('adminStats').innerHTML = [['Пользователей', o.users], ['Отчётов сегодня', o.reports_today], ['Новых заказов', o.orders_new]].map(x => `<div><div style="font-size:1.6rem;font-weight:800;color:#f6dc9a">${x[1]}</div><div class="note" style="margin:0">${x[0]}</div></div>`).join('');
     document.getElementById('adminOrders').innerHTML = o.orders.length ? o.orders.map(r => `<div class="notif-item ${r.status === 'new' ? 'new' : ''}" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.item)} · ${Number(r.price).toLocaleString('ru-RU')} 🪙</b><p>${esc(r.name || '')} ${esc(r.tg_username ? '@' + r.tg_username : (r.email || ''))} · ${fmtD(r.created_at)}</p>${r.status === 'new' ? `<button class="btn btn-gold" style="width:auto;padding:6px 14px;margin-top:6px" onclick="adminOrderDone(${r.id})">Выдано</button>` : '<small>✅ выдано</small>'}</div>`).join('') : '<p class="note">Заказов пока нет.</p>';
     document.getElementById('adminReports').innerHTML = o.reports.length ? o.reports.map(r => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.name || '')} · ${esc((CHALLENGES[r.challenge] || {}).title || r.challenge)}</b><p>${r.day} · +${r.points}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn btn-outline" style="width:auto;padding:6px 14px" onclick="adminProof('${esc(r.file_path || '')}')">Открыть фото</button><button class="btn btn-outline" style="width:auto;padding:6px 14px;border-color:#ef4444;color:#f87171" onclick="adminReject(${r.id})">Отклонить</button></div></div>`).join('') : '<p class="note">Отчётов пока нет.</p>';
+    document.getElementById('adminVips').innerHTML = (o.vips && o.vips.length) ? o.vips.map(v => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(v.name || '')} ${esc(v.tg_username ? '@' + v.tg_username : (v.email || ''))}</b><p>VIP до ${new Date(v.plan_until).toLocaleDateString('ru-RU')}</p></div>`).join('') : '<p class="note">Активных VIP-клиентов пока нет.</p>';
   } catch(e) { alert(errMsg(e)); }
 }
 async function adminProof(path) {
@@ -2769,15 +2771,15 @@ Object.assign(UZ_EXACT, {
   'Эту награду можно получать не чаще раза в 30 дней.': "Bu sovrinni 30 kunda bir martadan ko'p olib bo'lmaydi."
 });
 async function adminGrant() {
-  const email = document.getElementById('grantEmail').value.trim(), days = +document.getElementById('grantDays').value;
+  const email = document.getElementById('grantEmail').value.trim(), days = +document.getElementById('grantDays').value, tier = document.getElementById('grantTier').value;
   if(!email) return alert('Введите email клиента.');
-  try { const r = await rpc('admin_grant_plan', { p_email: email, p_days: days }); alert('Готово. PRO у клиента до ' + new Date(r).toLocaleDateString('ru-RU') + '.'); document.getElementById('grantEmail').value = ''; }
+  try { const r = await rpc('admin_grant_plan', { p_email: email, p_days: days, p_tier: tier }); alert('Готово. ' + tier.toUpperCase() + ' у клиента до ' + new Date(r).toLocaleDateString('ru-RU') + '.'); document.getElementById('grantEmail').value = ''; }
   catch(e) { alert(errMsg(e)); }
 }
 async function adminCode(d) {
   try {
-    const code = await rpc('admin_create_code', { p_days: d });
-    document.getElementById('adminCodeOut').innerHTML = 'Код на ' + d + ' дн.: <b style="color:#f6dc9a;font-size:1.1rem">' + esc(code) + '</b> (скопирован в буфер обмена). Сохраните его: повторно он не показывается.';
+    const code = await rpc('admin_create_code', { p_days: d, p_tier: document.getElementById('grantTier').value });
+    document.getElementById('adminCodeOut').innerHTML = document.getElementById('grantTier').value.toUpperCase() + '-код на ' + d + ' дн.: <b style="color:#f6dc9a;font-size:1.1rem">' + esc(code) + '</b> (скопирован в буфер обмена). Сохраните его: повторно он не показывается.';
     try { await navigator.clipboard.writeText(code); } catch(e) {}
   } catch(e) { alert(errMsg(e)); }
 }
