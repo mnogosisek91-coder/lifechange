@@ -465,6 +465,31 @@
         .tier .new { font-size: 1.5rem; font-weight: 800; color: #f6dc9a; } .tier .per { font-size: 0.72rem; color: var(--text-secondary); }
         .tier .off { display: inline-block; margin-top: 6px; background: rgba(239,68,68,0.2); color: #f87171; padding: 2px 10px; border-radius: 12px; font-weight: 700; font-size: 0.78rem; }
         .b2b ul { list-style: none; display: grid; gap: 8px; margin: 0 0 1rem; font-size: 0.9rem; color: var(--text-secondary); } .b2b li::before { content: '✓ '; color: #34d399; font-weight: 800; }
+    
+        .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .chip { background: rgba(99,102,241,0.18); border: 1px solid var(--accent-color); color: #c7d2fe; padding: 6px 12px; border-radius: 16px; font-size: 0.8rem; cursor: pointer; font-family: inherit; }
+        .msg.typing { opacity: 0.6; }
+        .pricing-card.active-plan { border-color: #34d399 !important; box-shadow: 0 0 0 1px #34d399, 0 10px 30px rgba(52,211,153,0.18); }
+        .plan-active-tag { position: absolute; top: -12px; right: 16px; background: #10b981; color: #fff; padding: 3px 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 800; }
+    
+        .result-box { background: rgba(245,158,11,0.08); border: 1px solid var(--gold-color); border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: left; }
+        .result-box b.rb-title { color: #f6dc9a; }
+        .result-box .rb-sub { font-size: 0.8rem; color: var(--text-secondary); margin: 4px 0 6px; }
+        .result-box ul { list-style: none; display: grid; gap: 6px; font-size: 0.85rem; color: #e6e9ff; line-height: 1.45; margin: 0; }
+        .result-box li::before { content: '✓ '; color: #34d399; font-weight: 800; }
+        .result-box small { display: block; margin-top: 8px; font-size: 0.7rem; color: var(--text-secondary); }
+        details.grp { margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(255,255,255,0.02); overflow: hidden; }
+        details.grp > summary.grp-title { list-style: none; cursor: pointer; margin: 0; padding: 14px 16px; display: flex; align-items: center; gap: 8px; font-size: 1.05rem; color: #f6dc9a; }
+        details.grp > summary::-webkit-details-marker { display: none; }
+        details.grp > summary::after { content: '▾'; margin-left: auto; transition: transform 0.2s; color: var(--text-secondary); }
+        details.grp:not([open]) > summary::after { transform: rotate(-90deg); }
+        details.grp > .grid { padding: 0 14px 14px; }
+        .grp-count { font-size: 0.8rem; color: var(--text-secondary); font-weight: 600; }
+        @media (max-width: 760px) {
+            details.grp > .grid { grid-template-columns: 1fr !important; padding: 0 10px 12px; }
+            #tab-challenges .page-banner { padding-left: 0.8rem; padding-right: 0.8rem; }
+        }
+        .grp-ctl { display: flex; gap: 14px; justify-content: flex-end; margin: 0 0 10px; font-size: 0.82rem; }
     </style>
 </head>
 <body>
@@ -714,7 +739,8 @@
                 <div class="chat-box" id="chatBox">
                     <div class="msg msg-ai">Привет! Я твой виртуальный ментор. Какая у тебя цель на сегодня? Готов помочь составить план!</div>
                 </div>
-                <div style="display: flex; gap: 10px;">
+                <div class="chips"><button class="chip" onclick="sendChatMessage(this.textContent)">План на сегодня</button><button class="chip" onclick="sendChatMessage(this.textContent)">Нет мотивации</button><button class="chip" onclick="sendChatMessage(this.textContent)">Сорвался</button><button class="chip" onclick="sendChatMessage(this.textContent)">Стресс</button><button class="chip" onclick="sendChatMessage(this.textContent)">Мой прогресс</button></div>
+            <div style="display: flex; gap: 10px;">
                     <input type="text" id="chatInput" placeholder="Напишите сообщение..." style="flex:1; padding: 12px; background: rgba(15,23,42,0.8); border:1px solid var(--border-color); border-radius:8px; color:#fff; outline:none;">
                     <button class="btn" style="width: auto;" onclick="sendChatMessage()" data-i18n="btn_send">Отправить</button>
                 </div>
@@ -759,6 +785,8 @@
 
                 <h2 style="margin-bottom: 0.5rem; text-align: center;" data-i18n="plans_title">💎 Выберите ваш план трансформации</h2>
                 <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;" data-i18n="plans_subtitle">Инвестируйте в свою дисциплину и достижение целей</p>
+        <div class="notice" id="planStatus" style="display:none; margin:0 auto 1rem; color:#34d399; font-weight:700;"></div>
+        <div style="text-align:center; margin-bottom:1rem;"><button class="btn btn-outline" id="musicBtn" style="width:auto; font-size:0.8rem; padding:8px 14px;" onclick="toggleMusic()">🎵 Музыка: вкл</button></div>
         <div class="act-box"><span style="font-size:0.9rem;">🔑 Уже оплатили? Введите код активации, который вам отправили в Telegram:</span><input id="actCode" placeholder="LC-M-XXXX-XXXX-XXXX"><button class="btn btn-gold" style="width:auto" onclick="activateCode()">Активировать</button></div>
                 
                 <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
@@ -1075,7 +1103,7 @@
           </div>
           <p class="note">Как администратор вы можете повторять отчёты, колесо, награду за вход и видео без дневных ограничений. Тариф включается и выключается кнопками выше, так можно проверять и PRO, и бесплатный режим.</p></div>
         <div class="pcard"><h4>💎 Выдать тариф клиенту</h4>
-          <div class="rem-row"><input id="grantEmail" type="email" placeholder="Email клиента или @username" style="flex:1;min-width:200px"><select id="grantTier" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="pro">PRO</option><option value="vip">VIP</option></select><select id="grantDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="30">30 дней</option><option value="90">3 месяца</option><option value="365">12 месяцев</option><option value="3">3 дня (пробный)</option></select><button class="btn btn-gold" style="width:auto" onclick="adminGrant()">Выдать тариф</button></div>
+          <div class="rem-row"><input id="grantEmail" type="email" placeholder="Email клиента или @username" style="flex:1;min-width:200px"><select id="grantTier" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="pro">PRO</option><option value="vip">VIP</option></select><select id="grantDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff"><option value="30">30 дней</option><option value="90">3 месяца</option><option value="365">12 месяцев</option><option value="3">3 дня (пробный)</option></select><button class="btn btn-gold" style="width:auto" onclick="adminGrant()">Выдать тариф</button><button class="btn btn-outline" style="width:auto; border-color:#ef4444; color:#f87171" onclick="adminRevoke()">Забрать тариф</button></div>
           <h4 style="margin-top:14px">🔑 Одноразовый код активации</h4>
           <div class="rem-row"><button class="btn btn-outline" style="width:auto" onclick="adminCode(3)">3 дня</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(30)">30 дней</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(90)">3 месяца</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(365)">12 месяцев</button></div>
           <p class="note" id="adminCodeOut"></p>
@@ -1346,6 +1374,7 @@
             <span class="close-modal" onclick="closeModal('challengeModal')">&times;</span>
             <h3 id="modalChallengeTitle" style="margin-bottom: 1rem;">Челлендж</h3>
             <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.8rem;">Отметьте все 3 задания дня и прикрепите подтверждение. Баллы начисляются только за полностью выполненный день.</p>
+            <div id="resultBox"></div>
             <div id="taskList"></div>
             <p id="proofHint" style="color: var(--text-secondary); font-size: 0.8rem; margin: 6px 0;"></p>
             
@@ -1761,7 +1790,7 @@
                 const r = await fetch('notifications.json?t=' + Date.now(), { cache: 'no-store' });
                 if(!r.ok) return;
                 const a = await r.json();
-                if(Array.isArray(a) && a.length) { NOTIFS = a.filter(n => n && n.id && n.title && !/example|пример/i.test(String(n.id) + String(n.title))); renderNotifs(false); }
+                if(Array.isArray(a) && a.length) { window.GLOBAL_NOTIFS = a.filter(n => n && n.id && n.title && !/example|пример/i.test(String(n.id) + String(n.title))); if(window.mergeNotifs) window.mergeNotifs(); else { NOTIFS = window.GLOBAL_NOTIFS; renderNotifs(false); } }
             } catch(e) {}
         }
         renderNotifs(false); loadRemoteNotifs();
@@ -2818,6 +2847,156 @@ async function onTelegramAuth(u) {
   }
 }
 { const _om = openModal; openModal = function(id) { _om(id); if(id === 'authModal') mountTelegramLogin(); }; }
+</script>
+<script>
+// ===================== Личные уведомления, статус тарифа, музыка, наставник =====================
+Object.assign(UZ_EXACT, {"🎵 Музыка: вкл": "🎵 Musiqa: yoqilgan", "🔇 Музыка: выкл": "🔇 Musiqa: o'chirilgan", "Продлить PRO": "PRO'ni uzaytirish", "Продлить VIP": "VIP'ni uzaytirish", "Включено в VIP": "VIP'ga kiritilgan", "Базовый тариф": "Bazaviy tarif", "✅ Ваш тариф": "✅ Sizning tarifingiz", "План на сегодня": "Bugungi reja", "Нет мотивации": "Motivatsiya yo'q", "Сорвался": "Sinib qoldim", "Стресс": "Stress", "Мой прогресс": "Mening yutuqlarim"});
+UZ_PAT.unshift(
+ [/^✅ У вас активен тариф (PRO|VIP) до ([\d.]+)\. Можно продлить\.$/, m => `✅ Sizda ${m[1]} tarifi ${m[2]} gacha faol. Uzaytirish mumkin.`]
+);
+// ---- личные уведомления
+window.GLOBAL_NOTIFS = window.GLOBAL_NOTIFS || NOTIFS.slice();
+let USER_NOTIFS = [];
+window.mergeNotifs = function() { NOTIFS = USER_NOTIFS.concat(window.GLOBAL_NOTIFS); renderNotifs(false); };
+async function loadUserNotifs() {
+  if(!sb || !sbUid) { USER_NOTIFS = []; window.mergeNotifs(); return; }
+  try {
+    const { data, error } = await sb.from('user_notifications').select('id,title,text,created_at').order('created_at', { ascending: false }).limit(20);
+    if(error) return;
+    USER_NOTIFS = (data || []).map(r => ({ id: 'u' + r.id, title: r.title, text: r.text, date: String(r.created_at).slice(0, 10) }));
+    window.mergeNotifs();
+  } catch(e) {}
+}
+setInterval(() => { if(sbUid) loadUserNotifs(); }, 60000);
+{ const _tn = toggleNotifs; toggleNotifs = function(e) { loadUserNotifs(); _tn(e); }; }
+async function adminRevoke() {
+  const email = document.getElementById('grantEmail').value.trim();
+  if(!email) return alert('Введите email клиента.');
+  if(!confirm('Забрать платный тариф у ' + email + '?')) return;
+  try { await rpc('admin_revoke_plan', { p_email: email }); alert('Тариф отключён.'); document.getElementById('grantEmail').value = ''; }
+  catch(e) { alert(errMsg(e)); }
+}
+// ---- статус тарифа во вкладке «Тарифы»
+function syncPlans() {
+  const active = userPlan === 'pro' && planUntil > Date.now(), vip = active && planTier === 'vip';
+  const st = document.getElementById('planStatus');
+  if(st) { if(active) { st.style.display = ''; st.textContent = '✅ У вас активен тариф ' + (vip ? 'VIP' : 'PRO') + ' до ' + new Date(planUntil).toLocaleDateString('ru-RU') + '. Можно продлить.'; } else st.style.display = 'none'; }
+  const q = x => document.querySelector('#tab-plans ' + x);
+  const pro = q('button[onclick*="Pro Intizom"]'), vb = q('button[onclick*="VIP Transformatsiya"]'), tr = q('button[onclick*="PRO Trial"]'), fr = q('.pricing-card button.btn-outline[onclick*="базовый"]');
+  if(pro) { pro.removeAttribute('data-i18n'); pro.disabled = vip; pro.textContent = vip ? 'Включено в VIP' : (active ? 'Продлить PRO' : 'Подключить PRO'); }
+  if(vb) { vb.removeAttribute('data-i18n'); vb.textContent = vip ? 'Продлить VIP' : 'Стать VIP'; }
+  if(fr) { fr.removeAttribute('data-i18n'); fr.textContent = active ? 'Базовый тариф' : 'Текущий тариф'; }
+  if(tr) { let el = tr; while(el.parentElement && !el.parentElement.classList.contains('page-banner')) el = el.parentElement; if(el.parentElement) el.style.display = active ? 'none' : ''; }
+  const cards = document.querySelectorAll('#tab-plans .pricing-card');
+  cards.forEach(c => { c.classList.remove('active-plan'); c.querySelectorAll('.plan-active-tag').forEach(x => x.remove()); });
+  const card = cards[active ? (vip ? 2 : 1) : 0];
+  if(card) { card.classList.add('active-plan'); const t = document.createElement('span'); t.className = 'plan-active-tag'; t.textContent = '✅ Ваш тариф'; card.appendChild(t); }
+}
+{ const _sp = syncProfile; syncProfile = function() { _sp(); syncPlans(); }; }
+{ const _as = applyState; applyState = function(st) { _as(st); syncPlans(); loadUserNotifs(); }; }
+{ const _tl = toggleLanguage; toggleLanguage = function() { _tl(); syncPlans(); }; }
+// ---- музыка во вкладке «Тарифы» (оригинальный инструментальный луп; можно подложить свой файл plans-music.mp3)
+const Music = (() => {
+  let fileAudio = null, hasFile = false, running = false;
+  try { fetch('plans-music.mp3', { method: 'HEAD' }).then(r => { hasFile = r.ok; syncMusicBtn(); }).catch(() => {}); } catch(e) {}
+  return {
+    available() { return hasFile; },
+    start() { if(running || !hasFile) return; running = true; try { fileAudio = fileAudio || Object.assign(new Audio('plans-music.mp3'), { loop: true, volume: 0.35 }); const pr = fileAudio.play(); if(pr && pr.catch) pr.catch(() => {}); } catch(e) { running = false; } },
+    stop() { if(!running) return; running = false; try { if(fileAudio) fileAudio.pause(); } catch(e) {} }
+  };
+})();
+let musicOn = true;
+try { musicOn = localStorage.getItem('lc_music') !== '0'; } catch(e) {}
+function syncMusicBtn() { const b = document.getElementById('musicBtn'); if(!b) return; b.textContent = musicOn ? '🎵 Музыка: вкл' : '🔇 Музыка: выкл'; b.parentElement.style.display = Music.available() ? '' : 'none'; }
+function toggleMusic() {
+  musicOn = !musicOn; try { localStorage.setItem('lc_music', musicOn ? '1' : '0'); } catch(e) {}
+  syncMusicBtn(); if(musicOn && document.getElementById('tab-plans').classList.contains('active')) Music.start(); else Music.stop();
+}
+syncMusicBtn();
+{ const _st = switchTab; switchTab = function(t) { _st(t); const onPlans = document.getElementById('tab-plans').classList.contains('active'); if(onPlans && musicOn) Music.start(); else Music.stop(); }; }
+document.addEventListener('visibilitychange', () => { if(document.hidden) Music.stop(); });
+// ---- ИИ-наставник (умные сценарии)
+const MENTOR = {"greet": [{"r": "Привет, {n}! Рад тебя видеть 👋 Серия сейчас {s} дн. С чего начнём: план на день, мотивация или разбор срыва?", "u": "Salom, {n}! Seni ko'rganimdan xursandman 👋 Hozirgi seriya {s} kun. Nimadan boshlaymiz: kunlik reja, motivatsiya yoki sinishni tahlil qilishdanmi?"}, {"r": "Здравствуй, {n}! Расскажи, как настроение и что планируешь сделать сегодня?", "u": "Assalomu alaykum, {n}! Kayfiyating qanday va bugun nimani rejalashtiryapsan?"}], "lazy": [{"r": "Знакомое чувство. Попробуй правило двух минут: пообещай себе сделать только первое задание дня всего на 2 минуты. Начать почти всегда сложнее, чем продолжить.", "u": "Bu tuyg'u hammaga tanish. Ikki daqiqa qoidasini sinab ko'r: o'zingga kunning birinchi topshirig'ini atigi 2 daqiqa bajarishni va'da qil. Boshlash davom ettirishdan qiyinroq bo'ladi."}, {"r": "Мотивация приходит после действия, а не до него. Выбери самое лёгкое из трёх заданий, сделай прямо сейчас и напиши мне, как ощущения.", "u": "Motivatsiya harakatdan keyin keladi, oldin emas. Uch topshiriqdan eng yengilini hozir bajar va menga his-tuyg'ularingni yoz."}, {"r": "Усталость бывает честным сигналом. Проверь сон и воду, а задание сделай в облегчённом варианте: лучше 5 минут, чем ничего. Серия важнее идеальности.", "u": "Charchoq ba'zan haqiqiy signal. Uyqu va suvni tekshir, topshiriqni yengillashtirilgan variantda bajar: hech nimadan 5 daqiqa yaxshi. Seriya mukammallikdan muhimroq."}], "relapse": [{"r": "Срыв не стирает твой прогресс. Это данные, а не приговор. Спроси себя: что было триггером (время, место, эмоция)? Заранее придумай замену на следующий раз и вернись к заданиям уже сегодня.", "u": "Sinish yutuqlaringni o'chirmaydi. Bu ma'lumot, hukm emas. O'zingdan so'ra: trigger nima edi (vaqt, joy, his-tuyg'u)? Keyingi safar uchun oldindan almashtirish top va bugunoq topshiriqlarga qayt."}, {"r": "Ты молодец, что честно об этом говоришь. Не наказывай себя: чувство вины чаще ведёт к новому срыву. Сделай один маленький шаг прямо сейчас, например выпей воды и отметь первое задание.", "u": "Bu haqda ochiq aytganing yaxshi. O'zingni jazolama: aybdorlik tuyg'usi ko'pincha yangi sinishga olib keladi. Hozir bitta kichik qadam tashla, masalan suv ich va birinchi topshiriqni belgila."}], "smoke": [{"r": "С отказом от курения помогает метод задержки: когда тянет, отложи на 10 минут, выпей воды и подыши глубоко. Тяга обычно проходит волной. Попробуй челлендж «Брось курить». Если курение давнее и тяжело даётся, полезно обсудить это с врачом.", "u": "Chekishni tashlashda kechiktirish usuli yordam beradi: tortganda 10 daqiqa kut, suv ich va chuqur nafas ol. Tortish odatda to'lqin kabi o'tadi. «Chekishni tashlash» chellenjini sinab ko'r. Chekish uzoq va qiyin bo'lsa, shifokor bilan maslahatlashgan ma'qul."}, {"r": "Запиши, в какие моменты тебя тянет к сигарете (после еды, в стрессе, с кофе). Для каждого момента придумай замену на 5 минут: прогулка, жвачка, стакан воды. Это самый надёжный шаг.", "u": "Qaysi paytlarda sigaretga tortishingni yoz (ovqatdan keyin, stressda, qahva bilan). Har bir payt uchun 5 daqiqalik almashtirish o'ylab top: sayr, saqich, bir stakan suv. Bu eng ishonchli qadam."}], "weight": [{"r": "Для снижения веса работает простое: шаги (около 10 000 в день), белок в каждом приёме пищи, вода и сон. Избегай жёстких диет и голодовок, а при хронических болезнях сначала проконсультируйся с врачом. Челлендж «Похудение & Кардио» ведёт по этим шагам.", "u": "Vazn tashlashda oddiy narsalar ishlaydi: qadamlar (kuniga taxminan 10 000), har ovqatda oqsil, suv va uyqu. Qattiq dieta va och qolishdan saqlan, surunkali kasalliklarda avval shifokor bilan maslahatlash. «Ozish va Kardio» chellenji shu qadamlar bo'yicha olib boradi."}], "sport": [{"r": "Для силы важны регулярность и техника: 3 тренировки в неделю по 30–45 минут, базовые упражнения, белок и сон. Начни с лёгких весов и записывай прогресс. Хочешь, помогу составить план на неделю?", "u": "Kuch uchun muntazamlik va texnika muhim: haftasiga 3 marta 30–45 daqiqa, asosiy mashqlar, oqsil va uyqu. Yengil vazndan boshla va yutuqni yozib bor. Haftalik reja tuzishda yordam berishimni xohlaysanmi?"}], "sleep": [{"r": "Для сна помогает режим: отбой в одно и то же время и час без телефона перед сном. Попробуй челлендж «Детокс перед сном». Если бессонница длится долго, обратись к врачу.", "u": "Uyqu uchun tartib yordam beradi: bir xil vaqtda yotish va uyqudan oldin bir soat telefonsiz. «Uyqu oldidan detoks» chellenjini sinab ko'r. Uyqusizlik uzoq cho'zilsa, shifokorga murojaat qil."}], "stress": [{"r": "Давай сначала замедлимся: вдох носом на 4 счёта, выдох на 6, повтори 5 раз. Потом выпиши, что именно тревожит, и раздели на то, что ты можешь изменить, и на то, что нет. Если тревога держится, поговори с психологом в разделе «Психолог». Я не заменяю специалиста.", "u": "Avval sekinlashaylik: burun orqali 4 sanoq nafas ol, 6 sanoq chiqar, 5 marta takrorla. Keyin seni nima bezovta qilayotganini yoz va o'zgartira oladiganing bilan o'zgartira olmaydiganingni ajrat. Xavotir uzoq davom etsa, «Psixolog» bo'limida psixolog bilan gaplash. Men mutaxassisning o'rnini bosmayman."}], "reading": [{"r": "Для чтения помогает привязка к ритуалу: 10 страниц после утреннего кофе или перед сном вместо ленты. Телефон в другую комнату, закладка в книгу. Челлендж «10 страниц в день» проведёт по шагам.", "u": "O'qish uchun marosimga bog'lash yordam beradi: ertalabki qahvadan keyin yoki uyqu oldidan lenta o'rniga 10 bet. Telefonni boshqa xonaga qo'y, kitobga xatcho'p qo'y. «Kuniga 10 bet» chellenji qadamma-qadam olib boradi."}], "rewards": [{"r": "Баллы можно тратить в разделе «Награды → Потратить»: промокоды партнёров, эспандер, худи и мистери-боксы. Награды открываются после 3 дней с отчётами, эспандер и худи после 7 дней. Колесо фортуны можно крутить раз в день.", "u": "Ballarni «Sovrinlar → Sarflash» bo'limida sarflash mumkin: hamkorlar promokodlari, ekspander, hudi va sirli qutilar. Sovrinlar hisobotli 3 kundan keyin, ekspander va hudi 7 kundan keyin ochiladi. Omad g'ildiragini kuniga bir marta aylantirish mumkin."}], "psy": [{"r": "Консультации психолога проходят онлайн и очно в Ташкенте: откройте раздел «Психолог», выберите формат и время, и мы подтвердим запись в Telegram. Это психологическая поддержка, а не медицинская помощь.", "u": "Psixolog maslahatlari onlayn va Toshkentda yuzma-yuz o'tadi: «Psixolog» bo'limini oching, format va vaqtni tanlang, yozilishni Telegramda tasdiqlaymiz. Bu psixologik yordam, tibbiy yordam emas."}], "thanks": [{"r": "Всегда рад помочь, {n}! Ты делаешь больше, чем думаешь. Что сделаем следующим шагом?", "u": "Doim yordam berishdan xursandman, {n}! Sen o'ylagandan ko'proq qilyapsan. Keyingi qadam nima bo'ladi?"}], "crisis": [{"r": "Мне очень жаль, что тебе так тяжело. Ты не один, и твоя боль важна. Пожалуйста, прямо сейчас позвони в скорую помощь (103) или близкому человеку и скажи, что тебе нужна поддержка. Если можешь, не оставайся в одиночестве. Ещё можно записаться к психологу в разделе «Психолог».", "u": "Senga bunchalik og'irligidan juda afsusdaman. Sen yolg'iz emassan va og'rig'ing muhim. Iltimos, hoziroq tez yordamga (103) yoki yaqin insoningga qo'ng'iroq qilib, yordam kerakligini ayt. Imkon bo'lsa, yolg'iz qolma. Shuningdek, «Psixolog» bo'limida psixologga yozilish mumkin."}], "fallback": [{"r": "Понимаю. Чтобы подсказать точнее, скажи: что сейчас мешает больше всего — время, энергия, план или настроение?", "u": "Tushundim. Aniqroq maslahat berish uchun ayt: hozir nima ko'proq xalaqit beryapti — vaqt, energiya, reja yoki kayfiyat?"}, {"r": "Хорошо, что ты об этом думаешь. Давай сделаем это конкретным: какой один шаг на 5 минут ты можешь сделать сегодня?", "u": "Bu haqda o'ylayotganing yaxshi. Keling, aniq qilaylik: bugun 5 daqiqada qilsa bo'ladigan bitta qadam qaysi?"}, {"r": "Хочешь, составлю план на сегодня? Напиши «план» или выбери подсказку ниже: мотивация, срыв, стресс, прогресс.", "u": "Bugungi reja tuzib beraymi? «Reja» deb yoz yoki quyidagi maslahatlardan birini tanla: motivatsiya, sinish, stress, yutuq."}, {"r": "Маленькие шаги побеждают. Что для тебя сегодня важнее всего: движение, режим, голова или привычки?", "u": "Kichik qadamlar g'alaba qozonadi. Bugun sen uchun nima muhimroq: harakat, tartib, ong yoki odatlar?"}]};
+const MENTOR_RX = [["crisis", "не хочу жить|суицид|покончить с собой|убить себя|навредить себе|причинить себе вред|хочу умереть|o'zimni o'ldir|o'lgim|jonimga qasd"], ["greet", "^(привет|здравствуй|добрый|салом|assalom|salom|hi\\b|hello)"], ["plan", "план|с чего начать|что делать|reja|nimadan boshla"], ["progress", "прогресс|серия|баллы|ранг|уровень|yutuq|ball|daraja|seriya"], ["relapse", "сорвал|срыв|закурил|покурил|нарушил|sinib|sindi|chekib qo'ydim"], ["smoke", "кур(ить|ю|ение)|сигарет|вейп|chekish|sigaret"], ["weight", "вес\\b|похуд|диет|питани|калори|ozish|ovqat|vazn"], ["sport", "тренир|зал\\b|мышц|сила|sport|mashq|zal\\b"], ["sleep", "\\bсон\\b|спать|бессонн|не сплю|uyqu|uxlay"], ["stress", "стресс|тревог|волную|нервн|паник|xavotir|stress|asab"], ["lazy", "лень|не хочу|нет сил|мотивац|нет настроения|устал|charchadim|erinch|xohlamayman|motivatsiya"], ["reading", "книг|чита|kitob|o'qi"], ["rewards", "приз|награ|магазин|sovrin|do'kon"], ["psy", "психолог|консультац|psixolog|maslahat"], ["thanks", "спасибо|благодар|rahmat"]].map(([k, v]) => [k, new RegExp(v, 'i')]);
+const mentorUsed = {};
+const uzL = () => currentLang === 'uz';
+function mentorPick(key) {
+  const a = MENTOR[key]; mentorUsed[key] = (mentorUsed[key] || 0) + 1;
+  const o = a[(mentorUsed[key] - 1) % a.length]; return uzL() ? o.u : o.r;
+}
+function mentorFill(t) { const n = (user && user.name) ? user.name : (uzL() ? "do'st" : 'друг'); return t.replace(/\{n\}/g, n).replace(/\{s\}/g, streak); }
+function mentorPlan() {
+  const n = (user && user.name) ? user.name : (uzL() ? "do'st" : 'друг'), tr = x => uzL() ? trUz(x) : x;
+  const key = [...activeChallenges][0] || Object.keys(CHALLENGES).find(k => reportedToday.has(k));
+  if(key && reportedToday.has(key) && reportedToday.size >= Math.max(1, activeChallenges.size)) return uzL() ? `Bugungi hisobot topshirilgan, ${n}. Ajoyib ish! Dam olishing yoki PRO bilan ikkinchi chellenjni olishing mumkin.` : `Отчёт сегодня уже сдан, ${n}. Отличная работа! Можно отдохнуть или взять второй челлендж (PRO).`;
+  if(key && CHALLENGES[key]) { const c = CHALLENGES[key], ts = c.tasks.map((t, i) => (i + 1) + ') ' + tr(t.t)).join('\n'); return (uzL() ? `«${tr(c.title)}» bo'yicha bugungi reja:\n` : `План на сегодня по «${c.title}»:\n`) + ts + (uzL() ? '\nUchalasini bajargach, «Chellenjlar» sahifasida tasdiq suratini ilova qil.' : '\nПосле выполнения всех трёх прикрепи подтверждение на странице «Челленджи».'); }
+  return uzL() ? "Boshlash uchun «Chellenjlar» sahifasida bitta chellenj tanla. Yengil start: «Ertalabki sehr» yoki «Qadam marafoni». Har birida kuniga uchta oddiy topshiriq bor." : 'Для начала выбери один челлендж на странице «Челленджи». Лёгкий старт: «Магия утра» или «Шаговый марафон». У каждого по три простых задания на день.';
+}
+function mentorProgress() {
+  const n = (user && user.name) ? user.name : (uzL() ? "do'st" : 'друг'), i = rankIdx(xp), r = RANKS[i], nx = RANKS[i + 1];
+  if(uzL()) return `Yutuqlaring, ${n}: seriya ${streak} kun, ${points} ball, «${trUz(r.n)}» darajasi, tajriba ${xp} XP. ` + (nx ? `«${trUz(nx.n)}» darajasigacha ${nx.min - xp} XP qoldi.` : "Bu eng yuqori daraja!");
+  return `Твой прогресс, ${n}: серия ${streak} дн., ${points} баллов, ранг «${r.n}», опыт ${xp} XP. ` + (nx ? `До ранга «${nx.n}» осталось ${nx.min - xp} XP.` : 'Это высший ранг!');
+}
+function mentorReply(text) {
+  const hit = MENTOR_RX.find(([k, rx]) => rx.test(text.trim()));
+  const key = hit ? hit[0] : 'fallback';
+  if(key === 'plan') return { text: mentorPlan() };
+  if(key === 'progress') return { text: mentorProgress() };
+  return { text: mentorFill(mentorPick(key)), crisis: key === 'crisis' };
+}
+function sendChatMessage(preset) {
+  const input = document.getElementById('chatInput'), box = document.getElementById('chatBox');
+  const text = (typeof preset === 'string' ? preset : input.value).trim();
+  if(!text) return;
+  box.insertAdjacentHTML('beforeend', `<div class="msg msg-user">${esc(text)}</div>`); input.value = '';
+  const typing = document.createElement('div'); typing.className = 'msg msg-ai typing'; typing.textContent = '…'; box.appendChild(typing); box.scrollTop = box.scrollHeight;
+  setTimeout(() => {
+    typing.remove();
+    const r = mentorReply(text);
+    box.insertAdjacentHTML('beforeend', `<div class="msg msg-ai">${esc(r.text).replace(/\n/g, '<br>')}</div>`);
+    box.scrollTop = box.scrollHeight; playSound('success'); track('mentor_msg');
+    if(r.crisis) openModal('crisisModal');
+  }, 500 + Math.random() * 600);
+}
+document.getElementById('chatInput').addEventListener('keydown', e => { if(e.key === 'Enter') sendChatMessage(); });
+syncPlans();
+</script>
+<script>
+// ===================== Результат челленджа и аккордеон групп =====================
+const RESULTS = {"c1_title": ["Через 7 дней: больше энергии, легче даётся утро и ходьба", "Через 14 дней: выше выносливость, проще держать режим питания и шаги", "Через 30 дней: привычка двигаться закрепляется, меняются самочувствие и фигура (вес зависит от питания и индивидуален)"], "c2_title": ["Через 7 дней: техника увереннее, тренировки входят в режим", "Через 14 дней: растут рабочий вес и выносливость", "Через 30 дней: заметный прирост силы, режим белка и растяжки закрепляется"], "c3_title": ["Через 7 дней: вы знаете свои триггеры и чаще справляетесь с тягой", "Через 30 дней: тяга приходит реже, появляется уверенность в себе", "Через 100 дней: новая привычка и жизнь без сигарет. При тяжёлой зависимости обсудите это с врачом"], "c4_title": ["Через 7 дней: около 200 страниц, чтение входит в распорядок", "Через 14 дней: около 420 страниц, это одна-две книги", "Через 30 дней: около 900 страниц, привычка читать закрепляется"], "c5_title": ["Через 7 дней: вставать до 7:00 заметно легче, утро становится спокойнее", "Через 14 дней: утренний ритуал входит в привычку, больше энергии и ясности", "Через 21 день: подъём до 7:00 становится автоматическим, день начинается с победы"], "c6_title": ["Через 3 дня: вечер спокойнее, легче отложить телефон", "Через 7 дней: многие замечают, что засыпают легче", "Через 14 дней: режим сна закрепляется, утро бодрее"], "c7_title": ["Через 3 дня: еда становится вкуснее и осознаннее", "Через 7 дней: меньше отвлечений, больше общения за столом", "Через 14 дней: привычка есть без экрана закрепляется"], "c8_title": ["Через 3 дня: ноги привыкают, 10 000 шагов даются легче", "Через 7 дней: около 70 000 шагов за неделю, больше энергии и выносливости", "Через 14 дней: ходьба становится частью дня"], "c9_title": ["Через 7 дней: меньше усталости днём, питьевой режим входит в привычку", "Через 14 дней: проще контролировать аппетит, лучше самочувствие", "Через 30 дней: привычка пить воду закрепляется без напоминаний"], "c10_title": ["Через 3 дня: вы привыкаете к прохладной воде и проще дышите ровно", "Через 7 дней: бодрее по утрам, растёт уверенность в себе", "Через 14 дней: холодный финал душа становится привычкой"], "c11_title": ["Через 3 дня: тяга к сладкому чаще проходит, вкус становится яснее", "Через 7 дней: меньше перепадов энергии, привыкаете к чаю и кофе без сахара", "Через 14 дней: сладкие напитки больше не тянут, привычка закреплена"], "c12_title": ["Через 3 дня: вы замечаете слова-паразиты, речь становится осознаннее", "Через 7 дней: речь чище и увереннее, дикция лучше", "Через 14 дней: новые речевые привычки закрепляются"], "c13_title": ["Через 7 дней: около 70 страниц, читать становится привычно", "Через 14 дней: около 140 страниц, это больше половины небольшой книги", "Через 30 дней: около 300 страниц, целая книга за месяц"], "c14_title": ["Через 7 дней: легче удерживать внимание 45 минут", "Через 14 дней: меньше отвлечений на мессенджеры, растёт продуктивность", "Через 21 день: глубокая работа входит в привычку, за день успеваете больше"], "c15_title": ["Через 3 дня: вы начинаете замечать хорошее в обычных днях", "Через 7 дней: вечером лучше настроение", "Через 14 дней: благодарность становится привычкой, спокойнее отношение к дню"], "c16_title": ["Через 3 дня: вы замечаете, как часто хочется пожаловаться", "Через 7 дней: спокойнее реагируете на мелочи, меньше споров", "Через 14 дней: новая привычка мышления закрепляется"]};
+Object.assign(UZ_EXACT, {"Через 7 дней: больше энергии, легче даётся утро и ходьба": "7 kundan keyin: energiya ko'proq, ertalab va yurish yengilroq", "Через 14 дней: выше выносливость, проще держать режим питания и шаги": "14 kundan keyin: chidamlilik oshadi, ovqatlanish tartibi va qadamlarni saqlash osonlashadi", "Через 30 дней: привычка двигаться закрепляется, меняются самочувствие и фигура (вес зависит от питания и индивидуален)": "30 kundan keyin: harakat odati mustahkamlanadi, o'zini his qilish va qomat o'zgaradi (vazn ovqatlanishga bog'liq va individual)", "Через 7 дней: техника увереннее, тренировки входят в режим": "7 kundan keyin: texnika ishonchliroq, mashg'ulotlar tartibga tushadi", "Через 14 дней: растут рабочий вес и выносливость": "14 kundan keyin: ishchi vazn va chidamlilik oshadi", "Через 30 дней: заметный прирост силы, режим белка и растяжки закрепляется": "30 kundan keyin: kuchning sezilarli o'sishi, oqsil va cho'zilish tartibi mustahkamlanadi", "Через 7 дней: вы знаете свои триггеры и чаще справляетесь с тягой": "7 kundan keyin: triggerlaringizni bilasiz va tortishni tez-tez yengasiz", "Через 30 дней: тяга приходит реже, появляется уверенность в себе": "30 kundan keyin: tortish kamroq keladi, o'ziga ishonch paydo bo'ladi", "Через 100 дней: новая привычка и жизнь без сигарет. При тяжёлой зависимости обсудите это с врачом": "100 kundan keyin: yangi odat va sigaretsiz hayot. Og'ir qaramlikda buni shifokor bilan muhokama qiling", "Через 7 дней: около 200 страниц, чтение входит в распорядок": "7 kundan keyin: taxminan 200 bet, o'qish kun tartibiga kiradi", "Через 14 дней: около 420 страниц, это одна-две книги": "14 kundan keyin: taxminan 420 bet, bu bir-ikki kitob", "Через 30 дней: около 900 страниц, привычка читать закрепляется": "30 kundan keyin: taxminan 900 bet, o'qish odati mustahkamlanadi", "Через 7 дней: вставать до 7:00 заметно легче, утро становится спокойнее": "7 kundan keyin: soat 7:00 gacha turish ancha oson, ertalab xotirjamroq bo'ladi", "Через 14 дней: утренний ритуал входит в привычку, больше энергии и ясности": "14 kundan keyin: ertalabki marosim odatga aylanadi, energiya va aniqlik ko'proq", "Через 21 день: подъём до 7:00 становится автоматическим, день начинается с победы": "21 kundan keyin: 7:00 gacha turish avtomatik bo'ladi, kun g'alaba bilan boshlanadi", "Через 3 дня: вечер спокойнее, легче отложить телефон": "3 kundan keyin: kechqurun xotirjamroq, telefonni qo'yish osonroq", "Через 7 дней: многие замечают, что засыпают легче": "7 kundan keyin: ko'pchilik uxlab qolish osonlashganini sezadi", "Через 14 дней: режим сна закрепляется, утро бодрее": "14 kundan keyin: uyqu tartibi mustahkamlanadi, ertalab tetikroq", "Через 3 дня: еда становится вкуснее и осознаннее": "3 kundan keyin: ovqat mazaliroq va ongliroq bo'ladi", "Через 7 дней: меньше отвлечений, больше общения за столом": "7 kundan keyin: chalg'ish kamroq, dasturxonda muloqot ko'proq", "Через 14 дней: привычка есть без экрана закрепляется": "14 kundan keyin: ekransiz ovqatlanish odati mustahkamlanadi", "Через 3 дня: ноги привыкают, 10 000 шагов даются легче": "3 kundan keyin: oyoqlar o'rganadi, 10 000 qadam osonroq", "Через 7 дней: около 70 000 шагов за неделю, больше энергии и выносливости": "7 kundan keyin: haftada taxminan 70 000 qadam, energiya va chidamlilik ko'proq", "Через 14 дней: ходьба становится частью дня": "14 kundan keyin: yurish kunning bir qismiga aylanadi", "Через 7 дней: меньше усталости днём, питьевой режим входит в привычку": "7 kundan keyin: kunduzi charchoq kamroq, ichish tartibi odatga aylanadi", "Через 14 дней: проще контролировать аппетит, лучше самочувствие": "14 kundan keyin: ishtahani nazorat qilish osonroq, ahvol yaxshiroq", "Через 30 дней: привычка пить воду закрепляется без напоминаний": "30 kundan keyin: suv ichish odati eslatmasiz mustahkamlanadi", "Через 3 дня: вы привыкаете к прохладной воде и проще дышите ровно": "3 kundan keyin: salqin suvga o'rganasiz va bir tekis nafas olish osonlashadi", "Через 7 дней: бодрее по утрам, растёт уверенность в себе": "7 kundan keyin: ertalab tetikroq, o'ziga ishonch oshadi", "Через 14 дней: холодный финал душа становится привычкой": "14 kundan keyin: dushning salqin yakuni odatga aylanadi", "Через 3 дня: тяга к сладкому чаще проходит, вкус становится яснее": "3 kundan keyin: shirinlikka tortish tez-tez o'tadi, ta'm aniqroq bo'ladi", "Через 7 дней: меньше перепадов энергии, привыкаете к чаю и кофе без сахара": "7 kundan keyin: energiya sakrashlari kamroq, shakarsiz choy va qahvaga o'rganasiz", "Через 14 дней: сладкие напитки больше не тянут, привычка закреплена": "14 kundan keyin: shirin ichimliklar endi tortmaydi, odat mustahkam", "Через 3 дня: вы замечаете слова-паразиты, речь становится осознаннее": "3 kundan keyin: ortiqcha so'zlarni sezasiz, nutq ongliroq bo'ladi", "Через 7 дней: речь чище и увереннее, дикция лучше": "7 kundan keyin: nutq tozaroq va ishonchliroq, diksiya yaxshiroq", "Через 14 дней: новые речевые привычки закрепляются": "14 kundan keyin: yangi nutq odatlari mustahkamlanadi", "Через 7 дней: около 70 страниц, читать становится привычно": "7 kundan keyin: taxminan 70 bet, o'qish odatiy bo'ladi", "Через 14 дней: около 140 страниц, это больше половины небольшой книги": "14 kundan keyin: taxminan 140 bet, bu kichik kitobning yarmidan ko'pi", "Через 30 дней: около 300 страниц, целая книга за месяц": "30 kundan keyin: taxminan 300 bet, oyiga bitta to'liq kitob", "Через 7 дней: легче удерживать внимание 45 минут": "7 kundan keyin: 45 daqiqa diqqatni ushlab turish osonroq", "Через 14 дней: меньше отвлечений на мессенджеры, растёт продуктивность": "14 kundan keyin: messenjerlarga chalg'ish kamroq, samaradorlik oshadi", "Через 21 день: глубокая работа входит в привычку, за день успеваете больше": "21 kundan keyin: chuqur ish odatga aylanadi, kun davomida ko'proq ulgurasiz", "Через 3 дня: вы начинаете замечать хорошее в обычных днях": "3 kundan keyin: oddiy kunlarda yaxshi narsalarni sezishni boshlaysiz", "Через 7 дней: вечером лучше настроение": "7 kundan keyin: kechqurun kayfiyat yaxshiroq", "Через 14 дней: благодарность становится привычкой, спокойнее отношение к дню": "14 kundan keyin: minnatdorchilik odatga aylanadi, kunga munosabat xotirjamroq", "Через 3 дня: вы замечаете, как часто хочется пожаловаться": "3 kundan keyin: shikoyat qilgingiz kelishini qanchalik tez-tez sezasiz", "Через 7 дней: спокойнее реагируете на мелочи, меньше споров": "7 kundan keyin: mayda narsalarga xotirjamroq munosabat, bahslar kamroq", "Через 14 дней: новая привычка мышления закрепляется": "14 kundan keyin: yangi fikrlash odati mustahkamlanadi", "🎯 Примерный результат": "🎯 Taxminiy natija", "Если выполнять все 3 задания честно каждый день:": "Har kuni 3 ta topshiriqni halol bajarsangiz:", "Результат индивидуален и не является медицинской гарантией.": "Natija individual va tibbiy kafolat emas.", "Развернуть всё": "Hammasini ochish", "Свернуть всё": "Hammasini yopish"});
+function renderResult(key) {
+  const box = document.getElementById('resultBox'), r = RESULTS[key];
+  box.innerHTML = r ? '<div class="result-box"><b class="rb-title">🎯 Примерный результат</b><div class="rb-sub">Если выполнять все 3 задания честно каждый день:</div><ul>' + r.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul><small>Результат индивидуален и не является медицинской гарантией.</small></div>' : '';
+}
+{ const _oc = openChallengeModal; openChallengeModal = function(k) { _oc.apply(this, arguments); if(currentChallenge === k) renderResult(k); }; }
+// аккордеон: оборачиваем группы в раскрывающиеся блоки
+(function() {
+  document.querySelectorAll('#tab-challenges .grp-title').forEach(h => {
+    const grid = h.nextElementSibling; if(!grid || !grid.classList.contains('grid')) return;
+    const d = document.createElement('details'); d.className = 'grp';
+    const sm = document.createElement('summary'); sm.className = 'grp-title'; sm.innerHTML = h.innerHTML + ' <span class="grp-count">(' + grid.children.length + ')</span>';
+    h.parentNode.insertBefore(d, h); d.appendChild(sm); d.appendChild(grid); h.remove();
+  });
+  const first = document.querySelector('#tab-challenges details.grp');
+  if(first) {
+    const ctl = document.createElement('div'); ctl.className = 'grp-ctl';
+    ctl.innerHTML = '<span class="link" onclick="setAllGroups(true)">Развернуть всё</span><span class="link" onclick="setAllGroups(false)">Свернуть всё</span>';
+    first.parentNode.insertBefore(ctl, first);
+  }
+})();
+let grpTouched = false;
+function setAllGroups(open) { grpTouched = true; document.querySelectorAll('#tab-challenges details.grp').forEach(d => d.open = open); }
+document.querySelectorAll('#tab-challenges details.grp').forEach(d => d.addEventListener('toggle', () => { if(document.activeElement && d.contains(document.activeElement) || d.matches(':hover')) grpTouched = true; }));
+function initGroups() {
+  const groups = [...document.querySelectorAll('#tab-challenges details.grp')];
+  if(window.innerWidth > 760) { groups.forEach(d => d.open = true); return; }
+  const key = [...activeChallenges][0];
+  let target = key ? groups.find(d => d.querySelector('button[onclick*="' + key + '"]')) : null;
+  groups.forEach(d => d.open = (d === (target || groups[0])));
+}
+initGroups();
+{ const _as = applyState; applyState = function(st) { _as(st); if(!grpTouched) initGroups(); }; }
 </script>
 </body>
 </html>
