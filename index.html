@@ -490,6 +490,7 @@
             #tab-challenges .page-banner { padding-left: 0.8rem; padding-right: 0.8rem; }
         }
         .grp-ctl { display: flex; gap: 14px; justify-content: flex-end; margin: 0 0 10px; font-size: 0.82rem; }
+            .shop-card.coming-soon { opacity: 0.6; filter: grayscale(0.4); }
     </style>
 </head>
 <body>
@@ -867,7 +868,7 @@
     <div class="psy-role">Психолог-консультант · магистр психологии · стаж более 5 лет</div>
     <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.55;">Окончила магистратуру Белорусского государственного педагогического университета им. М. Танка по профилизации «Психологическое консультирование и психокоррекция». Научные работы посвящены переживанию тревоги и психологии девиантного поведения. Консультирует на русском и английском языках.</p>
     <div class="psy-tags"><span>Тревога и стресс</span><span>Вредные привычки</span><span>Выгорание</span><span>Телесно-ориентированная терапия</span><span>Метафорические карты</span></div>
-    <button class="btn btn-gold" style="width:auto" onclick="openPsychologyModal('Онлайн-сессия', 500000)">Записаться на консультацию</button>
+    <button class="btn btn-gold" style="width:auto" onclick="openPsychologyModal('Онлайн-сессия', 600000)">Записаться на консультацию</button>
   </div>
   <div class="psy-cols">
     <div><h4>🎓 Образование</h4><ul>
@@ -895,14 +896,14 @@
                             <span class="card-tag tag-mind">Онлайн Формат</span>
                             <h3>💻 Онлайн-Сессия с Психологом</h3>
                             <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0.5rem 0 1rem;">Видеовстреча (Zoom / Telegram) с психологом-консультантом (магистр психологии). Конфиденциально и в удобное время.</p>
-                            <div class="price-val">500 000 <span>So'm / 50 мин</span></div>
+                            <div class="price-val">600 000 <span>So'm / 50 мин</span></div>
                             <ul class="pricing-features">
                                 <li>Разбор причин срывов и зависимости</li>
                                 <li>Проработка индивидуальных триггеров</li>
                                 <li>Техники самоконтроля и снятия тревожности</li>
                             </ul>
                         </div>
-                        <button class="btn" onclick="openPsychologyModal('Онлайн-сессия', 500000)">Записаться Онлайн</button>
+                        <button class="btn" onclick="openPsychologyModal('Онлайн-сессия', 600000)">Записаться Онлайн</button>
                     </div>
 
                     <div class="pricing-card featured">
@@ -926,18 +927,37 @@
 <div class="pricing-badge" style="background:#ef4444">🔥 СПЕЦПРЕДЛОЖЕНИЕ</div>
                         <div>
                             <span class="card-tag tag-habit">Курсовая Терапия</span>
-                            <h3>🛡️ Комплексный Пакет «Свобода»</h3>
+                            <h3>🛡️ Пакет «Свобода»: онлайн</h3>
                             <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0.5rem 0 1rem;">4 консультации в месяц + сопровождение психолога в чате для устойчивого результата.</p>
-                            <div style="margin: 1rem 0 0;"><span style="text-decoration: line-through; color: #f87171; font-size: 1.1rem; font-weight: 600;">3 200 000 So'm</span> <span style="background: rgba(239,68,68,0.25); color: #f87171; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">−22%</span></div>
-                <div class="price-val" style="margin-top: 0.2rem;">2 500 000 <span>So'm / мес</span></div>
-                <p style="color: var(--success-color); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.5rem;">Ваша выгода — 700 000 So'm</p>
+                            <div style="margin: 1rem 0 0;"><span style="text-decoration: line-through; color: #f87171; font-size: 1.1rem; font-weight: 600;">2 400 000 So'm</span> <span style="background: rgba(239,68,68,0.25); color: #f87171; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">−21%</span></div>
+                <div class="price-val" style="margin-top: 0.2rem;">1 900 000 <span>So'm / мес</span></div>
+                <p style="color: var(--success-color); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.2rem;">Ваша выгода — 500 000 So'm</p>
+                <p style="color: var(--text-secondary); font-size: 0.78rem; margin-bottom: 0.5rem;">≈ 475 000 So'm за сессию вместо 600 000</p>
                             <ul class="pricing-features">
-                                <li>4 Сессии (Онлайн или Офлайн на выбор)</li>
+                                <li>4 онлайн-сессии по 50 минут</li>
                                 <li>Чат с психологом в будни (ответ в течение рабочего дня)</li>
                                 <li>Поддержка в моменты тяги и срывов (в рамках чата)</li>
                             </ul>
                         </div>
-                        <button class="btn btn-outline" onclick="openPsychologyModal('Пакет Свобода', 2500000)">Выбрать Пакет</button>
+                        <button class="btn btn-outline" onclick="openPsychologyModal('Пакет Свобода (онлайн)', 1900000)">Выбрать Пакет</button>
+                    </div>
+<div class="pricing-card" style="background: rgba(30, 41, 59, 0.9);">
+<div class="pricing-badge" style="background:#ef4444">🔥 СПЕЦПРЕДЛОЖЕНИЕ</div>
+                        <div>
+                            <span class="card-tag tag-habit">Курсовая Терапия</span>
+                            <h3>🛡️ Пакет «Свобода+»: личные встречи</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0.5rem 0 1rem;">4 консультации в месяц + сопровождение психолога в чате для устойчивого результата.</p>
+                            <div style="margin: 1rem 0 0;"><span style="text-decoration: line-through; color: #f87171; font-size: 1.1rem; font-weight: 600;">3 200 000 So'm</span> <span style="background: rgba(239,68,68,0.25); color: #f87171; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;">−22%</span></div>
+                <div class="price-val" style="margin-top: 0.2rem;">2 500 000 <span>So'm / мес</span></div>
+                <p style="color: var(--success-color); font-size: 0.85rem; font-weight: 700; margin-bottom: 0.2rem;">Ваша выгода — 700 000 So'm</p>
+                <p style="color: var(--text-secondary); font-size: 0.78rem; margin-bottom: 0.5rem;">≈ 625 000 So'm за встречу вместо 800 000</p>
+                            <ul class="pricing-features">
+                                <li>4 личные встречи в Ташкенте</li>
+                                <li>Чат с психологом в будни (ответ в течение рабочего дня)</li>
+                                <li>Поддержка в моменты тяги и срывов (в рамках чата)</li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-outline" onclick="openPsychologyModal('Пакет Свобода+ (личные встречи)', 2500000)">Выбрать Пакет</button>
                     </div>
 
                 </div>
@@ -992,15 +1012,15 @@
                     <button class="btn btn-gold" onclick="buyItem(4000, 'Кистевой эспандер LifeChange')">Получить за баллы</button>
                     <button class="btn btn-outline" style="margin-top:8px" onclick="switchTab('expander')">Подробнее</button>
                 </div>
-                <div class="shop-card"><div class="shop-icon">🛒</div><h4>Промокод на маркетплейс −10%</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Скидка 10% на покупки на маркетплейсе.</p>
-                    <div class="shop-price">6 000 🪙</div><button class="btn btn-outline" onclick="buyItem(6000, 'Промокод на маркетплейс −10%')">Получить</button></div>
-                <div class="shop-card"><div class="shop-icon">📚</div><h4>Скидка в книжном магазине</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Промокод на скидку на книги.</p>
-                    <div class="shop-price">8 000 🪙</div><button class="btn btn-outline" onclick="buyItem(8000, 'Скидка в книжном магазине')">Получить</button></div>
-                <div class="shop-card"><div class="shop-icon">🏋️‍♂️</div><h4>Скидка в спортзал</h4>
-                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Промокод на скидку в фитнес-клубе.</p>
-                    <div class="shop-price">10 000 🪙</div><button class="btn btn-outline" onclick="buyItem(10000, 'Скидка в спортзал')">Получить</button></div>
+                <div class="shop-card coming-soon"><div class="shop-icon">🛒</div><h4>Промокод на маркетплейс</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Промокод на скидку на маркетплейсе.</p>
+                    <div class="shop-price">6 000 🪙</div><button class="btn btn-outline" disabled>Скоро</button></div>
+                <div class="shop-card coming-soon"><div class="shop-icon">📚</div><h4>Скидка 50% в книжном магазине</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Скидка 50% на книги.</p>
+                    <div class="shop-price">8 000 🪙</div><button class="btn btn-outline" disabled>Скоро</button></div>
+                <div class="shop-card coming-soon"><div class="shop-icon">🏋️‍♂️</div><h4>Скидка 50% в спортзал</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Скидка 50% в фитнес-клубе.</p>
+                    <div class="shop-price">10 000 🪙</div><button class="btn btn-outline" disabled>Скоро</button></div>
                 <div class="shop-card" style="border-color: var(--accent-color); background: rgba(99, 102, 241, 0.15);"><div class="shop-icon">🧥</div><h4 style="color: #fff;">Худи LifeChange (Limited Edition)</h4>
                     <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 5px 0;">Премиум-хлопок, фиолетовый оверсайз с вышивкой бренда. Доставка по Ташкенту.</p>
                     <div class="shop-price">25 000 🪙</div><button class="btn btn-gold" onclick="buyItem(25000, 'Худи LifeChange')">Заказать худи</button></div>
@@ -2792,6 +2812,7 @@ Object.assign(ERRMAP, {
   need_activity_3: 'Награды открываются после 3 дней с принятыми отчётами.',
   need_activity_7: 'Эспандер и худи открываются после 7 дней с принятыми отчётами.',
   order_cooldown: 'Эту награду можно получать не чаще раза в 30 дней.',
+  coming_soon: 'Эта награда скоро появится.',
   no_user: 'Пользователь с такой почтой не найден.', bad_days: 'Недопустимый срок.'
 });
 Object.assign(UZ_EXACT, {
@@ -2799,6 +2820,13 @@ Object.assign(UZ_EXACT, {
   'Эспандер и худи открываются после 7 дней с принятыми отчётами.': "Ekspander va hudi hisobotlari qabul qilingan 7 kundan keyin ochiladi.",
   'Эту награду можно получать не чаще раза в 30 дней.': "Bu sovrinni 30 kunda bir martadan ko'p olib bo'lmaydi."
 });
+Object.assign(UZ_EXACT, {
+  'Промокод на маркетплейс': "Marketpleys uchun promokod", 'Промокод на скидку на маркетплейсе.': "Marketpleysda chegirma uchun promokod.",
+  'Скидка 50% в книжном магазине': "Kitob do'konida 50% chegirma", 'Скидка 50% на книги.': "Kitoblarga 50% chegirma.",
+  'Скидка 50% в спортзал': "Sport zalda 50% chegirma", 'Скидка 50% в фитнес-клубе.': "Fitnes-klubda 50% chegirma.",
+  'Эта награда скоро появится.': "Bu sovrin tez orada paydo bo'ladi."
+});
+Object.assign(UZ_EXACT, {"🛡️ Пакет «Свобода»: онлайн": "🛡️ «Ozodlik» paketi: onlayn", "🛡️ Пакет «Свобода+»: личные встречи": "🛡️ «Ozodlik+» paketi: shaxsiy uchrashuvlar", "4 онлайн-сессии по 50 минут": "50 daqiqalik 4 ta onlayn sessiya", "4 личные встречи в Ташкенте": "Toshkentda 4 ta shaxsiy uchrashuv", "≈ 475 000 So'm за сессию вместо 600 000": "Sessiya uchun ≈ 475 000 So'm, 600 000 o'rniga", "≈ 625 000 So'm за встречу вместо 800 000": "Uchrashuv uchun ≈ 625 000 So'm, 800 000 o'rniga", "Ваша выгода — 500 000 So'm": "Sizning foydangiz — 500 000 So'm", "Пакет Свобода (онлайн)": "«Ozodlik» paketi (onlayn)", "Пакет Свобода+ (личные встречи)": "«Ozodlik+» paketi (shaxsiy uchrashuvlar)"});
 async function adminGrant() {
   const email = document.getElementById('grantEmail').value.trim(), days = +document.getElementById('grantDays').value, tier = document.getElementById('grantTier').value;
   if(!email) return alert('Введите email клиента.');
