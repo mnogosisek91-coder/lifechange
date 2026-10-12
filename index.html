@@ -2787,6 +2787,7 @@ async function adminCode(d) {
 <script>
 // ===================== Вход через Telegram =====================
 const TG_BOT_USERNAME = 'LifeChangeAuth_bot'; // имя бота без @ (создан в @BotFather)
+const TG_AUTH_FN = 'smooth-action'; // имя Edge Function в Supabase с кодом входа через Telegram
 Object.assign(UZ_EXACT, {"или": "yoki", "Продолжая через Telegram, вы подтверждаете, что вам 18+, и принимаете": "Telegram orqali davom etib, siz 18 yoshdan oshganingizni tasdiqlaysiz va quyidagilarni qabul qilasiz:", "Не удалось войти через Telegram. Попробуйте ещё раз.": "Telegram orqali kirib bo'lmadi. Qayta urinib ko'ring."});
 let tgMounted = false;
 function mountTelegramLogin() {
@@ -2802,13 +2803,19 @@ function mountTelegramLogin() {
 async function onTelegramAuth(u) {
   if(!sb) return alert('Нет связи с сервером. Проверьте интернет и повторите.');
   try {
-    const { data, error } = await sb.functions.invoke('telegram-auth', { body: u });
+    const { data, error } = await sb.functions.invoke(TG_AUTH_FN, { body: u });
     if(error || !data || !data.access_token) throw (error || new Error('tg_fail'));
     const r = await sb.auth.setSession({ access_token: data.access_token, refresh_token: data.refresh_token });
     if(r.error) throw r.error;
     sbUid = r.data.session.user.id; await hydrate(); track('login_telegram');
     closeModal('authModal'); document.getElementById('authNotice').style.display = 'none'; playSound('win');
-  } catch(e) { console.warn(e); alert('Не удалось войти через Telegram. Попробуйте ещё раз.'); }
+  } catch(e) {
+    console.warn(e);
+    let detail = '';
+    try { if(e && e.context && e.context.json) { const j = await e.context.json(); detail = j.error || j.message || ''; } } catch(x) {}
+    if(!detail) detail = (e && e.message) ? e.message : '';
+    alert('Не удалось войти через Telegram. Попробуйте ещё раз.' + (detail ? '\n[' + String(detail).slice(0, 120) + ']' : ''));
+  }
 }
 { const _om = openModal; openModal = function(id) { _om(id); if(id === 'authModal') mountTelegramLogin(); }; }
 </script>
