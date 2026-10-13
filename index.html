@@ -2332,7 +2332,7 @@ Object.assign(UZ_EXACT, {
   "Не удалось выполнить действие. Попробуйте ещё раз.": "Amalni bajarib bo'lmadi. Qayta urinib ko'ring.",
   "Мы отправили письмо для подтверждения. Подтвердите email и войдите.": "Tasdiqlash xati yuborildi. Emailni tasdiqlab, kiring.",
   "Проверьте email: он выглядит некорректно.": "Emailni tekshiring: u noto'g'ri ko'rinadi.",
-  "Файл слишком большой (до 25 МБ).": "Fayl juda katta (25 MB gacha).", "Выйти из аккаунта?": "Akkauntdan chiqasizmi?",
+  "Файл слишком большой (до 10 МБ).": "Fayl juda katta (10 MB gacha).", "Выйти из аккаунта?": "Akkauntdan chiqasizmi?",
   "Пока никого нет. Станьте первым!": "Hozircha hech kim yo'q. Birinchi bo'ling!", "Участник": "Ishtirokchi",
   "Профиль хранится на сервере: войти можно с любого устройства.": "Profil serverda saqlanadi: istalgan qurilmadan kirish mumkin."
 });
@@ -2343,7 +2343,7 @@ const ERRMAP = {
   dup_file: 'Этот файл уже использован в другом отчёте. Загрузите новое фото или видео.',
   already_claimed: 'Награда за сегодня уже получена. Приходите завтра!', already_spun: 'Вы уже крутили колесо сегодня!',
   not_enough: 'Недостаточно баллов!', already_watched: 'Баллы за это видео уже получены. Повторный просмотр награду не даёт.',
-  bad_code: 'Неверный код. Проверьте и введите ещё раз.', used_code: 'Этот код уже использован.', file_big: 'Файл слишком большой (до 25 МБ).'
+  bad_code: 'Неверный код. Проверьте и введите ещё раз.', used_code: 'Этот код уже использован.', file_big: 'Файл слишком большой (до 10 МБ).'
 };
 function errMsg(e) {
   const m = String((e && (e.message || e.error_description)) || e || '');
@@ -2583,7 +2583,7 @@ function downscale(file) {
 async function uploadProof(file, key) {
   let blob = file, ext = (file.name.split('.').pop() || 'bin').toLowerCase().replace(/[^a-z0-9]/g, '').slice(0, 5) || 'bin';
   if(file.type && file.type.startsWith('image/')) { blob = await downscale(file); ext = 'jpg'; }
-  else if(file.size > 25 * 1024 * 1024) throw new Error('file_big');
+  else if(file.size > 10 * 1024 * 1024) throw new Error('file_big');
   const path = `${sbUid}/${srvToday || TODAY}-${key}-${Date.now()}.${ext}`;
   const { error } = await sb.storage.from('reports').upload(path, blob, { contentType: blob.type || 'application/octet-stream' });
   if(error) throw error;
@@ -2786,7 +2786,7 @@ async function renderAdmin() {
     document.getElementById('adminWho').textContent = 'Вы вошли как администратор' + (accountEmail ? ': ' + accountEmail : '');
     document.getElementById('adminStats').innerHTML = [['Пользователей', o.users], ['Отчётов сегодня', o.reports_today], ['Новых заказов', o.orders_new]].map(x => `<div><div style="font-size:1.6rem;font-weight:800;color:#f6dc9a">${x[1]}</div><div class="note" style="margin:0">${x[0]}</div></div>`).join('');
     document.getElementById('adminOrders').innerHTML = o.orders.length ? o.orders.map(r => `<div class="notif-item ${r.status === 'new' ? 'new' : ''}" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.item)} · ${Number(r.price).toLocaleString('ru-RU')} 🪙</b><p>${esc(r.name || '')} ${esc(r.tg_username ? '@' + r.tg_username : (r.email || ''))} · ${fmtD(r.created_at)}</p>${r.status === 'new' ? `<button class="btn btn-gold" style="width:auto;padding:6px 14px;margin-top:6px" onclick="adminOrderDone(${r.id})">Выдано</button>` : '<small>✅ выдано</small>'}</div>`).join('') : '<p class="note">Заказов пока нет.</p>';
-    document.getElementById('adminReports').innerHTML = o.reports.length ? o.reports.map(r => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.name || '')} · ${esc((CHALLENGES[r.challenge] || {}).title || r.challenge)}</b><p>${r.day} · +${r.points}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn btn-outline" style="width:auto;padding:6px 14px" onclick="adminProof('${esc(r.file_path || '')}')">Открыть фото</button><button class="btn btn-outline" style="width:auto;padding:6px 14px;border-color:#ef4444;color:#f87171" onclick="adminReject(${r.id})">Отклонить</button></div></div>`).join('') : '<p class="note">Отчётов пока нет.</p>';
+    document.getElementById('adminReports').innerHTML = o.reports.length ? o.reports.map(r => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(r.name || '')} · ${esc((CHALLENGES[r.challenge] || {}).title || r.challenge)}</b><p>${r.day} · +${r.points}</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn btn-outline" style="width:auto;padding:6px 14px" data-path="${esc(r.file_path || '')}" onclick="adminProof(this.dataset.path)">Открыть фото</button><button class="btn btn-outline" style="width:auto;padding:6px 14px;border-color:#ef4444;color:#f87171" onclick="adminReject(${r.id})">Отклонить</button></div></div>`).join('') : '<p class="note">Отчётов пока нет.</p>';
     document.getElementById('adminVips').innerHTML = (o.vips && o.vips.length) ? o.vips.map(v => `<div class="notif-item" style="border-radius:8px;margin-bottom:6px;"><b>${esc(v.name || '')} ${esc(v.tg_username ? '@' + v.tg_username : (v.email || ''))}</b><p>VIP до ${new Date(v.plan_until).toLocaleDateString('ru-RU')}</p></div>`).join('') : '<p class="note">Активных VIP-клиентов пока нет.</p>';
   } catch(e) { alert(errMsg(e)); }
 }
