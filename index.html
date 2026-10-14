@@ -500,6 +500,13 @@
         .ref-row button { flex: 0 0 auto; }
         @media (max-width: 760px) { .ref-row button { width: 100% !important; } }
         .bonus-strip { background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(99,102,241,0.18)); border: 1px solid var(--gold-color); border-radius: 14px; padding: 12px 16px; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; font-size: 0.92rem; }
+    
+        html.modal-open, body.modal-open { overflow: hidden; }
+        .modal { overscroll-behavior: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .modal-content { overscroll-behavior: contain; }
+        .promo-flag { display: inline-block; background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 4px 12px; border-radius: 12px; margin-bottom: 10px; letter-spacing: 0.03em; }
+        .old-price { text-decoration: line-through; color: #f87171; font-size: 1.1rem; font-weight: 600; margin-right: 8px; }
+        .promo-line { background: rgba(239,68,68,0.12); border: 1px solid #ef4444; border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; line-height: 1.5; color: #fecaca; margin: 8px 0; text-align: left; }
     </style>
 </head>
 <body>
@@ -892,7 +899,7 @@
                             <h3 data-i18n="p1_name">Boshlang'ich (Старт)</h3>
                             <div class="price-val">0 <span>So'm / мес</span></div>
                             <ul class="pricing-features">
-                                <li data-i18n="p1_f1">Доступ к 1 челленджу</li>
+                                <li data-i18n="p1_f1">Доступ к 1 челленджу из каждой группы</li>
                                 <li data-i18n="p1_f2">Колесо фортуны раз в день</li>
                                 <li data-i18n="p1_f3">Базовая статистика профиля</li>
                             </ul>
@@ -906,7 +913,7 @@
                             <h3 data-i18n="p2_name">Pro Intizom (PRO)</h3>
                             <div class="price-val">399 000 <span>So'm / мес</span></div>
                             <ul class="pricing-features">
-                                <li data-i18n="p2_f1">Безлимитный доступ ко всем челленджам</li>
+                                <li data-i18n="p2_f1">Безлимитный доступ ко всем челленджам (вместо одного в каждой группе)</li>
                                 <li data-i18n="p2_f2">2x Начисление баллов за отчеты</li>
                                 </ul>
                         </div>
@@ -1450,6 +1457,7 @@
                     <button class="btn btn-outline" style="padding:8px; font-size:0.85rem;" onclick="copyCard()">📋 Скопировать номер</button>
                 </div>
             </div>
+            <p id="payBenefit" style="display:none; font-size:0.82rem; color: #c7d2fe; margin-bottom:8px; line-height:1.5;"></p>
             <p id="payGift" style="display:none; font-size:0.85rem; color: var(--success-color); font-weight:700; margin-bottom:8px;">🎁 К этому тарифу в подарок идёт эспандер: напишите в Telegram, как удобнее получить.</p>
             <ol style="font-size:0.85rem; color: var(--text-secondary); line-height:1.7; margin:0 0 12px 18px;">
                 <li>Переведите точную сумму на карту (через любое банковское приложение или по QR).</li>
@@ -1575,6 +1583,9 @@
     </footer>
 
     <script>
+        var CH_GROUPS = { A: ['c5_title', 'c6_title', 'c7_title'], B: ['c1_title', 'c2_title', 'c8_title', 'c9_title', 'c10_title', 'c11_title'], C: ['c4_title', 'c12_title', 'c13_title', 'c14_title'], D: ['c3_title', 'c15_title', 'c16_title'], E: ['c17_title', 'c18_title', 'c19_title', 'c20_title', 'c21_title', 'c22_title', 'c23_title'], F: ['c24_title', 'c25_title', 'c26_title'] };
+        function chalGroup(k) { return Object.keys(CH_GROUPS).find(g => CH_GROUPS[g].includes(k)); }
+        function groupTaken(k) { return [...activeChallenges].some(a => a !== k && chalGroup(a) === chalGroup(k)); }
         let currentLang = 'ru';
         let points = 0;
         let streak = 0;
@@ -1712,8 +1723,8 @@
                 c4_title: "Чтение книг (30 страниц)", c4_desc: "Три задания в день: 30 страниц, чтение без телефона и запись главной мысли. Баллы начисляются, когда выполнены все три.",
                 btn_start: "Начать челлендж", plans_title: "💎 Выберите ваш план трансформации", plans_subtitle: "Инвестируйте в свою дисциплину и достижение целей",
                 p1_name: "Boshlang'ich (Старт)", p2_name: "Pro Intizom (PRO)", p3_name: "VIP Transformatsiya",
-                p1_f1: "Доступ к 1 челленджу", p1_f2: "Колесо фортуны раз в день", p1_f3: "Базовая статистика профиля",
-                p2_f1: "Безлимитный доступ ко всем челленджам", p2_f2: "2x Начисление баллов за отчеты", p2_f3: "Заморозка стрика (1 замена в месяц)", p2_f4: "Безлимитные консультации ИИ-Наставника",
+                p1_f1: "Доступ к 1 челленджу из каждой группы", p1_f2: "Колесо фортуны раз в день", p1_f3: "Базовая статистика профиля",
+                p2_f1: "Безлимитный доступ ко всем челленджам (вместо одного в каждой группе)", p2_f2: "2x Начисление баллов за отчеты", p2_f3: "Заморозка стрика (1 замена в месяц)", p2_f4: "Безлимитные консультации ИИ-Наставника",
                 p3_f1: "Всё, что входит в тариф PRO", p3_f2: "Личный куратор и проверка видеоотчетов", p3_f3: "Персональный план питания/тренировок", p3_f4: "Доступ в закрытый VIP-чат с лидером",
                 btn_current: "Текущий тариф", btn_choose: "Подключить PRO", btn_choose_vip: "Стать VIP",
                 wheel_title: "Ежедневное Колесо Фортуны", wheel_desc: "Крути колесо раз в день и забирай бонусные баллы!",
@@ -1733,8 +1744,8 @@
                 c4_title: "Kitob o'qish (30 sahifa)", c4_desc: "Kuniga uchta topshiriq: 30 bet, telefonsiz o\'qish va asosiy fikrni yozish. Ballar uchalasi bajarilganda beriladi.",
                 btn_start: "Boshlash", plans_title: "💎 Transformatsiya rejangizni tanlang", plans_subtitle: "Intizomingiz va maqsadlaringizga sarmoya kiriting",
                 p1_name: "Boshlang'ich", p2_name: "Pro Intizom", p3_name: "VIP Transformatsiya",
-                p1_f1: "1 ta chellenjga kirish", p1_f2: "Kuniga bir marta omad g'ildiragi", p1_f3: "Profilning asosiy statistikasi",
-                p2_f1: "Barcha chellenjlarga cheksiz kirish", p2_f2: "Hisobotlar uchun 2x ballar", p2_f3: "Strikni muzlatish (oyiga 1 marta)", p2_f4: "AI-Murabbiy bilan cheksiz muloqot",
+                p1_f1: "Har bir guruhdan 1 ta chellenjga kirish", p1_f2: "Kuniga bir marta omad g'ildiragi", p1_f3: "Profilning asosiy statistikasi",
+                p2_f1: "Barcha chellenjlarga cheksiz kirish (har bir guruhdagi bittasi o'rniga)", p2_f2: "Hisobotlar uchun 2x ballar", p2_f3: "Strikni muzlatish (oyiga 1 marta)", p2_f4: "AI-Murabbiy bilan cheksiz muloqot",
                 p3_f1: "PRO tarifidagi barcha imkoniyatlar", p3_f2: "Shaxsiy kurator va video nazorati", p3_f3: "Shaxsiy ovqatlanish va mashq rejasi", p3_f4: "Yopiq VIP-chatga kirish",
                 btn_current: "Joriy tarif", btn_choose: "PRO-ni yoqish", btn_choose_vip: "VIP bo'lish",
                 wheel_title: "Kunlik Omad G'ildiragi", wheel_desc: "G'ildirakni aylantiring va bonus ballarni yutib oling!",
@@ -2176,7 +2187,7 @@
         function refreshLocks() {
             document.querySelectorAll('#tab-challenges button[onclick^="openChallengeModal"]').forEach(b => {
                 const k = b.getAttribute('onclick').match(/'(.+?)'/)[1];
-                const locked = userPlan === 'free' && activeChallenges.size > 0 && !activeChallenges.has(k);
+                const locked = userPlan === 'free' && groupTaken(k);
                 b.textContent = locked ? '🔒 Доступно в PRO' : (activeChallenges.has(k) ? 'Продолжить челлендж' : 'Начать челлендж');
                 b.classList.toggle('btn-outline', locked);
             });
@@ -2189,12 +2200,12 @@
             refreshLocks();
         }
         function openChallengeModal(titleKey) {
-            if(userPlan === 'free' && activeChallenges.size > 0 && !activeChallenges.has(titleKey)) {
-                alert('В бесплатном тарифе доступен только 1 челлендж. Оформите PRO, чтобы участвовать во всех.');
+            if(userPlan === 'free' && groupTaken(titleKey)) {
+                alert('В бесплатном тарифе из каждой группы доступен 1 челлендж. Оформите PRO, чтобы участвовать во всех.');
                 switchTab('plans'); return;
             }
             if(userPlan === 'free' && !activeChallenges.has(titleKey)) {
-                if(!confirm('Выбрать этот челлендж? В бесплатном тарифе можно участвовать только в одном.')) return;
+                if(!confirm('Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.')) return;
                 activeChallenges.add(titleKey); saveState(); refreshLocks();
             }
             currentChallenge = titleKey;
@@ -2292,7 +2303,7 @@
         function openPayModal(t, p) {
             openPayModalBase(t, p);
             const g = document.getElementById('payGift');
-            if(g) g.style.display = (p >= 399000 && /PRO|VIP/i.test(t)) ? 'block' : 'none';
+            if(g) g.style.display = (p >= 299000 && /PRO|VIP/i.test(t)) ? 'block' : 'none';
         }
         function openPayModalBase(name, price) {
             selectedPayTariff = name;
@@ -2488,7 +2499,7 @@ function applyState(st) {
   points = st.points;
   user = { name: st.name || 'Участник', goal: st.goal || '', support: st.support || '', code: st.ref_code || '' };
   planUntil = st.plan_until ? Date.parse(st.plan_until) : 0; userPlan = planUntil > Date.now() ? 'pro' : 'free';
-  activeChallenges.clear(); if(userPlan === 'free' && st.free_challenge) activeChallenges.add(st.free_challenge);
+  activeChallenges.clear(); if(userPlan === 'free') (st.free_challenges && st.free_challenges.length ? st.free_challenges : (st.free_challenge ? [st.free_challenge] : [])).forEach(x => activeChallenges.add(x));
   reportedToday.clear(); (st.reported_today || []).forEach(x => reportedToday.add(x));
   watchedVideos.clear(); (st.videos || []).forEach(x => watchedVideos.add(x));
   histDays = new Set(st.days || []); streak = computeStreak();
@@ -3269,6 +3280,45 @@ function updateFileName() { const f = document.getElementById('reportFile').file
 { const _sc = simulateAIScan; simulateAIScan = async function() { await _sc.apply(this, arguments); updateFileName(); }; }
 // реферальная строка
 (function() { const r = document.getElementById('refLink'); if(r) r.parentElement.classList.add('ref-row'); })();
+</script>
+<script>
+// ===================== Акция PRO, лимиты бесплатного тарифа, блокировка прокрутки =====================
+Object.assign(UZ_EXACT, {"🔥 АКЦИЯ: ТОЛЬКО 1 МЕСЯЦ": "🔥 AKSIYA: FAQAT 1 OY", "🔥 Акция месяца: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!": "🔥 Oy aksiyasi: PRO 399 000 o'rniga 299 000. Ulgurib qoling, taklif cheklangan!", "С PRO открываются все челленджи (бесплатно: 1 из каждой группы), баллы x2 и подарок.": "PRO bilan barcha chellenjlar ochiladi (bepul: har bir guruhdan 1 ta), ballar x2 va sovg'a.", "В бесплатном тарифе из каждой группы доступен 1 челлендж. Оформите PRO, чтобы участвовать во всех.": "Bepul tarifda har bir guruhdan 1 ta chellenj mavjud. Barchasida qatnashish uchun PRO'ni rasmiylashtiring.", "Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.": "Ushbu chellenjni tanlaysizmi? Bepul tarifda har bir guruhdan faqat bittasida qatnashish mumkin."});
+UZ_PAT.unshift([/^Ограниченное предложение: успейте купить PRO за 299 000 вместо 399 000\. Акция до ([\d.]+), осталось (\d+) дн\.$/, m => `Cheklangan taklif: PRO'ni 399 000 o'rniga 299 000 ga ulgurib oling. Aksiya ${m[1]} gacha, ${m[2]} kun qoldi.`]);
+const PROMO_END = new Date('2026-11-14T23:59:59+05:00');
+function syncPromo() {
+  const btn = document.querySelector('#tab-plans button[onclick*="Pro Intizom"]'); if(!btn) return;
+  const card = btn.closest('.pricing-card'), pv = card.querySelector('.price-val'), on = Date.now() < PROMO_END.getTime();
+  const days = Math.max(1, Math.ceil((PROMO_END.getTime() - Date.now()) / 864e5));
+  const fmt = PROMO_END.toLocaleDateString('ru-RU');
+  card.querySelectorAll('.promo-flag, .promo-line').forEach(e => e.remove());
+  if(on) {
+    pv.innerHTML = '<span class="old-price">399 000</span>299 000 <span>So\'m / мес</span>';
+    btn.setAttribute('onclick', "openPayModal('Pro Intizom (PRO)', 299000)");
+    const inner = Array.from(card.children).find(c => c.tagName === 'DIV' && !c.classList.contains('pricing-badge'));
+    const flag = document.createElement('div'); flag.className = 'promo-flag'; flag.textContent = '🔥 АКЦИЯ: ТОЛЬКО 1 МЕСЯЦ';
+    inner.insertBefore(flag, inner.firstChild);
+    const line = document.createElement('div'); line.className = 'promo-line'; line.textContent = 'Ограниченное предложение: успейте купить PRO за 299 000 вместо 399 000. Акция до ' + fmt + ', осталось ' + days + ' дн.';
+    pv.insertAdjacentElement('afterend', line);
+  } else {
+    pv.innerHTML = '399 000 <span>So\'m / мес</span>';
+    btn.setAttribute('onclick', "openPayModal('Pro Intizom (PRO)', 399000)");
+  }
+  let bn = document.getElementById('promoBanner');
+  if(on && !bn) { bn = document.createElement('div'); bn.id = 'promoBanner'; bn.className = 'promo-line'; bn.style.textAlign = 'center'; bn.style.fontWeight = '700'; bn.textContent = '🔥 Акция месяца: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!'; document.getElementById('tab-plans').querySelector('.page-banner').insertBefore(bn, document.getElementById('planStatus')); }
+  if(!on && bn) bn.remove();
+}
+syncPromo(); setInterval(syncPromo, 3600000);
+{ const _st = switchTab; switchTab = function(t) { _st(t); if(t === 'plans') syncPromo(); }; }
+{ const _tl = toggleLanguage; toggleLanguage = function() { _tl(); syncPromo(); }; }
+{ const _sp = syncPlans; syncPlans = function() { _sp(); const b = document.querySelector('#tab-plans button[onclick*="Pro Intizom"]'); if(b && Date.now() < PROMO_END.getTime()) syncPromo(); }; }
+// что даёт тариф при покупке
+{ const _pm = openPayModal; openPayModal = function(t) { _pm.apply(this, arguments); const b = document.getElementById('payBenefit'); const tar = /^Pro|^VIP|^PRO/.test(String(t)); b.style.display = tar ? '' : 'none'; b.textContent = tar ? 'С PRO открываются все челленджи (бесплатно: 1 из каждой группы), баллы x2 и подарок.' : ''; }; }
+// блокировка прокрутки страницы под окнами
+let lockRaf = 0;
+function syncModalLock() { cancelAnimationFrame(lockRaf); lockRaf = requestAnimationFrame(() => { const open = [...document.querySelectorAll('.modal')].some(m => getComputedStyle(m).display !== 'none'); document.documentElement.classList.toggle('modal-open', open); document.body.classList.toggle('modal-open', open); }); }
+{ const _o = openModal, _c = closeModal; openModal = function(id) { _o(id); syncModalLock(); }; closeModal = function(id) { _c(id); syncModalLock(); }; }
+new MutationObserver(syncModalLock).observe(document.body, { subtree: true, attributes: true, attributeFilter: ['style'] });
 </script>
 </body>
 </html>
