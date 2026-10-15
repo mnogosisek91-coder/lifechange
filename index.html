@@ -370,7 +370,10 @@
         .bell-dot { position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff; font-size: 0.65rem; font-weight: 800; min-width: 17px; height: 17px; line-height: 17px; border-radius: 9px; text-align: center; padding: 0 3px; }
         .notif-panel { display: none; position: fixed; top: calc(68px + env(safe-area-inset-top, 0px)); right: 12px; width: 350px; max-width: calc(100vw - 24px); max-height: 70vh; overflow-y: auto; background: #131a33; border: 1px solid var(--border-color); border-radius: 14px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); z-index: 3000; text-align: left; }
         .notif-panel.open { display: block; }
-        .notif-head { padding: 12px 16px; font-weight: 800; border-bottom: 1px solid var(--border-color); }
+        .notif-head { padding: 12px 16px; font-weight: 800; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; background: #131a33; z-index: 2; }
+        .notif-close { background: rgba(255,255,255,0.08); border: 1px solid var(--border-color); color: #fff; width: 34px; height: 34px; border-radius: 50%; font-size: 1rem; cursor: pointer; line-height: 1; }
+        .wheel-container { width: min(320px, 100%) !important; height: auto !important; aspect-ratio: 1 / 1; }
+        .wheel-container canvas, #wheelCanvas { width: 100% !important; height: 100% !important; display: block; }
         .notif-item { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); }
         .notif-item.new { background: rgba(99,102,241,0.14); }
         .notif-item b { display: block; font-size: 0.92rem; margin-bottom: 3px; }
@@ -1965,7 +1968,7 @@
             const unread = list.filter(n => !readNotifs.has(n.id)).length, dot = document.getElementById('bellDot');
             dot.textContent = unread; dot.style.display = unread ? 'block' : 'none';
             const panel = document.getElementById('notifPanel');
-            panel.innerHTML = '<div class="notif-head">🔔 Уведомления</div>' + (list.length ? list.map(n => `<div class="notif-item ${readNotifs.has(n.id) ? '' : 'new'}"><b>${esc(currentLang === 'uz' && n.title_uz ? n.title_uz : n.title)}</b><p>${esc((currentLang === 'uz' && n.text_uz ? n.text_uz : n.text) || '')}</p>${/^https:\/\//.test(n.link || '') ? `<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc((currentLang === 'uz' && n.linkText_uz ? n.linkText_uz : n.linkText) || 'Подробнее')}</a>` : ''}<small>${esc(n.date || '')}</small></div>`).join('') : '<div class="notif-item"><p>Пока уведомлений нет.</p></div>');
+            panel.innerHTML = '<div class="notif-head"><span>🔔 Уведомления</span><button class="notif-close" onclick="closeNotifs(event)" aria-label="Закрыть">✕</button></div>' + (list.length ? list.map(n => `<div class="notif-item ${readNotifs.has(n.id) ? '' : 'new'}"><b>${esc(currentLang === 'uz' && n.title_uz ? n.title_uz : n.title)}</b><p>${esc((currentLang === 'uz' && n.text_uz ? n.text_uz : n.text) || '')}</p>${/^https:\/\//.test(n.link || '') ? `<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc((currentLang === 'uz' && n.linkText_uz ? n.linkText_uz : n.linkText) || 'Подробнее')}</a>` : ''}<small>${esc(n.date || '')}</small></div>`).join('') : '<div class="notif-item"><p>Пока уведомлений нет.</p></div>');
         }
         function toggleNotifs(e) {
             e.stopPropagation();
@@ -1976,6 +1979,8 @@
             }
         }
         document.addEventListener('click', e => { const p = document.getElementById('notifPanel'); if(!p.contains(e.target)) p.classList.remove('open'); });
+        function closeNotifs(e) { if(e) e.stopPropagation(); document.getElementById('notifPanel').classList.remove('open'); }
+        document.addEventListener('keydown', e => { if(e.key === 'Escape') closeNotifs(); });
         async function loadRemoteNotifs() {
             try {
                 const r = await fetch('notifications.json?t=' + Date.now(), { cache: 'no-store' });
