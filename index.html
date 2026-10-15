@@ -271,8 +271,8 @@
         }
         .support-widget-btn:hover { transform: scale(1.08); box-shadow: 0 12px 30px rgba(99, 102, 241, 0.7); }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: rgba(30, 41, 59, 0.95); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; width: 90%; max-width: 480px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(8px); z-index: 3000; justify-content: center; align-items: center; }
+        .modal-content { background: rgba(30, 41, 59, 0.95); border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; width: 90%; max-width: 480px; position: relative; max-height: 90vh; max-height: calc(100dvh - 24px); overflow-y: auto; -webkit-overflow-scrolling: touch; }
         .close-modal { position: absolute; top: 12px; right: 16px; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary); }
 
         .ai-scanner { display: none; background: rgba(16, 185, 129, 0.1); border: 1px dashed var(--success-color); padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 1rem; color: var(--success-color); font-size: 0.85rem; }
@@ -502,7 +502,7 @@
         .bonus-strip { background: linear-gradient(135deg, rgba(245,158,11,0.18), rgba(99,102,241,0.18)); border: 1px solid var(--gold-color); border-radius: 14px; padding: 12px 16px; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; font-size: 0.92rem; }
     
         html.modal-open, body.modal-open { overflow: hidden; }
-        .modal { overscroll-behavior: contain; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .modal { overscroll-behavior: contain; }
         .modal-content { overscroll-behavior: contain; }
         .promo-flag { display: inline-block; background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-weight: 800; font-size: 0.75rem; padding: 4px 12px; border-radius: 12px; margin-bottom: 10px; letter-spacing: 0.03em; }
         .old-price { text-decoration: line-through; color: #f87171; font-size: 1.1rem; font-weight: 600; margin-right: 8px; }
@@ -510,6 +510,36 @@
     
         .card { position: relative; }
         .hit-badge { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; font-size: 0.68rem; font-weight: 800; padding: 3px 10px; border-radius: 12px; letter-spacing: 0.02em; }
+    
+        .modal-content { padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px)); }
+        body.modal-open .support-widget-btn { display: none !important; }
+        .box-stage { overflow-x: hidden; }
+        .bx-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; margin-bottom: 8px; padding-right: 28px; }
+        .bx-cost { color: #f87171; font-weight: 800; }
+        .bx-icon { font-size: 4.2rem; line-height: 1.1; margin: 6px 0; display: inline-block; }
+        .bx-icon.shake { animation: bxShake 0.5s infinite; }
+        .bx-icon.open { animation: bxGlow 0.8s ease-out; }
+        .bx-icon.pop { animation: bxPop 0.6s ease-out; }
+        @keyframes bxShake { 0%,100% { transform: rotate(0) scale(1); } 20% { transform: rotate(-12deg) scale(1.05); } 40% { transform: rotate(12deg) scale(1.1); } 60% { transform: rotate(-8deg) scale(1.05); } 80% { transform: rotate(8deg) scale(1.1); } }
+        @keyframes bxGlow { 0% { transform: scale(0.6); filter: brightness(2.5); } 60% { transform: scale(1.3); } 100% { transform: scale(1); filter: none; } }
+        @keyframes bxPop { 0% { transform: scale(0.4) rotate(-20deg); } 60% { transform: scale(1.35) rotate(8deg); } 100% { transform: scale(1) rotate(0); } }
+        .bx-roulette { position: relative; overflow: hidden; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(0,0,0,0.35); height: 84px; margin: 12px 0; transition: opacity 0.3s; }
+        .bx-roulette::before, .bx-roulette::after { content: ''; position: absolute; top: 0; bottom: 0; width: 40px; z-index: 2; pointer-events: none; }
+        .bx-roulette::before { left: 0; background: linear-gradient(90deg, rgba(15,23,42,0.95), transparent); }
+        .bx-roulette::after { right: 0; background: linear-gradient(-90deg, rgba(15,23,42,0.95), transparent); }
+        .bx-pointer { position: absolute; left: 50%; top: 0; bottom: 0; width: 3px; background: #f6dc9a; box-shadow: 0 0 12px #f6dc9a; z-index: 3; transform: translateX(-50%); }
+        .bx-strip { display: flex; gap: 8px; padding: 8px 0; will-change: transform; }
+        .bx-chip { flex: 0 0 84px; height: 68px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px solid var(--border-color); background: rgba(255,255,255,0.05); font-size: 0.95rem; }
+        .bx-chip.mid { border-color: #34d399; background: rgba(52,211,153,0.12); }
+        .bx-chip.big { border-color: #f59e0b; background: rgba(245,158,11,0.2); }
+        .bx-chip.low { border-color: #64748b; }
+        .bx-status { min-height: 1.4em; font-weight: 700; color: #f6dc9a; margin-bottom: 8px; }
+        .bx-result { text-align: left; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; margin-bottom: 12px; }
+        .bx-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.95rem; }
+        .bx-row.total { border-top: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); font-size: 1.1rem; }
+        .bx-row .pos { color: #34d399; } .bx-row .neg { color: #f87171; }
+        .confetti-bit { position: absolute; top: -10px; font-size: 1.2rem; animation: fall 1.8s linear forwards; pointer-events: none; z-index: 5; }
+        @keyframes fall { to { transform: translateY(420px) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -1237,6 +1267,7 @@
         <div class="pcard"><h4>🎉 Начислить баллы (розыгрыши)</h4>
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Баллов" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
           <p class="note">Победителю придёт уведомление в колокольчик. Для розыгрышей в Telegram-канале.</p></div>
+        <div class="pcard"><h4>📨 Обращения в поддержку</h4><div id="adminSupport"></div></div>
         <div class="pcard"><h4>🎁 Заказы наград</h4><div id="adminOrders"></div></div>
         <div class="pcard"><h4>📸 Последние отчёты</h4><div id="adminReports"></div></div>
     </div></div>
@@ -1431,7 +1462,9 @@
         <span class="close-modal" onclick="closeModal('tgLinkModal')">&times;</span>
         <h3 style="margin-bottom:6px;">Подключите Telegram</h3>
         <p style="color: var(--text-secondary); font-size:0.88rem; margin-bottom:12px; line-height:1.5;">Чтобы мы проверили подписку на канал и выдали 500 баллов, подключите свой Telegram. Это занимает секунду.</p>
-        <div id="tgLinkBox" style="display:flex; justify-content:center; min-height:40px;"></div>
+        <div id="tgLinkBox" style="display:flex; justify-content:center; min-height:48px; margin-bottom:10px;"></div>
+        <button class="btn btn-outline" style="width:auto;" onclick="joinChannel()">✈️ Открыть Telegram-канал</button>
+        <p style="color: var(--text-secondary); font-size:0.78rem; margin-top:10px; line-height:1.5;">Нажмите синюю кнопку Telegram выше и подтвердите вход. Потом нажмите «Получить 500 баллов» ещё раз, и мы проверим подписку.</p>
     </div></div>
     <div class="support-widget-btn" style="left:25px; right:auto; width:auto; border-radius:30px; padding:0 18px; font-size:0.95rem; font-weight:700; background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 10px 25px rgba(239,68,68,0.45);" onclick="openModal('crisisModal')">🆘 Мне плохо</div>
     <div class="modal" id="crisisModal"><div class="modal-content">
@@ -1499,14 +1532,25 @@
         </div>
     </div>
 
+    <div class="modal" id="boxModal"><div class="modal-content box-stage" style="max-width:440px; text-align:center;">
+        <span class="close-modal" id="bxClose" onclick="closeBoxModal()">&times;</span>
+        <div class="bx-head"><span>Баланс: <b id="bxBalance">0</b> 🪙</span><span class="bx-cost" id="bxCost">−0 🪙</span></div>
+        <div class="bx-icon shake" id="bxIcon">🎁</div>
+        <h3 id="bxTitle" style="margin-bottom:4px;">Бокс</h3>
+        <div class="bx-roulette" id="bxRoulette"><div class="bx-pointer"></div><div class="bx-strip" id="bxStrip"></div></div>
+        <div class="bx-status" id="bxStatus">Открываем бокс…</div>
+        <div class="bx-result" id="bxResult" style="display:none;"></div>
+        <div class="rem-row" style="justify-content:center;"><button class="btn btn-gold" id="bxAgain" style="width:auto; display:none;" onclick="openBox(lastBox)">🎁 Открыть ещё</button><button class="btn btn-outline" style="width:auto;" onclick="closeBoxModal()">Закрыть</button></div>
+    </div></div>
     <div class="modal" id="supportModal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('supportModal')">&times;</span>
-            <h3 style="margin-bottom: 0.5rem;">🎧 Техподдержка 24/7</h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1.5rem;">Есть вопросы или проблемы? Мы всегда на связи!</p>
-            <textarea placeholder="Опишите вашу проблему или вопрос..." style="width:100%; height: 100px; padding: 10px; margin-bottom: 1rem; background: var(--bg-color); border:1px solid var(--border-color); border-radius:8px; color:#fff; outline:none; resize:none;"></textarea>
+            <h3 style="margin-bottom: 0.5rem;">🎧 Поддержка LifeChange</h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">Пишите нам в любое время. Сообщение получит команда LifeChange, ответ придёт вам в уведомления (🔔) на сайте и, если укажете контакт, в Telegram.</p>
+            <textarea id="supportText" placeholder="Опишите вашу проблему или вопрос..." style="width:100%; height: 100px; padding: 10px; margin-bottom: 0.8rem; background: var(--bg-color); border:1px solid var(--border-color); border-radius:8px; color:#fff; outline:none; resize:none;"></textarea>
+            <input id="supportContact" placeholder="Ваш Telegram @username или телефон (необязательно)" style="width:100%; padding: 10px; margin-bottom: 1rem; background: var(--bg-color); border:1px solid var(--border-color); border-radius:8px; color:#fff; outline:none;">
             <button class="btn" onclick="sendSupportMessage()" style="margin-bottom: 10px;">Отправить сообщение</button>
-            <button class="btn btn-outline" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">Связаться в Telegram</button>
+            <button class="btn btn-outline" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">Написать в Telegram: @LifeChangeSuLen</button>
         </div>
     </div>
 
@@ -3357,6 +3401,92 @@ async function loadHits() {
   applyHits(real);
 }
 applyHits(null); loadHits();
+</script>
+<script>
+// ===================== Поддержка, анимированные боксы, привязка Telegram =====================
+Object.assign(UZ_EXACT, {"🎧 Поддержка LifeChange": "🎧 LifeChange yordam xizmati", "Пишите нам в любое время. Сообщение получит команда LifeChange, ответ придёт вам в уведомления (🔔) на сайте и, если укажете контакт, в Telegram.": "Bizga istalgan vaqtda yozing. Xabarni LifeChange jamoasi oladi, javob saytdagi bildirishnomalarga (🔔) va, agar aloqa qoldirsangiz, Telegramga keladi.", "Ваш Telegram @username или телефон (необязательно)": "Telegram @username yoki telefon (ixtiyoriy)", "Написать в Telegram: @LifeChangeSuLen": "Telegramda yozing: @LifeChangeSuLen", "Сообщение отправлено. Мы ответим в уведомлениях (🔔) и в Telegram, если вы указали контакт.": "Xabar yuborildi. Bildirishnomalarda (🔔) va, agar aloqa qoldirgan bo'lsangiz, Telegramda javob beramiz.", "Напишите сообщение (минимум 3 символа).": "Xabar yozing (kamida 3 belgi).", "Сообщение слишком короткое или слишком длинное.": "Xabar juda qisqa yoki juda uzun.", "Слишком много сообщений. Попробуйте позже или напишите нам в Telegram.": "Xabarlar juda ko'p. Keyinroq urinib ko'ring yoki Telegramda yozing.", "✈️ Открыть Telegram-канал": "✈️ Telegram kanalini ochish", "Нажмите синюю кнопку Telegram выше и подтвердите вход. Потом нажмите «Получить 500 баллов» ещё раз, и мы проверим подписку.": "Yuqoridagi ko'k Telegram tugmasini bosing va kirishni tasdiqlang. Keyin «500 ball olish» tugmasini yana bosing, obunani tekshiramiz.", "Баланс:": "Balans:", "🎁 Открыть ещё": "🎁 Yana ochish", "Закрыть": "Yopish", "Открываем бокс…": "Quti ochilmoqda…", "Крутим…": "Aylantiryapmiz…", "Стоимость бокса": "Quti narxi", "Выпало": "Tushdi", "Итог": "Natija", "Новый баланс": "Yangi balans", "🎉 Вы в плюсе!": "🎉 Siz yutuqdasiz!", "Выпало меньше, чем стоил бокс. В следующий раз может выпасть больше.": "Quti narxidan kamroq tushdi. Keyingi safar ko'proq tushishi mumkin.", "Бокс": "Quti"});
+UZ_PAT.unshift([/^🎁 Открыть ещё \((.+)\)$/, m => `🎁 Yana ochish (${m[1]})`]);
+Object.assign(ERRMAP, { bad_message: 'Сообщение слишком короткое или слишком длинное.', too_many: 'Слишком много сообщений. Попробуйте позже или напишите нам в Telegram.' });
+// ---- поддержка
+{ const _om = openModal; openModal = function(id) { _om(id); if(id === 'supportModal') { const c = document.getElementById('supportContact'); if(c && !c.value && accountEmail && accountEmail[0] === '@') c.value = accountEmail; } }; }
+async function sendSupportMessage() {
+  const txt = document.getElementById('supportText').value.trim(), contact = document.getElementById('supportContact').value.trim();
+  if(txt.length < 3) return alert('Напишите сообщение (минимум 3 символа).');
+  if(!requireAuth()) return;
+  try {
+    await rpc('send_support', { p_message: txt, p_contact: contact });
+    document.getElementById('supportText').value = ''; playSound('success'); closeModal('supportModal');
+    alert('Сообщение отправлено. Мы ответим в уведомлениях (🔔) и в Telegram, если вы указали контакт.');
+  } catch(e) { alert(errMsg(e)); }
+}
+async function renderSupport() {
+  const box = document.getElementById('adminSupport'); if(!box) return;
+  try {
+    const rows = await rpc('admin_support_list');
+    box.innerHTML = rows.length ? rows.map(r => `<div class="notif-item ${r.status === 'new' ? 'new' : ''}" style="border-radius:8px;margin-bottom:8px;"><b>${esc(r.name || '')} ${esc(r.tg_username ? '@' + r.tg_username : (r.email || ''))} · ${fmtD(r.created_at)}</b><p style="white-space:pre-wrap">${esc(r.message)}</p>${r.contact ? '<small>Контакт: ' + esc(r.contact) + '</small>' : ''}${r.reply ? '<p style="color:#34d399">Ответ: ' + esc(r.reply) + '</p>' : `<textarea id="sr-${r.id}" placeholder="Ответ клиенту (придёт ему в уведомления)" style="width:100%;height:60px;margin-top:6px;padding:8px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:#fff;"></textarea><button class="btn btn-gold" style="width:auto;padding:6px 14px;margin-top:6px" onclick="adminSupportReply(${r.id})">Ответить</button>`}</div>`).join('') : '<p class="note">Обращений пока нет.</p>';
+  } catch(e) { box.innerHTML = '<p class="note">Не удалось загрузить обращения.</p>'; }
+}
+{ const _ra = renderAdmin; renderAdmin = async function() { await _ra(); await renderSupport(); }; }
+async function adminSupportReply(id) {
+  const t = document.getElementById('sr-' + id).value.trim(); if(!t) return alert('Напишите ответ.');
+  try { await rpc('admin_support_reply', { p_id: id, p_reply: t }); renderSupport(); } catch(e) { alert(errMsg(e)); }
+}
+// ---- привязка Telegram: собственная кнопка (iframe Telegram), не зависит от скрипта-виджета
+function mountTgLink() {
+  const box = document.getElementById('tgLinkBox'); if(!TG_BOT_USERNAME || box.dataset.m) return; box.dataset.m = '1';
+  const f = document.createElement('iframe'); f.id = 'tgLinkFrame'; f.width = 240; f.height = 48; f.frameBorder = 0; f.scrolling = 'no';
+  f.style.cssText = 'overflow:hidden; border:none; color-scheme: light dark;';
+  f.src = 'https://oauth.telegram.org/embed/' + TG_BOT_USERNAME + '?origin=' + encodeURIComponent(location.origin) + '&return_to=' + encodeURIComponent(location.href) + '&size=large&userpic=false&request_access=write&radius=10&lang=ru';
+  box.appendChild(f);
+}
+window.addEventListener('message', e => {
+  if(e.origin !== 'https://oauth.telegram.org') return;
+  let d = e.data; try { if(typeof d === 'string') d = JSON.parse(d); } catch(x) { return; }
+  const f = document.getElementById('tgLinkFrame'); if(!d || !f || e.source !== f.contentWindow) return;
+  if(d.event === 'resize') { if(d.height) f.style.height = d.height + 'px'; if(d.width) f.style.width = d.width + 'px'; }
+  if(d.event === 'auth_user' && d.auth_data) onTelegramLink(d.auth_data);
+});
+// ---- анимированные боксы
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fmtN = n => Number(n).toLocaleString('ru-RU');
+let boxBusy = false, lastBox = null;
+function closeBoxModal() { if(boxBusy) return; closeModal('boxModal'); }
+function pickPrize(b) { const tot = b.prizes.reduce((a, x) => a + x.w, 0); let r = Math.random() * tot; for(const x of b.prizes) { if((r -= x.w) < 0) return x.p; } return b.prizes[0].p; }
+function chipHtml(p, cost) { const c = p >= cost * 2 ? 'big' : (p >= cost ? 'mid' : 'low'); return `<div class="bx-chip ${c}"><b>${fmtN(p)}</b><span>🪙</span></div>`; }
+function confetti() { const box = document.querySelector('#boxModal .modal-content'); const em = ['🎉', '✨', '🪙', '⭐']; for(let i = 0; i < 26; i++) { const e = document.createElement('span'); e.className = 'confetti-bit'; e.textContent = em[i % em.length]; e.style.left = (Math.random() * 95) + '%'; e.style.animationDelay = (Math.random() * 0.5) + 's'; box.appendChild(e); setTimeout(() => e.remove(), 2600); } }
+async function openBox(key) {
+  if(!requireAuth() || boxBusy) return;
+  const b = BOXES[key]; if(!b) return;
+  if(points < b.cost) return alert('Недостаточно баллов!');
+  boxBusy = true; lastBox = key;
+  const $ = id => document.getElementById(id);
+  $('bxTitle').textContent = b.name + ' бокс'; $('bxBalance').textContent = fmtN(points); $('bxCost').textContent = '−' + fmtN(b.cost) + ' 🪙';
+  $('bxIcon').className = 'bx-icon shake'; $('bxIcon').textContent = { silver: '🥈', gold: '🥇', platinum: '💎' }[key] || '🎁';
+  $('bxStrip').style.transition = 'none'; $('bxStrip').style.transform = 'translateX(0)'; $('bxStrip').innerHTML = b.prizes.map(x => chipHtml(x.p, b.cost)).join('');
+  $('bxRoulette').style.opacity = '0.35'; $('bxStatus').textContent = 'Открываем бокс…'; $('bxResult').style.display = 'none'; $('bxAgain').style.display = 'none'; $('bxClose').style.visibility = 'hidden';
+  openModal('boxModal'); playSound('success');
+  const t0 = Date.now(); let r;
+  try { r = await rpc('open_box', { p_tier: key }); }
+  catch(e) { boxBusy = false; closeModal('boxModal'); return alert(errMsg(e)); }
+  await sleep(Math.max(0, 1400 - (Date.now() - t0)));
+  const W = 92, N = 44, WIN = 36, filler = Array.from({ length: N }, () => pickPrize(b)); filler[WIN] = r.win;
+  $('bxStrip').innerHTML = filler.map(p => chipHtml(p, b.cost)).join('');
+  $('bxIcon').className = 'bx-icon open'; $('bxIcon').textContent = '✨'; $('bxRoulette').style.opacity = '1'; $('bxStatus').textContent = 'Крутим…';
+  const cw = $('bxRoulette').clientWidth, jitter = (Math.random() - 0.5) * 40, target = -(WIN * W + W / 2 - cw / 2) + jitter;
+  void $('bxStrip').offsetWidth;
+  $('bxStrip').style.transition = 'transform 3.6s cubic-bezier(0.12, 0.65, 0.12, 1)'; $('bxStrip').style.transform = 'translateX(' + target + 'px)';
+  await sleep(3800);
+  xpAdd(r.win - r.cost); points = r.points; syncUI();
+  const net = r.win - r.cost, plus = net >= 0;
+  $('bxBalance').textContent = fmtN(points);
+  $('bxStatus').textContent = plus ? '🎉 Вы в плюсе!' : 'Выпало меньше, чем стоил бокс. В следующий раз может выпасть больше.';
+  $('bxResult').innerHTML = `<div class="bx-row"><span>Стоимость бокса</span><b class="neg">−${fmtN(r.cost)} 🪙</b></div><div class="bx-row"><span>Выпало</span><b class="pos">+${fmtN(r.win)} 🪙</b></div><div class="bx-row total"><span>Итог</span><b class="${plus ? 'pos' : 'neg'}">${plus ? '+' : '−'}${fmtN(Math.abs(net))} 🪙</b></div><div class="bx-row"><span>Новый баланс</span><b>${fmtN(points)} 🪙</b></div>`;
+  $('bxResult').style.display = ''; $('bxIcon').className = 'bx-icon pop'; $('bxIcon').textContent = plus ? '🎉' : '🎁';
+  if(plus) confetti(); playSound(plus ? 'win' : 'success');
+  $('bxAgain').style.display = ''; $('bxAgain').textContent = '🎁 Открыть ещё (−' + fmtN(b.cost) + ' 🪙)'; $('bxClose').style.visibility = 'visible';
+  const old = document.getElementById('boxResult'); if(old) old.textContent = '';
+  boxBusy = false;
+}
 </script>
 </body>
 </html>
