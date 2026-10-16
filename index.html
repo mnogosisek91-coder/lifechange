@@ -238,6 +238,8 @@
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-top: 2.5rem; text-align: left; }
         .feature-item { background: var(--card-bg); backdrop-filter: blur(8px); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 12px; }
         .feature-item h3 { margin-bottom: 0.5rem; color: #818cf8; }
+        .feature-link { cursor: pointer; transition: transform .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
+        .feature-link:hover, .feature-link:active { transform: translateY(-2px); border-color: #818cf8; }
         .feature-item p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; }
 
         .card-tag { align-self: flex-start; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; }
@@ -623,15 +625,15 @@
                     </div>
 
                     <div class="features-grid">
-                        <div class="feature-item">
+                        <div class="feature-item feature-link" role="button" tabindex="0" onclick="switchTab('challenges')" onkeydown="if(event.key==='Enter')switchTab('challenges')">
                             <h3 data-i18n="f1_title">🎯 Трекинг и Дисциплина</h3>
                             <p data-i18n="f1_desc">Выбирай направления: от похудения и тренировок до отказа от курения и ежедневного чтения.</p>
                         </div>
-                        <div class="feature-item">
+                        <div class="feature-item feature-link" role="button" tabindex="0" onclick="switchTab('psychology')" onkeydown="if(event.key==='Enter')switchTab('psychology')">
                             <h3 data-i18n="f2_title">🧠 Психологическая помощь</h3>
                             <p data-i18n="f2_desc">Консультации психолога с высшим профильным образованием: онлайн-сессии или очные встречи в Ташкенте.</p>
                         </div>
-                        <div class="feature-item">
+                        <div class="feature-item feature-link" role="button" tabindex="0" onclick="switchTab('shop')" onkeydown="if(event.key==='Enter')switchTab('shop')">
                             <h3 data-i18n="f3_title">🎁 Магазин Вознаграждений</h3>
                             <p data-i18n="f3_desc">Обменивайте искры на брендовый мерч, книги, промокоды на скидки, мистери-боксы и подарки.</p>
                         </div>
