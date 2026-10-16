@@ -3750,5 +3750,9 @@ async function exportPartnerCsv() {
   try{ if(typeof UZ_EXACT!=='undefined') Object.assign(UZ_EXACT,{"Показать все":"Hammasini ko'rsatish","Свернуть":"Yig'ish"}); }catch(e){}
 })();
 </script>
+<script>
+/* Повторная загрузка состояния после полной загрузки страницы: на медленном старте вход мог восстановиться раньше, чем подключился код администратора, и кнопка «Админ-панель» не появлялась. */
+window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefined' && sbUid && typeof hydrate === 'function') hydrate(); } catch(e) {} });
+</script>
 </body>
 </html>
