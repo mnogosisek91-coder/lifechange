@@ -516,6 +516,7 @@
         .ref-bar i { display: block; height: 100%; background: linear-gradient(90deg, #f6dc9a, #f59e0b); transition: width .4s; }
         .ref-note { margin: 6px 0 12px; color: var(--text-secondary); font-size: 0.8rem; }
         @media (max-width: 520px) { .ref-prize { flex-direction: column; align-items: flex-start; } }
+        .pst-table th, .pst-table td { padding: 5px 8px; white-space: nowrap; text-align: left; }
         .ref-row { display: flex; gap: 10px; flex-wrap: wrap; }
         .ref-row input { flex: 1 1 180px; min-width: 0; }
         .ref-row button { flex: 0 0 auto; }
@@ -1284,6 +1285,11 @@
           <div class="rem-row"><button class="btn btn-outline" style="width:auto" onclick="adminCode(3)">3 дня</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(30)">30 дней</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(90)">3 месяца</button><button class="btn btn-outline" style="width:auto" onclick="adminCode(365)">12 месяцев</button></div>
           <p class="note" id="adminCodeOut"></p>
           <p class="note">Тариф (PRO или VIP) берётся из выбора выше, он действует и для кнопок кодов. Клиента можно указать по email или @username. VIP на сайте открывает то же, что PRO, а куратора и разбор видеоотчётов вы выполняете вручную: список активных VIP-клиентов смотрите ниже.</p></div>
+        <div class="pcard"><h4>🤝 Партнёры: статистика роликов</h4>
+          <div class="rem-row"><select id="pstDays" style="padding:9px;background:var(--bg-color);border:1px solid var(--border-color);color:#fff;border-radius:8px"><option value="7">7 дней</option><option value="30" selected>30 дней</option><option value="90">90 дней</option></select>
+            <input id="pstCpm" type="number" min="0" value="40000" style="width:130px" title="Цена за 1 000 просмотров, сум"><button class="btn btn-outline" style="width:auto" onclick="loadPartnerStats()">Показать</button><button class="btn btn-outline" style="width:auto" onclick="exportPartnerCsv()">⬇ CSV для партнёра</button></div>
+          <p class="note">Считаются только досмотренные ролики (не чаще раза в день на ролик и источник). Поле справа — цена за 1 000 просмотров в сумах для оценки стоимости рекламы.</p>
+          <div id="pstOut"></div></div>
         <div class="pcard"><h4>⭐ Активные VIP-клиенты</h4><div id="adminVips"></div></div>
         <div class="pcard"><h4>🎉 Начислить искры (розыгрыши)</h4>
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Искр" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
@@ -2697,9 +2703,10 @@ function claimDailyReward() {
   if(dailyClaimed) return alert('Награда за сегодня уже получена. Приходите завтра!');
   const dp = dailyRewards[currentDailyDay - 1].p, v = PARTNER_VIDEOS[(new Date().getDate() + currentDailyDay) % PARTNER_VIDEOS.length];
   document.getElementById('dailyBonusText').innerHTML = `Посмотрите короткое видео нашего партнёра до конца и получите <b style="color:#f6dc9a">+${dp * 2}</b> вместо +${dp}.`;
-  mountPlayer(document.getElementById('dailyPlayer'), videoSrc(v), () => finishDaily(true));
+  mountPlayer(document.getElementById('dailyPlayer'), videoSrc(v), () => { if(v.src) logVideo(v.id, 'daily'); finishDaily(true); });
   openModal('dailyBonusModal');
 }
+function logVideo(id, src) { try { rpc('log_video_view', { p_video: id, p_source: src }).catch(() => {}); } catch(e) {} }
 function claimDailyPlain() { finishDaily(false); }
 async function finishDaily(double) {
   if(dailyClaimed || busy) return;
@@ -2720,6 +2727,7 @@ function openPartnerVideo(id) {
   document.getElementById('pvTitle').textContent = v.title;
   document.getElementById('pvDesc').textContent = got ? 'Искры за это видео уже получены. Повторный просмотр награду не даёт.' : v.desc + ' Награда: +' + v.points + ' искр, один раз навсегда.';
   mountPlayer(document.getElementById('partnerPlayer'), videoSrc(v), async () => {
+    if(v.src) logVideo(id, 'section');
     if(watchedVideos.has(id)) return;
     try {
       const r = await rpc('watch_video', { p_id: id });
@@ -3713,6 +3721,35 @@ async function claimGiftBox() {
     if(!dailyClaimed && currentDailyDay === 7) return claimGiftBox();
     return _cdr.apply(this, arguments);
   }; }
+</script>
+
+<script>
+// ===================== Админка: статистика партнёров =====================
+const PST_NAMES = { p1: 'Маркетплейс', p2: 'Книжный магазин', p3: 'Фитнес-клуб' };
+const PST_ITEMS = { market10: 'Маркетплейс (промокод)', books: 'Книжный магазин (скидка)', gym: 'Спортзал (скидка)' };
+let pstLast = null;
+async function loadPartnerStats() {
+  const out = document.getElementById('pstOut'); if(!out) return;
+  try {
+    const n = +document.getElementById('pstDays').value, cpm = Math.max(0, +document.getElementById('pstCpm').value || 0);
+    const s = await rpc('admin_partner_stats', { p_days: n }); pstLast = s;
+    const f = x => Number(x).toLocaleString('ru-RU'), per = s.active_users ? (s.views_total / s.active_users).toFixed(1) : '0';
+    const tile = (v, t) => `<div style="min-width:110px"><div style="font-size:1.4rem;font-weight:800;color:#f6dc9a">${v}</div><div class="note" style="margin:0">${t}</div></div>`;
+    const max = Math.max(1, ...s.by_day.map(d => d.views));
+    out.innerHTML = `<div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0">${tile(f(s.views_total), 'Просмотров')}${tile(f(s.viewers), 'Уникальных зрителей')}${tile(f(s.active_users), 'Активных (с отчётом)')}${tile(per, 'Просмотров на активного')}${tile(f(Math.round(s.views_total / 1000 * cpm)) + ' сум', 'Оценка рекламы по CPM')}</div>
+    <div style="overflow-x:auto"><table class="pst-table" style="width:100%;font-size:0.82rem;border-collapse:collapse"><tr style="color:var(--text-secondary);text-align:left"><th>Ролик</th><th>Просмотры</th><th>Уникальных</th><th>При входе</th><th>В разделе</th></tr>${s.by_video.length ? s.by_video.map(v => `<tr><td>${esc(PST_NAMES[v.video_id] || v.video_id)}</td><td>${f(v.views)}</td><td>${f(v.viewers)}</td><td>${f(v.daily_views)}</td><td>${f(v.section_views)}</td></tr>`).join('') : '<tr><td colspan="5" class="note">Пока нет досмотренных партнёрских роликов.</td></tr>'}</table></div>
+    <div style="display:flex;align-items:flex-end;gap:2px;height:60px;margin:12px 0 4px">${s.by_day.map(d => `<div title="${d.day}: ${d.views}" style="flex:1;min-width:3px;background:#f6dc9a;height:${Math.max(4, d.views / max * 100)}%"></div>`).join('')}</div><p class="note" style="margin:0">Просмотры по дням, с ${esc(s.from)}</p>
+    <p style="margin-top:10px;font-weight:700">Награды партнёров, оформленные пользователями</p>${s.rewards.length ? s.rewards.map(r => `<div class="note" style="margin:2px 0">${esc(PST_ITEMS[r.item] || r.item)}: ${f(r.orders)} заказов, выдано ${f(r.done)}</div>`).join('') : '<p class="note">Пока нет заказов партнёрских наград.</p>'}`;
+  } catch(e) { alert(errMsg(e)); }
+}
+async function exportPartnerCsv() {
+  if(!pstLast) await loadPartnerStats(); const s = pstLast; if(!s) return;
+  const rows = [['Период с', s.from, 'дней', s.days], ['Роликов просмотров всего', s.views_total, 'уникальных зрителей', s.viewers], [], ['Ролик', 'Просмотры', 'Уникальных', 'При входе', 'В разделе']]
+    .concat(s.by_video.map(v => [PST_NAMES[v.video_id] || v.video_id, v.views, v.viewers, v.daily_views, v.section_views]), [[], ['День', 'Просмотры']], s.by_day.map(d => [d.day, d.views]), [[], ['Награда', 'Заказов', 'Выдано']], s.rewards.map(r => [PST_ITEMS[r.item] || r.item, r.orders, r.done]));
+  const csv = '﻿' + rows.map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(';')).join('\n');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'lifechange-partners-' + s.from + '.csv'; document.body.appendChild(a); a.click(); a.remove();
+}
+{ const _st4 = switchTab; switchTab = function(t) { _st4(t); if(t === 'admin') setTimeout(loadPartnerStats, 50); }; }
 </script>
 </body>
 </html>
