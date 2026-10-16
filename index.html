@@ -1704,7 +1704,7 @@
         const dailyRewards = [
             { day: 1, p: 5, val: "5 ⚡" }, { day: 2, p: 10, val: "10 ⚡" }, { day: 3, p: 10, val: "10 ⚡" },
             { day: 4, p: 15, val: "15 ⚡" }, { day: 5, p: 20, val: "20 ⚡" }, { day: 6, p: 25, val: "25 ⚡" },
-            { day: 7, p: 50, val: "🎁 50 ⚡" }
+            { day: 7, p: 50, val: "🎁 Бокс" }
         ];
 
         function renderDailyRewards() {
@@ -3668,6 +3668,51 @@ function shareRef() {
   }; }
 if(typeof resetGameState === 'function') { const _rg = resetGameState; resetGameState = function() { _rg.apply(this, arguments); refInvited = 0; refOk = 0; renderRef(); }; }
 renderRef(); renderBadges();
+</script>
+
+<script>
+// ===================== 7-й день входа подряд: подарочный серебряный бокс =====================
+Object.assign(UZ_EXACT, {"🎁 Бокс": "🎁 Quti", "🎁 Подарок за 7 дней подряд": "🎁 Ketma-ket 7 kun uchun sovg'a", "Бесплатно": "Bepul", "Открываем подарок…": "Sovg'ani ochamiz…", "🎉 Подарок открыт!": "🎉 Sovg'a ochildi!", "Подарок": "Sovg'a",
+ "7-й день: подарочный серебряный бокс. Выигрыш: 50 · 100 · 150 · 300 · 800 ⚡": "7-kun: sovg'a kumush quti. Yutuq: 50 · 100 · 150 · 300 · 800 ⚡"});
+const GIFT_BOX = { prizes: [{ p: 50, w: 45 }, { p: 100, w: 30 }, { p: 150, w: 15 }, { p: 300, w: 8 }, { p: 800, w: 2 }] };
+(function() {
+  const g = document.getElementById('dailyRewardsGrid'); if(!g || document.getElementById('giftNote')) return;
+  const p = document.createElement('p'); p.id = 'giftNote'; p.className = 'note'; p.style.marginTop = '8px';
+  p.textContent = '7-й день: подарочный серебряный бокс. Выигрыш: 50 · 100 · 150 · 300 · 800 ⚡';
+  g.parentNode.insertBefore(p, g.nextSibling);
+})();
+async function claimGiftBox() {
+  if(boxBusy) return; boxBusy = true; lastBox = null;
+  const $ = id => document.getElementById(id), b = GIFT_BOX;
+  $('bxTitle').textContent = '🎁 Подарок за 7 дней подряд'; $('bxBalance').textContent = fmtN(points); $('bxCost').textContent = 'Бесплатно';
+  $('bxIcon').className = 'bx-icon shake'; $('bxIcon').textContent = '🥈';
+  $('bxStrip').style.transition = 'none'; $('bxStrip').style.transform = 'translateX(0)'; $('bxStrip').innerHTML = b.prizes.map(x => chipHtml(x.p, 100)).join('');
+  $('bxRoulette').style.opacity = '0.35'; $('bxStatus').textContent = 'Открываем подарок…'; $('bxResult').style.display = 'none'; $('bxAgain').style.display = 'none'; $('bxClose').style.visibility = 'hidden';
+  openModal('boxModal'); playSound('success');
+  const t0 = Date.now(); let r;
+  try { r = await rpc('claim_daily', { p_double: false }); }
+  catch(e) { boxBusy = false; closeModal('boxModal'); return alert(errMsg(e)); }
+  await sleep(Math.max(0, 1400 - (Date.now() - t0)));
+  const W = 92, N = 44, WIN = 36, filler = Array.from({ length: N }, () => pickPrize(b)); filler[WIN] = r.gain;
+  $('bxStrip').innerHTML = filler.map(p => chipHtml(p, 100)).join('');
+  $('bxIcon').className = 'bx-icon open'; $('bxIcon').textContent = '✨'; $('bxRoulette').style.opacity = '1'; $('bxStatus').textContent = 'Крутим…';
+  const cw = $('bxRoulette').clientWidth, jitter = (Math.random() - 0.5) * 40, target = -(WIN * W + W / 2 - cw / 2) + jitter;
+  void $('bxStrip').offsetWidth;
+  $('bxStrip').style.transition = 'transform 3.6s cubic-bezier(0.12, 0.65, 0.12, 1)'; $('bxStrip').style.transform = 'translateX(' + target + 'px)';
+  await sleep(3800);
+  xpAdd(r.gain); points = r.points; dailyClaimed = true; dailyCount += 1; lastClaim = srvToday; currentDailyDay = r.day; syncUI(); renderDailyRewards();
+  $('bxBalance').textContent = fmtN(points); $('bxStatus').textContent = '🎉 Подарок открыт!';
+  $('bxResult').innerHTML = `<div class="bx-row"><span>Подарок</span><b class="pos">+${fmtN(r.gain)} ⚡</b></div><div class="bx-row"><span>Новый баланс</span><b>${fmtN(points)} ⚡</b></div>`;
+  $('bxResult').style.display = ''; $('bxIcon').className = 'bx-icon pop'; $('bxIcon').textContent = '🎉';
+  confetti(); playSound('win'); $('bxClose').style.visibility = 'visible';
+  boxBusy = false;
+}
+{ const _cdr = claimDailyReward;
+  claimDailyReward = function() {
+    if(!requireAuth()) return;
+    if(!dailyClaimed && currentDailyDay === 7) return claimGiftBox();
+    return _cdr.apply(this, arguments);
+  }; }
 </script>
 </body>
 </html>
