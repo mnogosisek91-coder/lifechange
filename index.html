@@ -398,8 +398,8 @@
             h1 { font-size: 2rem !important; line-height: 1.25 !important; }
             .hero { padding: 2rem 1rem !important; }
             .hero p { font-size: 1rem !important; }
-            .support-widget-btn { bottom: 84px !important; }
-            footer { padding-bottom: 80px; }
+            .support-widget-btn { bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important; }
+            footer { padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px)); }
         }
     
         .pcard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 16px; margin-bottom: 1rem; text-align: left; }
