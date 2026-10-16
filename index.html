@@ -404,6 +404,8 @@
     
         .pcard { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 14px 16px; margin-bottom: 1rem; text-align: left; }
         .pcard h4 { margin-bottom: 8px; }
+        .ach-fold { overflow: hidden; }
+        .ach-more { display:block; margin:10px auto 0; background:none; border:1px solid var(--border-color); color:#a5b4fc; border-radius:999px; padding:8px 18px; font-size:0.9rem; cursor:pointer; }
         .pcard .note { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.5; margin-top: 8px; }
         .deadline-timer { background: rgba(99,102,241,0.15); border: 1px solid var(--accent-color); border-radius: 12px; padding: 12px 16px; margin-bottom: 1rem; font-size: 0.92rem; text-align: center; }
         .deadline-timer .dt-time { font-size: 1.35rem; color: #f6dc9a; margin-left: 6px; font-variant-numeric: tabular-nums; }
@@ -1347,7 +1349,8 @@
   <p class="note" id="rankNext"></p>
   <div class="rank-ladder" id="rankLadder"></div></div>
 <div class="pcard"><h4>🏅 Достижения <span class="note" id="badgeCount"></span></h4>
-  <div class="badge-grid" id="badgesGrid"></div>
+  <div class="badge-grid ach-fold" id="badgesGrid"></div>
+  <button type="button" class="ach-more" id="achMore">Показать все</button>
   <details style="margin-top:12px"><summary class="link">Пройденные челленджи</summary><div class="badge-grid" id="badgesChall" style="margin-top:10px"></div></details></div>
 <div class="pcard"><h4>📈 Динамика состояния</h4><div class="mood-chart" id="moodChart"></div><p class="note" id="moodAvg"></p></div>
 <div class="pcard"><h4>⏰ Напоминание о сдаче отчёта</h4>
@@ -3750,6 +3753,31 @@ async function exportPartnerCsv() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' })); a.download = 'lifechange-partners-' + s.from + '.csv'; document.body.appendChild(a); a.click(); a.remove();
 }
 { const _st4 = switchTab; switchTab = function(t) { _st4(t); if(t === 'admin') setTimeout(loadPartnerStats, 50); }; }
+</script>
+<script>
+(function(){
+  let open=false;
+  const g=()=>document.getElementById('badgesGrid'), btn=()=>document.getElementById('achMore');
+  function fit(){
+    const grid=g(), b=btn(); if(!grid||!b) return;
+    if(!grid.children.length||!grid.offsetParent) return;
+    if(open){ grid.style.maxHeight='none'; b.textContent='Свернуть'; return; }
+    const f=grid.children[0];
+    const h=Math.ceil(f.getBoundingClientRect().bottom-grid.getBoundingClientRect().top)+2;
+    grid.style.maxHeight=h+'px'; b.textContent='Показать все';
+    b.style.display = grid.scrollHeight>h+4 ? '' : 'none';
+  }
+  function init(){
+    const grid=g(), b=btn(); if(!grid||!b) return;
+    b.addEventListener('click',()=>{ open=!open; fit(); });
+    try{ new ResizeObserver(fit).observe(grid); }catch(e){}
+    new MutationObserver(()=>setTimeout(fit,0)).observe(grid,{childList:true});
+    window.addEventListener('resize',fit);
+    fit();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init); else init();
+  try{ if(typeof UZ_EXACT!=='undefined') Object.assign(UZ_EXACT,{"Показать все":"Hammasini ko'rsatish","Свернуть":"Yig'ish"}); }catch(e){}
+})();
 </script>
 </body>
 </html>
