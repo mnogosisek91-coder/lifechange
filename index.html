@@ -1373,33 +1373,6 @@
                     </div>
                 </div>
 
-                <!-- БЛОК СИНХРОНИЗАЦИИ ФИТНЕС-ТРЕКЕРОВ -->
-                <div class="card" style="margin-bottom: 1.5rem; background: rgba(30, 41, 59, 0.9);">
-                    <h3>⌚ Интеграция с Фитнес-Трекерами</h3>
-                    <p style="color: var(--text-secondary); font-size: 0.88rem; margin: 0.5rem 0 1rem;">Подключите ваш смарт-браслет или приложение для автоматической засветки шагов и тренировок.</p>
-                    
-                    <div class="tracker-badge">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span>💚 Google Fit</span>
-                        </div>
-                        <span class="tracker-status" id="st-googlefit">Скоро</span>
-                    </div>
-
-                    <div class="tracker-badge">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span>🍎 Apple Health</span>
-                        </div>
-                        <button class="btn btn-outline" style="width: auto; padding: 4px 12px; font-size: 0.8rem;" onclick="connectTracker('Apple Health', 'st-apple')">Скоро</button>
-                    </div>
-
-                    <div class="tracker-badge">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span>🟠 Strava</span>
-                        </div>
-                        <button class="btn btn-outline" style="width: auto; padding: 4px 12px; font-size: 0.8rem;" onclick="connectTracker('Strava', 'st-strava')">Скоро</button>
-                    </div>
-                </div>
-
                 <div class="card ref-card" id="refCard">
                     <h3>🔗 Реферальная программа «Пригласи друга»</h3>
                     <div class="ref-prize"><span class="ref-big">+5 000 ⚡</span><span>за каждые <b>10 друзей,</b> которые сдали по вашей ссылке свои первые 3 отчёта. Это целый кистевой эспандер!</span></div>
@@ -1767,10 +1740,6 @@
                 countSpan.textContent = count + 1;
                 playSound('success');
             }
-        }
-
-        function connectTracker(name, elementId) {
-            alert('Интеграция с трекерами появится позже. Пока прикладывайте скриншот шагомера к отчёту.');
         }
 
         function playSound(type) {
