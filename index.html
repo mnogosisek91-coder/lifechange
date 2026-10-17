@@ -1364,6 +1364,14 @@
         <div class="grid" id="partnersGrid"></div>
         
     </div></div>
+    <div class="modal" id="tourModal"><div class="modal-content" style="max-width:420px;text-align:center;">
+        <div id="tourEmoji" style="font-size:3.2rem;margin-bottom:.4rem"></div>
+        <h2 id="tourTitle" style="margin-bottom:.6rem"></h2>
+        <p id="tourText" style="color:var(--text-secondary);line-height:1.6;min-height:5.2em"></p>
+        <div id="tourDots" style="display:flex;justify-content:center;gap:8px;margin:1rem 0"></div>
+        <button type="button" class="btn" id="tourNext" style="width:100%" onclick="tourNext()"></button>
+        <button type="button" onclick="tourClose()" style="background:none;border:none;color:var(--text-secondary);margin-top:.8rem;cursor:pointer">Пропустить</button>
+    </div></div>
     <div class="modal" id="partnerVideoModal"><div class="modal-content" style="max-width:520px;">
         <span class="close-modal" onclick="closeVideoModal('partnerVideoModal')">&times;</span>
         <h3 id="pvTitle" style="margin-bottom:6px;"></h3>
@@ -3985,6 +3993,47 @@ document.querySelectorAll('.onb-step').forEach(el => el.addEventListener('keydow
     if(!before && channelBonus && !onbSteps()[0] && confirm('Бонус получен! Теперь выберите челлендж и заработайте ещё. Перейти к выбору?')) switchTab('challenges');
   }; }
 renderOnboarding();
+</script>
+<script>
+// ===================== Приветственный тур для новичков (1 раз) =====================
+Object.assign(UZ_EXACT, {
+ "Добро пожаловать в LifeChange": "LifeChange'ga xush kelibsiz",
+ "Здесь ты строишь привычки и получаешь за это награды. Не нужно ничего сложного: делай маленькие шаги каждый день.": "Bu yerda odatlar shakllantirasiz va buning uchun mukofot olasiz. Murakkab narsa yo'q: har kuni kichik qadamlar qiling.",
+ "Выбери челлендж": "Chellenj tanlang",
+ "Челлендж — это задание на каждый день, например зарядка или чтение. Открой вкладку «Челленджи» и нажми на любой.": "Chellenj — har kungi vazifa, masalan badantarbiya yoki kitob o'qish. «Chellenjlar» bo'limini oching va birini tanlang.",
+ "Сдай отчёт и получай искры": "Hisobot topshiring va uchqun oling",
+ "Сделал(а) задание — отправь фото или видео. За это начисляются искры ⚡ и опыт. Искры можно потратить в магазине.": "Vazifani bajargach, rasm yoki video yuboring. Buning uchun uchqun ⚡ va tajriba beriladi. Uchqunni do'konda sarflash mumkin.",
+ "Заходи каждый день": "Har kuni kiring",
+ "Каждый день забирай награду за вход. На 7-й день тебя ждёт подарочный бокс. Если пропустишь день, серия начнётся заново.": "Har kuni kirish mukofotini oling. 7-kuni sovg'a qutisi kutadi. Kun o'tkazib yuborsangiz, seriya qaytadan boshlanadi.",
+ "Дальше": "Keyingisi", "Начать": "Boshlash", "Пропустить": "O'tkazib yuborish"
+});
+const TOUR = [
+ ['👋','Добро пожаловать в LifeChange','Здесь ты строишь привычки и получаешь за это награды. Не нужно ничего сложного: делай маленькие шаги каждый день.'],
+ ['🎯','Выбери челлендж','Челлендж — это задание на каждый день, например зарядка или чтение. Открой вкладку «Челленджи» и нажми на любой.'],
+ ['⚡','Сдай отчёт и получай искры','Сделал(а) задание — отправь фото или видео. За это начисляются искры ⚡ и опыт. Искры можно потратить в магазине.'],
+ ['🎁','Заходи каждый день','Каждый день забирай награду за вход. На 7-й день тебя ждёт подарочный бокс. Если пропустишь день, серия начнётся заново.']
+];
+let tourI = 0;
+function tourRender() {
+  const t = TOUR[tourI];
+  document.getElementById('tourEmoji').textContent = t[0];
+  document.getElementById('tourTitle').textContent = t[1];
+  document.getElementById('tourText').textContent = t[2];
+  document.getElementById('tourNext').textContent = tourI === TOUR.length - 1 ? 'Начать' : 'Дальше';
+  document.getElementById('tourDots').innerHTML = TOUR.map((_, i) => '<i style="width:9px;height:9px;border-radius:50%;background:' + (i === tourI ? '#818cf8' : 'rgba(255,255,255,.25)') + '"></i>').join('');
+}
+function tourOpen() { tourI = 0; tourRender(); document.getElementById('tourModal').style.display = 'flex'; }
+function tourClose() {
+  document.getElementById('tourModal').style.display = 'none';
+  try { localStorage.setItem('lc_tour_seen', '1'); } catch(e) {}
+}
+function tourNext() { if(tourI < TOUR.length - 1) { tourI++; tourRender(); } else { tourClose(); if(!user) authBtnClick(); else switchTab('challenges'); } }
+setTimeout(() => {
+  let seen = false; try { seen = localStorage.getItem('lc_tour_seen') === '1'; } catch(e) {}
+  const busy = [...document.querySelectorAll('.modal')].some(m => m.id !== 'tourModal' && getComputedStyle(m).display !== 'none');
+  const exp = user && (histDays.size > 0 || activeChallenges.size > 0);
+  if(!seen && !busy && !exp) tourOpen();
+}, 1500);
 </script>
 <script>
 /* Повторная загрузка состояния после полной загрузки страницы: на медленном старте вход мог восстановиться раньше, чем подключился код администратора, и кнопка «Админ-панель» не появлялась. */
