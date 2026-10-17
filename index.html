@@ -1441,10 +1441,10 @@
 
                 <div class="card ref-card" id="refCard">
                     <h3>🔗 Реферальная программа «Пригласи друга»</h3>
-                    <div class="ref-prize"><span class="ref-big">+5 000 ⚡</span><span>за каждые <b>10 друзей,</b> которые сдали по вашей ссылке свои первые 3 отчёта. Это целый кистевой эспандер!</span></div>
+                    <div class="ref-prize"><span class="ref-big">до +5 000 ⚡</span><span>1 друг, сдавший отчёт: +500 ⚡. 3 друга, сдавших по 3 отчёта: ещё +1 000 ⚡. 10 друзей, сдавших по 3 отчёта: ещё +3 500 ⚡. Друг тоже получит +500 ⚡ за свой первый отчёт!</span></div>
                     <div class="ref-stats">
                         <div><b id="refInvited">0</b><small>Позвали друзей</small></div>
-                        <div><b id="refOk">0</b><small>Сдали 3 отчёта</small></div>
+                        <div><b id="refOk">0</b><small>Сдали отчёт</small></div>
                         <div><b id="refEarned">0</b><small>Получено ⚡</small></div>
                     </div>
                     <div class="ref-bar"><i id="refBar" style="width:0%"></i></div>
@@ -1489,7 +1489,7 @@
 <h4>5. Конфиденциальность консультаций</h4><p>Содержание консультаций психолога не разглашается, за исключением случаев, когда раскрытие требуется по закону или необходимо для защиты жизни.</p>
 <h4>6. Ваши права</h4><p>Вы можете запросить доступ к своим данным, их исправление или удаление аккаунта, написав на lifechangee@mail.ru. Данные хранятся, пока действует аккаунт, и удаляются после обращения, если закон не требует иного.</p></div><div class="legal-doc" id="legal-points"><h3>Правила программы искр</h3>
 <ul><li>Искры — внутренняя единица Платформы, не являются деньгами, не обмениваются на деньги и не передаются другим пользователям.</li>
-<li>Начисляются за отчёты (не более одного в день по каждому челленджу), ежедневный вход, колесо фортуны и приглашённых друзей, которые сдали первые 3 отчёта.</li>
+<li>Начисляются за отчёты (не более одного в день по каждому челленджу), ежедневный вход, колесо фортуны и приглашённых друзей: ступенчатая награда за друзей: 1 друг с отчётом, 3 или 10 друзей по 3 отчёта.</li>
 <li>За фиктивные или чужие отчёты, дубли и несколько аккаунтов искры аннулируются, а аккаунт может быть заблокирован.</li>
 <li>Каталог наград, их стоимость в искрах и наличие могут меняться. Скидки партнёров предоставляются на условиях партнёров, промокоды имеют срок действия.</li>
 <li>Мистери-бокс: искры за открытие списываются сразу, выигрыш может быть больше или меньше стоимости бокса. Шансы указаны на странице наград, возврат искр за открытый бокс не производится.</li>
@@ -2859,7 +2859,7 @@ async function submitChallengeReport() {
     if(userPlan === 'free') activeChallenges.add(key);
     syncUI(); initHabitGrid(); tickTimer(); playSound('success'); track('report_accepted');
     closeModal('challengeModal'); hydrate();
-    alert('Отчёт принят! Вам начислено ' + r.gain + ' искр. 🔥');
+    alert('Отчёт принят! Вам начислено ' + r.gain + ' искр. 🔥' + (r.ref_bonus ? '\n🎁 Плюс ' + r.ref_bonus + ' искр бонус за первый отчёт по приглашению!' : ''));
   } catch(e) { alert(errMsg(e)); }
   finally { busy = false; if(btn) btn.disabled = false; }
 }
@@ -3661,7 +3661,7 @@ renderRank(); renderBadges();
 Object.assign(UZ_EXACT, {
  "за каждые": "har bir", "10 друзей,": "10 do'st uchun,",
  "которые сдали по вашей ссылке свои первые 3 отчёта. Это целый кистевой эспандер!": "ular sizning havolangiz bo'yicha birinchi 3 ta hisobotni topshirgan bo'lsa. Bu butun bir qo'l ekspanderi!",
- "Позвали друзей": "Taklif qilingan do'stlar", "Сдали 3 отчёта": "3 ta hisobot topshirdi", "Получено ⚡": "Olingan ⚡",
+ "Позвали друзей": "Taklif qilingan do'stlar", "Сдали отчёт": "Hisobot topshirdi", "Первый друг": "Birinchi do'st", "Приведи 1 друга, сдавшего первый отчёт": "Birinchi hisobotini topshirgan 1 ta do'st olib keling", "Три друга": "Uch do'st", "Приведи 3 друзей, сдавших первый отчёт": "Birinchi hisobotini topshirgan 3 ta do'st olib keling", "Приведи 10 друзей, сдавших первый отчёт": "Birinchi hisobotini topshirgan 10 ta do'st olib keling", "Приведи 20 друзей, сдавших первый отчёт": "Birinchi hisobotini topshirgan 20 ta do'st olib keling", "Приведи 30 друзей, сдавших первый отчёт": "Birinchi hisobotini topshirgan 30 ta do'st olib keling", "до +5 000 ⚡": "+5 000 ⚡ gacha", "Получено ⚡": "Olingan ⚡",
  "📤 Поделиться ссылкой": "📤 Havolani ulashish", "Войдите, чтобы получить ссылку": "Havolani olish uchun tizimga kiring",
  "Первая десятка": "Birinchi o'nlik", "Приведи 10 друзей, сдавших 3 отчёта": "3 ta hisobot topshirgan 10 ta do'st olib keling",
  "Двадцатка": "Yigirmalik", "Приведи 20 друзей, сдавших 3 отчёта": "3 ta hisobot topshirgan 20 ta do'st olib keling",
@@ -3674,6 +3674,7 @@ Object.assign(UZ_EXACT, {
  "🎁 Вам начислены искры": "🎁 Sizga uchqunlar berildi"
 });
 UZ_PAT.unshift(
+ [/^До награды \+(\d+) ⚡: ещё (\d+) (?:друг|друга|друзей) \((1 отчёт|по 3 отчёта|по 3 отчёта)\)$/, m => `+${m[1]} ⚡ mukofotgacha yana ${m[2]} ta do'st (` + (m[3] === '1 отчёт' ? '1 ta hisobot' : 3 + ' tadan hisobot') + ')'],
  [/^До следующей награды ещё (\d+) (?:друг|друга|друзей)$/, m => `Keyingi mukofotgacha yana ${m[1]} ta do'st`],
  [/^🆙 Новый ранг: (.+) · \+(\d+) искр$/, m => `🆙 Yangi daraja: ${trUz(m[1])} · +${m[2]} uchqun`],
  [/^🏅 Достижение: (.+) · \+(\d+) искр$/, m => `🏅 Yutuq: ${trUz(m[1])} · +${m[2]} uchqun`],
@@ -3684,19 +3685,24 @@ UZ_PAT.unshift(
  [/^Ещё (\d+) XP до ранга «(.+)» · награда \+(\d+) ⚡$/, m => `«${trUz(m[2])}» darajasigacha yana ${m[1]} XP · mukofot +${m[3]} ⚡`],
  [/^Друзья: (\d+) приглашённых$/, m => `Do'stlar: ${m[1]} ta taklif`]
 );
-[["ref_1","👥","Первая десятка","Приведи 10 друзей, сдавших 3 отчёта",10],["ref_2","🚀","Двадцатка","Приведи 20 друзей, сдавших 3 отчёта",20],["ref_3","🏆","Тридцатка","Приведи 30 друзей, сдавших 3 отчёта",30]]
-  .forEach(a => BADGES.push({ id: a[0], ico: a[1], t: a[2], d: a[3], m: 'refok', n: a[4], r: 5000 }));
-var refInvited = 0, refOk = 0, _refBusy = false;
-{ const _m2 = metric; metric = function(m) { return m === 'refok' ? refOk : _m2(m); }; }
+[["refm_1","🤝","Первый друг","Приведи 1 друга, сдавшего первый отчёт",1,500,"refok"],["refm_3","👫","Три друга","Приведи 3 друзей, сдавших по 3 отчёта",3,1000,"refok3"],["ref_1","👥","Первая десятка","Приведи 10 друзей, сдавших по 3 отчёта",10,3500,"refok10"],["ref_2","🚀","Двадцатка","Приведи 20 друзей, сдавших по 3 отчёта",20,5000,"refok10"],["ref_3","🏆","Тридцатка","Приведи 30 друзей, сдавших по 3 отчёта",30,5000,"refok10"]]
+  .forEach(a => BADGES.push({ id: a[0], ico: a[1], t: a[2], d: a[3], m: a[6], n: a[4], r: a[5] }));
+var refInvited = 0, refOk = 0, refOk3 = 0, refOk10 = 0, _refBusy = false;
+{ const _m2 = metric; metric = function(m) { return m === 'refok' ? refOk : m === 'refok3' ? refOk3 : m === 'refok10' ? refOk10 : _m2(m); }; }
 try { const q = new URLSearchParams(location.search).get('ref'); if(q && /^[a-f0-9]{8}$/.test(q)) localStorage.setItem('lc_ref', q); } catch(e) {}
 function ruFriends(n) { const a = n % 10, b = n % 100; return (a === 1 && b !== 11) ? 'друг' : (a >= 2 && a <= 4 && (b < 10 || b >= 20)) ? 'друга' : 'друзей'; }
 function renderRef() {
   const el = id => document.getElementById(id); if(!el('refCard')) return;
-  const left = 10 - (refOk % 10), earned = Math.floor(refOk / 10) * 5000;
+  let need, have, base, prize, what;
+  if(refOk < 1) { need = 1; have = refOk; base = 0; prize = 500; what = '1 отчёт'; }
+  else if(refOk3 < 3) { need = 3; have = refOk3; base = 0; prize = 1000; what = 'по 3 отчёта'; }
+  else { need = (Math.floor(refOk10 / 10) + 1) * 10; have = refOk10; base = need - 10; prize = need === 10 ? 3500 : 5000; what = 'по 3 отчёта'; }
+  const earned = (refOk >= 1 ? 500 : 0) + (refOk3 >= 3 ? 1000 : 0) + (refOk10 >= 10 ? 3500 + (Math.floor(refOk10 / 10) - 1) * 5000 : 0);
+  const left = need - have;
   el('refInvited').textContent = refInvited; el('refOk').textContent = refOk;
   el('refEarned').textContent = String(earned).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-  el('refBar').style.width = ((refOk % 10) * 10) + '%';
-  el('refNote').textContent = `До следующей награды ещё ${left} ${ruFriends(left)}`;
+  el('refBar').style.width = Math.max(0, Math.min(100, Math.round((have - base) / (need - base) * 100))) + '%';
+  el('refNote').textContent = `До награды +${prize} ⚡: ещё ${left} ${ruFriends(left)} (${what})`;
 }
 function shareRef() {
   const link = document.getElementById('refLink').value;
@@ -3707,14 +3713,14 @@ function shareRef() {
 { const _as3 = applyState;
   applyState = function(st) {
     _as3(st);
-    refInvited = st.ref_invited || 0; refOk = st.ref_ok || 0; renderRef(); renderBadges();
+    refInvited = st.ref_invited || 0; refOk = st.ref_ok || 0; refOk3 = st.ref_ok3 || 0; refOk10 = st.ref_ok10 || 0; renderRef(); renderBadges();
     let code = null; try { code = localStorage.getItem('lc_ref'); } catch(e) {}
     if(code && !st.referred && !_refBusy && sbUid) {
       _refBusy = true;
       rpc('apply_referral', { p_code: code }).then(() => { try { localStorage.removeItem('lc_ref'); } catch(e) {} }).catch(e => console.warn('apply_referral', e)).then(() => { _refBusy = false; });
     }
   }; }
-if(typeof resetGameState === 'function') { const _rg = resetGameState; resetGameState = function() { _rg.apply(this, arguments); refInvited = 0; refOk = 0; renderRef(); }; }
+if(typeof resetGameState === 'function') { const _rg = resetGameState; resetGameState = function() { _rg.apply(this, arguments); refInvited = 0; refOk = 0; refOk3 = 0; refOk10 = 0; renderRef(); }; }
 renderRef(); renderBadges();
 </script>
 
@@ -3957,6 +3963,8 @@ loadPsyPosts();
 <script>
 // ===================== «Первые шаги» для новичков и подсказка после бонуса =====================
 Object.assign(UZ_EXACT, {
+ "1 друг, сдавший отчёт: +500 ⚡. 3 друга, сдавших по 3 отчёта: ещё +1 000 ⚡. 10 друзей, сдавших по 3 отчёта: ещё +3 500 ⚡. Друг тоже получит +500 ⚡ за свой первый отчёт!": "Hisobot topshirgan 1 do'st: +500 ⚡. 3 tadan hisobot topshirgan 3 do'st: yana +1 000 ⚡. 3 tadan hisobot topshirgan 10 do'st: yana +3 500 ⚡. Do'st ham birinchi hisoboti uchun +500 ⚡ oladi!",
+ "Приведи 3 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 3 ta do'st olib keling", "Приведи 10 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 10 ta do'st olib keling", "Приведи 20 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 20 ta do'st olib keling", "Приведи 30 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 30 ta do'st olib keling",
  "🚀 Первые шаги": "🚀 Birinchi qadamlar", "Выбери челлендж": "Chellenj tanlang", "Начни с одного, остальное потом": "Bittadan boshlang, qolganini keyin",
  "Сдай первый отчёт": "Birinchi hisobotni topshiring", "Фото или видео: получишь искры и опыт": "Rasm yoki video: uchqun va tajriba olasiz",
  "Забери награду за вход": "Kirish mukofotini oling", "Заходи каждый день: на 7-й день подарочный бокс": "Har kuni kiring: 7-kuni sovg'a qutisi",
