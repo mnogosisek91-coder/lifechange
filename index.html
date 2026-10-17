@@ -251,6 +251,19 @@
         .psy-post { border-top:1px solid var(--border-color); padding:10px 0; } .psy-post:first-child { border-top:none; }
         .psy-post h5 { font-size:1rem; margin-bottom:4px; } .psy-post p { color:var(--text-secondary); font-size:0.92rem; line-height:1.55; white-space:pre-line; }
         .psy-post .psy-date { font-size:0.75rem; color:var(--text-secondary); margin-bottom:4px; }
+        .onb-card { max-width:560px; margin:0 auto 1.6rem; text-align:left; background:var(--card-bg); border:1px solid #818cf8; border-radius:14px; padding:14px 16px; }
+        .onb-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:1.02rem; }
+        .onb-head > span { color:var(--text-secondary); font-size:0.9rem; }
+        .onb-x { background:none; border:none; color:var(--text-secondary); cursor:pointer; font-size:1rem; padding:0 4px; margin-left:6px; }
+        .onb-bar { height:6px; border-radius:6px; background:rgba(255,255,255,0.08); overflow:hidden; margin-bottom:10px; }
+        .onb-bar i { display:block; height:100%; width:0; background:linear-gradient(90deg,#818cf8,#f6dc9a); transition:width .3s; }
+        .onb-step { display:flex; align-items:center; gap:12px; padding:10px 8px; border-radius:10px; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+        .onb-step:hover, .onb-step:active { background:rgba(99,102,241,0.14); }
+        .onb-step b { display:block; font-size:0.98rem; } .onb-step small { color:var(--text-secondary); font-size:0.82rem; line-height:1.4; }
+        .onb-step div { flex:1; }
+        .onb-dot { width:30px; height:30px; flex:none; border-radius:50%; border:2px solid #818cf8; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.9rem; }
+        .onb-arrow { color:#a5b4fc; font-size:1.4rem; }
+        .onb-step.done { opacity:0.6; cursor:default; } .onb-step.done .onb-dot { background:#10b981; border-color:#10b981; color:#fff; } .onb-step.done b { text-decoration:line-through; } .onb-step.done .onb-arrow { visibility:hidden; }
         .feature-link { cursor: pointer; transition: transform .15s, border-color .15s; -webkit-tap-highlight-color: transparent; }
         .feature-link:hover, .feature-link:active { transform: translateY(-2px); border-color: #818cf8; }
         .feature-item p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.5; }
@@ -635,6 +648,14 @@
                     <div style="display: flex; gap: 15px; justify-content: center; max-width: 400px; margin: 0 auto 2rem;">
                         <button class="btn" onclick="switchTab('challenges')" data-i18n="btn_start_now">Выбрать челлендж</button>
                         <button class="btn btn-outline" onclick="switchTab('plans')" data-i18n="btn_plans">Тарифы подписки</button>
+                    </div>
+
+                    <div class="onb-card" id="onbCard" style="display:none">
+                        <div class="onb-head"><b>🚀 Первые шаги</b><span><span id="onbCount">0 / 3</span> <button type="button" class="onb-x" onclick="onbHide()" aria-label="Скрыть">✕</button></span></div>
+                        <div class="onb-bar"><i id="onbFill"></i></div>
+                        <div class="onb-step" id="onb1" role="button" tabindex="0" onclick="onbGo(1)"><span class="onb-dot">1</span><div><b>Выбери челлендж</b><small>Начни с одного, остальное потом</small></div><span class="onb-arrow">›</span></div>
+                        <div class="onb-step" id="onb2" role="button" tabindex="0" onclick="onbGo(2)"><span class="onb-dot">2</span><div><b>Сдай первый отчёт</b><small>Фото или видео: получишь искры и опыт</small></div><span class="onb-arrow">›</span></div>
+                        <div class="onb-step" id="onb3" role="button" tabindex="0" onclick="onbGo(3)"><span class="onb-dot">3</span><div><b>Забери награду за вход</b><small>Заходи каждый день: на 7-й день подарочный бокс</small></div><span class="onb-arrow">›</span></div>
                     </div>
 
                     <div class="features-grid">
@@ -3923,6 +3944,47 @@ function recordPsyBooking(attempt) {
     _sb(); recordPsyBooking();
   }; }
 loadPsyPosts();
+</script>
+<script>
+// ===================== «Первые шаги» для новичков и подсказка после бонуса =====================
+Object.assign(UZ_EXACT, {
+ "🚀 Первые шаги": "🚀 Birinchi qadamlar", "Выбери челлендж": "Chellenj tanlang", "Начни с одного, остальное потом": "Bittadan boshlang, qolganini keyin",
+ "Сдай первый отчёт": "Birinchi hisobotni topshiring", "Фото или видео: получишь искры и опыт": "Rasm yoki video: uchqun va tajriba olasiz",
+ "Забери награду за вход": "Kirish mukofotini oling", "Заходи каждый день: на 7-й день подарочный бокс": "Har kuni kiring: 7-kuni sovg'a qutisi",
+ "Бонус получен! Теперь выберите челлендж и заработайте ещё. Перейти к выбору?": "Bonus olindi! Endi chellenj tanlang va yana uchqun ishlang. Tanlashga o'tamizmi?"
+});
+function onbSteps() {
+  const d1 = activeChallenges.size > 0 || histDays.size > 0 || reportedToday.size > 0;
+  const d2 = histDays.size > 0 || reportedToday.size > 0;
+  const d3 = dailyCount > 0 || dailyClaimed;
+  return [d1, d2, d3];
+}
+function onbStaff() { return (typeof isAdmin !== 'undefined' && isAdmin) || (typeof isPsy !== 'undefined' && isPsy); }
+function renderOnboarding() {
+  const card = document.getElementById('onbCard'); if(!card) return;
+  let hidden = false; try { hidden = localStorage.getItem('lc_onb_hide') === '1'; } catch(e) {}
+  const st = user ? onbSteps() : [false, false, false], n = st.filter(Boolean).length;
+  card.style.display = (hidden || onbStaff() || n === 3) ? 'none' : '';
+  document.getElementById('onbCount').textContent = n + ' / 3';
+  document.getElementById('onbFill').style.width = Math.round(n / 3 * 100) + '%';
+  st.forEach((v, i) => document.getElementById('onb' + (i + 1)).classList.toggle('done', v));
+}
+function onbHide() { try { localStorage.setItem('lc_onb_hide', '1'); } catch(e) {} renderOnboarding(); }
+function onbGo(n) {
+  if(!user) return authBtnClick();
+  if(onbSteps()[n - 1]) return;
+  if(n === 3) return claimDailyReward();
+  switchTab('challenges');
+}
+document.querySelectorAll('.onb-step').forEach(el => el.addEventListener('keydown', e => { if(e.key === 'Enter') el.click(); }));
+{ const _su = syncUI; syncUI = function() { _su.apply(this, arguments); renderOnboarding(); }; }
+{ const _sw3 = switchTab; switchTab = function(t) { _sw3(t); if(t === 'home') renderOnboarding(); }; }
+// после бонуса за канал подсказываем следующий шаг
+{ const _cs = checkChannelSub; checkChannelSub = async function() {
+    const before = channelBonus; await _cs.apply(this, arguments);
+    if(!before && channelBonus && !onbSteps()[0] && confirm('Бонус получен! Теперь выберите челлендж и заработайте ещё. Перейти к выбору?')) switchTab('challenges');
+  }; }
+renderOnboarding();
 </script>
 <script>
 /* Повторная загрузка состояния после полной загрузки страницы: на медленном старте вход мог восстановиться раньше, чем подключился код администратора, и кнопка «Админ-панель» не появлялась. */
