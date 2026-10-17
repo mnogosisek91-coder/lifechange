@@ -539,6 +539,13 @@
         .ref-card { margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(99,102,241,0.16), rgba(245,158,11,0.12)); border-color: rgba(245,158,11,0.45); }
         .ref-prize { display: flex; align-items: center; gap: 12px; margin: 0.6rem 0 1rem; color: var(--text-secondary); font-size: 0.9rem; }
         .ref-big { flex: 0 0 auto; font-size: 1.5rem; font-weight: 800; color: var(--gold-color); background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.4); border-radius: 12px; padding: 10px 12px; }
+        .ref-ladder { display:flex; flex-direction:column; gap:8px; margin:0 0 10px; }
+        .ref-ladder .rl { display:flex; align-items:center; gap:12px; background:rgba(15,23,42,0.55); border:1px solid var(--border-color); border-radius:12px; padding:10px 14px; }
+        .ref-ladder .rl i { font-style:normal; font-size:1.5rem; }
+        .ref-ladder .rl div { flex:1; text-align:left; } .ref-ladder .rl b { display:block; font-size:1rem; color:#fff; } .ref-ladder .rl small { color:var(--text-secondary); font-size:0.78rem; }
+        .ref-ladder .rl em { font-style:normal; font-weight:800; color:var(--gold-color); white-space:nowrap; font-size:0.95rem; }
+        .ref-ladder .rl b { white-space:nowrap; } .ref-ladder .rl { gap:10px; padding:10px 12px; } .ref-ladder .rl i { font-size:1.3rem; }
+        .ref-friend { margin:0 0 14px; color:var(--text-secondary); font-size:0.85rem; text-align:center; }
         .ref-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
         .ref-stats div { text-align: center; background: rgba(15,23,42,0.55); border: 1px solid var(--border-color); border-radius: 10px; padding: 10px 4px; }
         .ref-stats b { display: block; font-size: 1.4rem; color: #fff; }
@@ -963,10 +970,10 @@
         <div id="tab-leaderboard" class="tab-content">
             <div class="page-banner">
                 <h2 style="margin-bottom: 0.5rem; text-align: center;">🏆 Топ Лидеров Недели</h2>
-                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Зарабатывайте искры за выполнение челленджей и поднимайтесь в рейтинге Ташкента!</p>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Зарабатывайте искры за выполнение челленджей и поднимайтесь в рейтинге Ташкента!<br><small>В рейтинге считаются искры, заработанные за 7 дней. Траты в магазине не вычитаются, поэтому цифра может быть больше вашего баланса.</small></p>
 
                 <div style="max-width: 750px; margin: 0 auto;">
-<div class="pcard" style="border-color: var(--gold-color); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;"><div>👤 Ваш результат: <b id="profileNameDisplay">Вы</b></div><div><b id="leaderboardUserPoints" style="color:#f6dc9a">0 ⚡</b> &nbsp;·&nbsp; <span id="lbUserStreak">🔥 Стрик: 0 дн.</span></div></div>
+<div class="pcard" style="border-color: var(--gold-color); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;"><div>👤 <span>Ваш баланс:</span> <b id="profileNameDisplay">Вы</b></div><div><b id="leaderboardUserPoints" style="color:#f6dc9a">0 ⚡</b> &nbsp;·&nbsp; <span id="lbUserStreak">🔥 Стрик: 0 дн.</span></div></div>
                     <p class="notice lb-empty" style="margin:1rem auto;">Рейтинг загружается…</p></div>
             </div>
         </div>
@@ -1441,7 +1448,13 @@
 
                 <div class="card ref-card" id="refCard">
                     <h3>🔗 Реферальная программа «Пригласи друга»</h3>
-                    <div class="ref-prize"><span class="ref-big">до +5 000 ⚡</span><span>1 друг, сдавший отчёт: +500 ⚡. 3 друга, сдавших по 3 отчёта: ещё +1 000 ⚡. 10 друзей, сдавших по 3 отчёта: ещё +3 500 ⚡. Друг тоже получит +500 ⚡ за свой первый отчёт!</span></div>
+                    <div class="ref-prize"><span class="ref-big">до +5 000 ⚡</span><span>Зови друзей, получай искры за каждый шаг</span></div>
+                    <div class="ref-ladder">
+                        <div class="rl"><i>🤝</i><div><b>1 друг</b><small>сдал отчёт</small></div><em>+500 ⚡</em></div>
+                        <div class="rl"><i>👫</i><div><b>3 друга</b><small>по 3 отчёта</small></div><em>+1 000 ⚡</em></div>
+                        <div class="rl"><i>👥</i><div><b>10 друзей</b><small>по 3 отчёта</small></div><em>+3 500 ⚡</em></div>
+                    </div>
+                    <p class="ref-friend">🎁 Друг тоже получит +500 ⚡ за свой первый отчёт</p>
                     <div class="ref-stats">
                         <div><b id="refInvited">0</b><small>Позвали друзей</small></div>
                         <div><b id="refOk">0</b><small>Сдали отчёт</small></div>
@@ -3963,6 +3976,7 @@ loadPsyPosts();
 <script>
 // ===================== «Первые шаги» для новичков и подсказка после бонуса =====================
 Object.assign(UZ_EXACT, {
+ "Ваш баланс:": "Sizning balansingiz:", "В рейтинге считаются искры, заработанные за 7 дней. Траты в магазине не вычитаются, поэтому цифра может быть больше вашего баланса.": "Reytingda 7 kun ichida ishlangan uchqunlar hisoblanadi. Do'kondagi xarajatlar ayirilmaydi, shuning uchun raqam balansingizdan katta bo'lishi mumkin.", "Зови друзей, получай искры за каждый шаг": "Do'stlarni taklif qiling, har qadam uchun uchqun oling", "1 друг": "1 ta do'st", "сдал отчёт": "hisobot topshirgan", "3 друга": "3 ta do'st", "по 3 отчёта": "3 tadan hisobot", "10 друзей": "10 ta do'st", "🎁 Друг тоже получит +500 ⚡ за свой первый отчёт": "🎁 Do'st ham birinchi hisoboti uchun +500 ⚡ oladi",
  "1 друг, сдавший отчёт: +500 ⚡. 3 друга, сдавших по 3 отчёта: ещё +1 000 ⚡. 10 друзей, сдавших по 3 отчёта: ещё +3 500 ⚡. Друг тоже получит +500 ⚡ за свой первый отчёт!": "Hisobot topshirgan 1 do'st: +500 ⚡. 3 tadan hisobot topshirgan 3 do'st: yana +1 000 ⚡. 3 tadan hisobot topshirgan 10 do'st: yana +3 500 ⚡. Do'st ham birinchi hisoboti uchun +500 ⚡ oladi!",
  "Приведи 3 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 3 ta do'st olib keling", "Приведи 10 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 10 ta do'st olib keling", "Приведи 20 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 20 ta do'st olib keling", "Приведи 30 друзей, сдавших по 3 отчёта": "3 tadan hisobot topshirgan 30 ta do'st olib keling",
  "🚀 Первые шаги": "🚀 Birinchi qadamlar", "Выбери челлендж": "Chellenj tanlang", "Начни с одного, остальное потом": "Bittadan boshlang, qolganini keyin",
