@@ -4036,6 +4036,42 @@ setTimeout(() => {
 }, 1500);
 </script>
 <script>
+// ===================== Системная кнопка «Назад»: вкладки и окна =====================
+(function(){
+  if(!window.history || !history.pushState) return;
+  let cur = 'home', fromPop = false, modalPushed = false, ignorePop = false;
+  try { history.replaceState({lc:1, tab:'home'}, ''); } catch(e) { return; }
+  const anyModal = () => [...document.querySelectorAll('.modal')].some(m => getComputedStyle(m).display !== 'none');
+  const _st = switchTab;
+  switchTab = function(t) {
+    _st(t);
+    if(fromPop || t === cur) return;
+    cur = t;
+    try { history.pushState({lc:1, tab:t}, ''); } catch(e) {}
+  };
+  window.addEventListener('popstate', function(e) {
+    if(ignorePop) { ignorePop = false; return; }
+    if(modalPushed && anyModal()) {
+      modalPushed = false;
+      document.querySelectorAll('.modal').forEach(m => { m.style.display = 'none'; });
+      return;
+    }
+    const t = (e.state && e.state.tab) || 'home';
+    fromPop = true; try { cur = t; _st(t); } finally { fromPop = false; }
+  });
+  new MutationObserver(function() {
+    const v = anyModal();
+    if(v && !modalPushed) {
+      modalPushed = true;
+      try { history.pushState({lc:1, tab:cur, modal:1}, ''); } catch(e) {}
+    } else if(!v && modalPushed) {
+      modalPushed = false;
+      if(history.state && history.state.modal) { ignorePop = true; history.back(); }
+    }
+  }).observe(document.body, {subtree:true, attributes:true, attributeFilter:['style','class']});
+})();
+</script>
+<script>
 /* Повторная загрузка состояния после полной загрузки страницы: на медленном старте вход мог восстановиться раньше, чем подключился код администратора, и кнопка «Админ-панель» не появлялась. */
 window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefined' && sbUid && typeof hydrate === 'function') hydrate(); } catch(e) {} });
 </script>
