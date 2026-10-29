@@ -1258,10 +1258,13 @@
         </div>
     </div>
 
-    <div id="tab-letter" class="tab-content"><div class="page-banner" style="text-align:center;">
-        <h2 style="margin-bottom:6px;">✉️ Письмо себе</h2>
-        <p style="color:var(--text-secondary);max-width:640px;margin:0 auto 1rem;line-height:1.55;">Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.</p>
-        <p style="max-width:640px;margin:0 auto;padding:10px 14px;border-radius:12px;background:rgba(124,58,237,.16);line-height:1.5;font-size:.92rem;color:#ddd6fe;">💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце. А за выполненную аскезу ты получаешь искры: срок × 4 (например, 30 дней = 120 искр).</p>
+    <div id="tab-letter" class="tab-content"><div class="page-banner" style="text-align:center;padding:1.2rem 1rem;">
+        <h2 style="margin-bottom:10px;">✉️ Письмо себе</h2>
+        <details style="max-width:640px;margin:0 auto;text-align:left;border:1.5px solid #fbbf24;border-radius:12px;background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(244,114,182,.12));padding:10px 14px;box-shadow:0 0 16px rgba(251,191,36,.28);">
+            <summary style="cursor:pointer;font-weight:700;color:#fef3c7;"><span style="display:inline-block;background:linear-gradient(90deg,#fbbf24,#fb923c);color:#2a1500;font-size:.72rem;font-weight:800;letter-spacing:.5px;padding:2px 8px;border-radius:99px;margin-right:6px;vertical-align:middle;">ВАЖНО</span>Что такое аскеза и как это работает <span style="font-weight:500;font-size:.8rem;color:#fcd34d;">· прочти перед началом</span></summary>
+            <p style="color:var(--text-secondary);line-height:1.55;margin:10px 0 8px;font-size:.92rem;">Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.</p>
+            <p style="line-height:1.5;font-size:.92rem;color:#ddd6fe;">💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце. А за выполненную аскезу ты получаешь искры: срок × 4 (например, 30 дней = 120 искр).</p>
+        </details>
     </div>
     <div id="letterBody" style="max-width:640px;margin:0 auto;text-align:left;"></div>
     </div>
@@ -4377,6 +4380,7 @@ setTimeout(() => {
     'Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.': "Majburiy emas, lekin shunda kuchliroq: bu askeza evaziga nimani so'rayotganingizni yozing. Buni oxirida ko'rasiz.",
     'Ты прошёл аскезу, теперь можешь просить. Сделай сегодня первый шаг к своему желанию.': "Siz askezadan o'tdingiz, endi so'rashingiz mumkin. Bugun istagingiz sari birinchi qadamni qiling.",
     'Чтобы запечатать письмо, понадобится войти в аккаунт': "Xatni muhrlash uchun hisobga kirish kerak",
+    'ВАЖНО': 'MUHIM', 'Что такое аскеза и как это работает': 'Askeza nima va bu qanday ishlaydi', '· прочти перед началом': "· boshlashdan oldin o'qing",
     '✊ Отлично, день засчитан': "✊ Ajoyib, kun hisoblandi"
   });
   try { Object.assign(UZ_EXACT, U); UZ_PAT.unshift(
