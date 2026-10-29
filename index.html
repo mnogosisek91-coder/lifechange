@@ -648,6 +648,7 @@
         <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
         <div id="tab-home" class="tab-content active">
         <div class="bonus-strip" id="bonusStrip"><span>🎁 Подпишитесь на наш Telegram-канал и получите <b>+500 искр</b>: там идут розыгрыши искр!</span><button class="btn btn-gold" style="width:auto;" onclick="claimChannelBonus()">Получить 500 искр</button></div>
+        <div class="bonus-strip" id="letterStrip" style="border-color:#a78bfa;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(236,72,153,.12))"><span id="letterStripText">✉️ <b>Письмо себе</b>: выбери аскезу, запечатай письмо и открой его в конце срока</span><button class="btn btn-gold" style="width:auto;" id="letterStripBtn" onclick="switchTab('letter')">Написать</button></div>
         
             <div class="page-banner">
                 <section class="hero-section">
@@ -1257,6 +1258,14 @@
         </div>
     </div>
 
+    <div id="tab-letter" class="tab-content"><div class="page-banner" style="text-align:center;">
+        <h2 style="margin-bottom:6px;">✉️ Письмо себе</h2>
+        <p style="color:var(--text-secondary);max-width:640px;margin:0 auto 1rem;line-height:1.55;">Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.</p>
+        <p style="max-width:640px;margin:0 auto;padding:10px 14px;border-radius:12px;background:rgba(124,58,237,.16);line-height:1.5;font-size:.92rem;color:#ddd6fe;">💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце.</p>
+    </div>
+    <div id="letterBody" style="max-width:640px;margin:0 auto;text-align:left;"></div>
+    </div>
+
     <div id="tab-expander" class="tab-content"><div class="page-banner">
         <button class="btn btn-outline" style="width:auto; margin-bottom:1rem;" onclick="switchTab('shop')">← К наградам</button>
         <h2 style="text-align:center; margin-bottom:0.4rem;">💪 Кистевой эспандер LifeChange</h2>
@@ -1529,6 +1538,7 @@
             <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('profile')">👤 Профиль</button>
             <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('community')">👥 Сообщество</button>
             <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('plans')">💎 Тарифы</button>
+            <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('letter')">✉️ Письмо себе</button>
             <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('expander')">💪 Эспандер</button>
             <button class="btn btn-outline" onclick="closeModal('moreModal'); switchTab('about')">ℹ️ О нас</button>
             <button class="btn btn-outline" onclick="closeModal('moreModal'); joinChannel()">📣 Наш канал</button>
@@ -4329,6 +4339,164 @@ setTimeout(() => {
   }
   const _a = applyState; applyState = function(st) { _a(st); setTimeout(check, 1500); };
   setTimeout(check, 3000);
+})();
+</script>
+<script>
+// ===================== «Письмо себе» + аскеза =====================
+(function(){
+  const $ = id => document.getElementById(id);
+  const PRESETS = ['Без сладкого', 'Без соцсетей', 'Подъём в 6 утра', 'Без сигарет и вейпа', 'Без фастфуда', 'Без алкоголя', 'Без жалоб'];
+  const DAYS = [7, 14, 30, 60];
+  let ST = null, form = { asc: '', days: 30, body: '', wish: '' }, opened = null, confirmGive = false, result = null, busyL = false;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const dword = n => { const a = Math.abs(n) % 100, b = a % 10; return (a > 10 && a < 20) ? 'дней' : b === 1 ? 'день' : (b > 1 && b < 5) ? 'дня' : 'дней'; };
+  const fmt = iso => { try { return new Date(iso + 'T00:00:00').toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }); } catch(e) { return iso; } };
+  const errTxt = e => { const m = String((e && e.message) || e); return /already_active/.test(m) ? 'У тебя уже есть запечатанное письмо' : /bad_ascesis/.test(m) ? 'Коротко назови аскезу (3–80 символов)' : /bad_body/.test(m) ? 'Письмо слишком короткое: напиши хотя бы пару предложений' : /too_early/.test(m) ? 'Ещё рано: письмо откроется в последний день' : 'Не получилось, попробуй позже'; };
+  const U = {
+    'Письмо себе': 'O\'zingizga xat', 'Написать': 'Yozish', 'Открыть письмо': 'Xatni ochish',
+    'Запечатать письмо': 'Xatni muhrlash', 'Твоя аскеза': 'Sizning askezangiz', 'Срок': 'Muddat', 'Письмо себе в будущее': 'Kelajakdagi o\'zingizga xat',
+    'Письмо запечатано': 'Xat muhrlandi', 'Держусь сегодня': 'Bugun bardoshliman', 'Сегодня отмечено': 'Bugun belgilandi', 'Сдаться': 'Taslim bo\'lish',
+    'Да, сдаюсь': 'Ha, taslim bo\'laman', 'Справился': 'Uddaladim', 'Сорвался': 'Uddalay olmadim', 'История': 'Tarix', 'Письмо готово к открытию': 'Xat ochishga tayyor',
+    'Не получилось, попробуй позже': 'Bo\'lmadi, keyinroq urinib ko\'ring', 'Письмо запечатано. Увидимся в последний день': 'Xat muhrlandi. Oxirgi kunda ko\'rishamiz',
+    'Напиши своё письмо': 'Xatingizni yozing', 'Назови аскезу': 'Askezani nomlang', 'Или свою': 'Yoki o\'zingiznikini',
+    'Зачем ты это делаешь? Что чувствуешь сейчас? Чего хочешь добиться? Что напомнить себе, когда будет тяжело?': 'Nima uchun buni qilyapsiz? Hozir qanday his qilyapsiz? Nimaga erishmoqchisiz? Qiyin bo\'lganda o\'zingizga nimani eslatasiz?',
+    'Назад': 'Orqaga'
+  };
+  Object.assign(U, {
+    '✉️ Письмо себе': "✉️ O'zingizga xat",
+    'Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.': "Muddatga askeza oling: nimadandir voz kechasiz yoki har kuni nimadir qilasiz. O'zingizga xat yozing: buni nima uchun qilyapsiz. U muddat oxirigacha yopiq turadi. Oxirgi kuni uni ochib, o'z so'zlaringizni ko'rasiz.",
+    ': выбери аскезу, запечатай письмо и открой его в конце срока': ": askezani tanlang, xatni muhrlang va muddat oxirida oching",
+    'Войди в аккаунт, чтобы написать письмо себе': "O'zingizga xat yozish uchun hisobingizga kiring",
+    'Без сладкого': "Shirinliksiz", 'Без соцсетей': "Ijtimoiy tarmoqlarsiz", 'Подъём в 6 утра': "Ertalab 6 da turish", 'Без сигарет и вейпа': "Sigaret va veypsiz", 'Без фастфуда': "Fastfudsiz", 'Без алкоголя': "Alkogolsiz", 'Без жалоб': "Shikoyatsiz",
+    'После отправки письмо закроется: прочитать его можно будет только в последний день.': "Yuborilgandan keyin xat yopiladi: uni faqat oxirgi kuni o'qish mumkin.",
+    '🔒 Запечатать письмо': '🔒 Xatni muhrlash', '✊ Держусь сегодня': '✊ Bugun bardoshliman', '✅ Сегодня отмечено': '✅ Bugun belgilandi', '📬 Открыть письмо': '📬 Xatni ochish', '✅ Справился': '✅ Uddaladim',
+    'Ты справился?': 'Uddaladingizmi?', 'Срок вышел. Открой письмо и посмотри, что ты написал себе': "Muddat tugadi. Xatni oching va o'zingizga nima yozganingizni ko'ring",
+    'Твоя аскеза: ': 'Sizning askezangiz: ', 'Сдаться': "Taslim bo'lish", 'Это тоже опыт. Начни заново, когда будешь готов': "Bu ham tajriba. Tayyor bo'lganda qaytadan boshlang",
+    '💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце.': "💡 Askeza: biror narsadan ixtiyoriy voz kechish yoki muddatga majburiyat. Masalan: 30 kun shirinliksiz, ijtimoiy tarmoqlarsiz yoki ertalab 6 da turish. Askezaga chidasangiz, eng aziz narsani so'rashga haqli bo'lasiz: istak xatda yoziladi va oxirida sizni kutadi.",
+    '🌟 Моё желание': '🌟 Mening istagim', 'Чего ты просишь за свою аскезу?': "Askezangiz evaziga nimani so'raysiz?",
+    'Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.': "Majburiy emas, lekin shunda kuchliroq: bu askeza evaziga nimani so'rayotganingizni yozing. Buni oxirida ko'rasiz.",
+    'Ты прошёл аскезу, теперь можешь просить. Сделай сегодня первый шаг к своему желанию.': "Siz askezadan o'tdingiz, endi so'rashingiz mumkin. Bugun istagingiz sari birinchi qadamni qiling.",
+    '✊ Отлично, день засчитан': "✊ Ajoyib, kun hisoblandi"
+  });
+  try { Object.assign(UZ_EXACT, U); UZ_PAT.unshift(
+    [/^(\d+) (?:день|дня|дней)$/, m => `${m[1]} kun`],
+    [/^Ты справился! \+(\d+) искр$/, m => `Uddaladingiz! +${m[1]} uchqun`],
+    [/^Ты писал это (\d+) (?:день|дня|дней) назад\. $/, m => `Siz buni ${m[1]} kun oldin yozgansiz. `]
+  ); } catch(e) {}
+  try { UZ_PAT.unshift(
+    [/^Осталось (\d+) (?:день|дня|дней)$/, m => `${m[1]} kun qoldi`],
+    [/^Награда: \+(\d+) искр, если отметишь не меньше (\d+) (?:день|дня|дней)$/, m => `Mukofot: +${m[1]} uchqun, agar kamida ${m[2]} kun belgilasangiz`],
+    [/^Отмечено дней: (\d+) из (\d+)$/, m => `Belgilangan kunlar: ${m[1]} / ${m[2]}`],
+    [/^📬 Письмо ждёт тебя$/, m => '📬 Xat sizni kutmoqda'],
+    [/^✉️ Письмо запечатано до (.+)$/, m => `✉️ Xat ${m[1]} gacha muhrlangan`],
+    [/^🎉 Ты справился! \+(\d+) искр$/, m => `🎉 Uddaladingiz! +${m[1]} uchqun`]
+  ); } catch(e) {}
+
+  async function load() {
+    if(typeof sbUid === 'undefined' || !sbUid) { ST = null; render(); return; }
+    try { ST = await rpc('letter_state'); } catch(e) { console.warn('letter_state', e); }
+    render(); strip();
+  }
+  function strip() {
+    const t = $('letterStripText'), b = $('letterStripBtn'); if(!t || !b) return;
+    const a = ST && ST.active;
+    if(a && a.ready) { t.innerHTML = '📬 <b>Письмо ждёт тебя</b>'; b.textContent = 'Открыть письмо'; }
+    else if(a) { t.innerHTML = '✉️ Письмо запечатано до ' + fmt(a.unlock_day); b.textContent = 'Отметить день'; }
+    else { t.innerHTML = '✉️ <b>Письмо себе</b>: выбери аскезу, запечатай письмо и открой его в конце срока'; b.textContent = 'Написать'; }
+  }
+  function render() {
+    const root = $('letterBody'); if(!root) return;
+    if(typeof sbUid === 'undefined' || !sbUid) { root.innerHTML = '<div class="card" style="text-align:center"><p style="margin-bottom:12px">Войди в аккаунт, чтобы написать письмо себе</p><button class="btn btn-gold" style="width:auto" onclick="requireAuth()">Войти</button></div>'; return; }
+    const a = ST && ST.active; let html = '';
+    if(result) {
+      html += '<div class="card" style="text-align:center;border-color:' + (result.status === 'kept' ? 'var(--gold-color)' : '#a78bfa') + '">'
+        + '<div style="font-size:2.6rem">' + (result.status === 'kept' ? (result.reward > 0 ? '🏆' : '✅') : '🌱') + '</div>'
+        + '<h3 style="margin:6px 0">' + (result.status === 'kept' ? (result.reward > 0 ? 'Ты справился! +' + result.reward + ' искр' : 'Ты справился') : 'Это тоже опыт. Начни заново, когда будешь готов') + '</h3>'
+        + (result.status === 'kept' && !result.reward ? '<p style="color:var(--text-secondary);font-size:.9rem">Искры не начислены: отмечено ' + result.marks + ' дней, нужно было не меньше ' + result.need + '. В следующий раз отмечай каждый день.</p>' : '')
+        + '<div style="margin-top:10px;text-align:left;padding:14px;border-radius:12px;background:rgba(124,58,237,.14);white-space:pre-wrap;line-height:1.55" id="resBody"></div>'
+        + (result.wish ? '<div style="margin-top:10px;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--gold-color);background:rgba(245,158,11,.08)"><div style="color:var(--gold-color);font-size:.82rem;margin-bottom:4px">🌟 Моё желание</div><div id="resWish" style="white-space:pre-wrap;line-height:1.5"></div>' + (result.status === 'kept' ? '<p style="margin-top:8px;color:#fde68a;font-size:.88rem">Ты прошёл аскезу, теперь можешь просить. Сделай сегодня первый шаг к своему желанию.</p>' : '') + '</div>' : '')
+        + '<button class="btn btn-outline" style="width:auto;margin-top:12px" onclick="letterReset()">Назад</button></div>';
+    } else if(opened) {
+      html += '<div class="card" style="border-color:#a78bfa"><div style="color:#c4b5fd;font-size:.85rem;margin-bottom:6px">Ты писал это ' + opened.days + ' ' + dword(opened.days) + ' назад. Твоя аскеза: <b>' + esc(opened.ascesis) + '</b></div>'
+        + '<div id="openBody" style="padding:14px;border-radius:12px;background:rgba(124,58,237,.14);white-space:pre-wrap;line-height:1.6;margin-bottom:12px"></div>'
+        + (opened.wish ? '<div style="padding:12px 14px;border-radius:12px;border:1px solid var(--gold-color);background:rgba(245,158,11,.08);margin-bottom:14px"><div style="color:var(--gold-color);font-size:.82rem;margin-bottom:4px">🌟 Моё желание</div><div id="openWish" style="white-space:pre-wrap;line-height:1.5"></div></div>' : '')
+        + '<p style="text-align:center;margin-bottom:10px;font-weight:700">Ты справился?</p>'
+        + '<div style="display:flex;gap:10px;flex-wrap:wrap"><button class="btn btn-gold" style="flex:1;min-width:140px" onclick="letterFinish(true)">✅ Справился</button><button class="btn btn-outline" style="flex:1;min-width:140px" onclick="letterFinish(false)">Сорвался</button></div>'
+        + '<p style="color:var(--text-secondary);font-size:.8rem;margin-top:10px;text-align:center">Награда: +' + opened.reward + ' искр, если отмечено не меньше ' + opened.need + ' ' + dword(opened.need) + ' (у тебя ' + opened.marks + ')</p></div>';
+    } else if(a) {
+      const done = Math.min(a.days, a.days - a.left), pct = Math.round(done / a.days * 100);
+      html += '<div class="card" style="text-align:center;border-color:#a78bfa">'
+        + '<div style="font-size:3rem">' + (a.ready ? '📬' : '✉️') + '</div>'
+        + '<h3 style="margin:4px 0">' + (a.ready ? 'Письмо готово к открытию' : 'Письмо запечатано') + '</h3>'
+        + '<p style="color:#c4b5fd;margin-bottom:4px">Твоя аскеза: <b>' + esc(a.ascesis) + '</b></p>'
+        + '<p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:10px">' + (a.ready ? 'Срок вышел. Открой письмо и посмотри, что ты написал себе' : 'Осталось ' + a.left + ' ' + dword(a.left)) + '</p>'
+        + '<div style="height:10px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-bottom:6px"><div style="height:100%;width:' + pct + '%;background:linear-gradient(90deg,#a78bfa,#f472b6)"></div></div>'
+        + '<p style="color:var(--text-secondary);font-size:.82rem;margin-bottom:14px">Отмечено дней: ' + a.marks + ' из ' + a.days + '</p>'
+        + (a.ready ? '<button class="btn btn-gold" onclick="letterOpen()">📬 Открыть письмо</button>'
+          : (a.marked_today ? '<button class="btn btn-outline" disabled style="opacity:.7">✅ Сегодня отмечено</button>' : '<button class="btn btn-gold" onclick="letterMark()">✊ Держусь сегодня</button>')
+            + '<p style="color:var(--text-secondary);font-size:.78rem;margin-top:10px">Награда: +' + a.reward + ' искр, если отметишь не меньше ' + a.need + ' ' + dword(a.need) + '</p>'
+            + (confirmGive ? '<div style="margin-top:12px"><button class="btn btn-outline" style="width:auto" onclick="letterFinish(false)">Да, сдаюсь</button> <button class="btn btn-outline" style="width:auto" onclick="letterGive(false)">Назад</button></div>'
+              : '<button style="margin-top:12px;background:none;border:none;color:#a5b4fc;cursor:pointer;font-size:.85rem" onclick="letterGive(true)">Сдаться</button>'))
+        + '</div>';
+    } else {
+      html += '<div class="card"><h3 style="margin-bottom:8px">Назови аскезу</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'
+        + PRESETS.map(p => '<button class="btn btn-outline" style="width:auto;padding:6px 12px;font-size:.85rem;' + (form.asc === p ? 'border-color:var(--gold-color);color:var(--gold-color)' : '') + '" onclick="letterPreset(this.textContent)">' + esc(p) + '</button>').join('') + '</div>'
+        + '<input id="lAsc" maxlength="80" placeholder="Или свою" value="' + esc(form.asc) + '" oninput="letterField(\'asc\',this.value)" style="width:100%;padding:10px;margin-bottom:14px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)">'
+        + '<h3 style="margin-bottom:8px">Срок</h3><div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
+        + DAYS.map(d => '<button class="btn ' + (form.days === d ? 'btn-gold' : 'btn-outline') + '" style="width:auto;padding:8px 14px" onclick="letterDays(' + d + ')">' + d + ' ' + dword(d) + '</button>').join('') + '</div>'
+        + '<p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:14px">Награда: +' + form.days * 4 + ' искр, если отметишь не меньше ' + Math.ceil(form.days * .6) + ' ' + dword(Math.ceil(form.days * .6)) + '</p>'
+        + '<h3 style="margin-bottom:8px">Напиши своё письмо</h3>'
+        + '<textarea id="lBody" rows="8" maxlength="3000" placeholder="Зачем ты это делаешь? Что чувствуешь сейчас? Чего хочешь добиться? Что напомнить себе, когда будет тяжело?" oninput="letterField(\'body\',this.value)" style="width:100%;padding:10px;margin-bottom:6px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.body) + '</textarea>'
+        + '<h3 style="margin:6px 0 4px">Чего ты просишь за свою аскезу?</h3><p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:8px">Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.</p>'
+        + '<textarea id="lWish" rows="3" maxlength="500" placeholder="Например: хочу сдать экзамен, накопить на мечту, наладить отношения" oninput="letterField(\'wish\',this.value)" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.wish) + '</textarea>'
+        + '<p style="color:var(--text-secondary);font-size:.78rem;margin-bottom:14px">После отправки письмо закроется: прочитать его можно будет только в последний день.</p>'
+        + '<button class="btn btn-gold" onclick="letterCreate()">🔒 Запечатать письмо</button></div>';
+    }
+    const hist = (ST && ST.history) || [];
+    if(hist.length && !result && !opened) {
+      html += '<h3 style="margin:22px 0 10px">История</h3>' + hist.map(x => '<details class="card" style="margin-bottom:10px;padding:12px 16px"><summary style="cursor:pointer;font-weight:600">' + (x.status === 'kept' ? '✅' : '🌱') + ' ' + esc(x.ascesis) + ' <span style="color:var(--text-secondary);font-weight:400;font-size:.85rem">· ' + x.days + ' ' + dword(x.days) + (x.reward ? ' · +' + x.reward + ' ⚡' : '') + '</span></summary><div class="hbody" data-b="' + x.id + '" style="margin-top:10px;white-space:pre-wrap;line-height:1.55;color:var(--text-secondary)"></div>' + (x.wish ? '<div class="hwish" data-w="' + x.id + '" style="margin-top:8px;white-space:pre-wrap;color:#fde68a;font-size:.9rem"></div>' : '') + '</details>').join('');
+    }
+    root.innerHTML = html;
+    if(result) { const r = $('resBody'); if(r) r.textContent = result.body; const w = $('resWish'); if(w) w.textContent = result.wish || ''; }
+    if(opened) { const o = $('openBody'); if(o) o.textContent = opened.body; const w = $('openWish'); if(w) w.textContent = opened.wish || ''; }
+    hist.forEach(x => { const el = root.querySelector('.hbody[data-b="' + x.id + '"]'); if(el) el.textContent = x.body; const w = root.querySelector('.hwish[data-w="' + x.id + '"]'); if(w) w.textContent = '🌟 ' + x.wish; });
+  }
+  window.letterField = (k, v) => { form[k] = v; };
+  window.letterPreset = t => { form.asc = t; const i = $('lAsc'); if(i) i.value = t; render(); };
+  window.letterDays = d => { form.days = d; render(); };
+  window.letterGive = v => { confirmGive = v; render(); };
+  window.letterReset = () => { result = null; opened = null; load(); };
+  window.letterCreate = async () => {
+    if(!requireAuth() || busyL) return; busyL = true;
+    try { await rpc('letter_create', { p_ascesis: form.asc, p_days: form.days, p_body: form.body, p_wish: form.wish }); form = { asc: '', days: 30, body: '', wish: '' }; toast('Письмо запечатано. Увидимся в последний день'); await load(); }
+    catch(e) { toast(errTxt(e)); }
+    busyL = false;
+  };
+  window.letterMark = async () => {
+    if(busyL) return; busyL = true;
+    try { await rpc('letter_mark'); toast('✊ Отлично, день засчитан'); await load(); } catch(e) { toast(errTxt(e)); }
+    busyL = false;
+  };
+  window.letterOpen = async () => {
+    if(busyL) return; busyL = true;
+    try { opened = await rpc('letter_open'); render(); window.scrollTo(0, 0); } catch(e) { toast(errTxt(e)); }
+    busyL = false;
+  };
+  window.letterFinish = async kept => {
+    if(busyL) return; busyL = true;
+    try {
+      const r = await rpc('letter_finish', { p_kept: !!kept });
+      result = r; opened = null; confirmGive = false;
+      if(r.points != null) { points = r.points; syncUI(); }
+      if(r.reward > 0) toast('🎉 Ты справился! +' + r.reward + ' искр');
+      render(); window.scrollTo(0, 0); strip();
+    } catch(e) { toast(errTxt(e)); }
+    busyL = false;
+  };
+  const _sw = switchTab; switchTab = function(id) { _sw(id); if(id === 'letter') { result = null; opened = null; load(); } };
+  const _ap = applyState; applyState = function(st) { _ap(st); setTimeout(load, 900); };
+  const sb0 = $('letterStripBtn'); if(sb0) sb0.onclick = () => { if(ST && ST.active && !ST.active.ready) { switchTab('letter'); } else switchTab('letter'); };
+  render();
 })();
 </script>
 <script>
