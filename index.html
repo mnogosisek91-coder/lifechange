@@ -4289,25 +4289,46 @@ setTimeout(() => {
 })();
 </script>
 <script>
-// Праздничный бонус Хэллоуина: +100 искр за вход, раз в день (сервер проверяет дату и повтор)
+// Праздничный бонус Хэллоуина: +100 искр, нужно нажать «Забрать» (раз в день; сервер проверяет дату и повтор)
 (function(){
   const md = String(new Date().getMonth() + 1).padStart(2, '0') + '-' + String(new Date().getDate()).padStart(2, '0');
   if(!(md >= '10-29' || md === '11-01') || (md > '11-01' && md < '10-29')) return;
   if(new URLSearchParams(location.search).get('season') === 'off') return;
-  const MSG = '🎃 Праздничный бонус Хэллоуина: +100 искр';
-  try { UZ_EXACT[MSG] = "🎃 Xellouin bayram bonusi: +100 uchqun"; } catch(e) {}
-  let busy = false, doneDay = '';
-  async function go() {
-    if(busy || doneDay === md || typeof sbUid === 'undefined' || !sbUid) return; busy = true;
-    try {
-      const r = await rpc('claim_event_bonus');
-      doneDay = md;
-      if(r && r.gain > 0) { if(r.points != null) { points = r.points; syncUI(); } setTimeout(() => toast(MSG), 900); }
-    } catch(e) { console.warn('claim_event_bonus', e); }
-    busy = false;
+  const T = { title: 'Праздничный бонус!', sub: 'Хэллоуин в LifeChange: заходи до 1 ноября и забирай искры каждый день', btn: 'Забрать 100 искр', got: '🎃 Бонус получен: +100 искр', later: 'Позже', have: 'Сегодняшний бонус уже получен' };
+  try { Object.assign(UZ_EXACT, { [T.title]: 'Bayram bonusi!', [T.sub]: "LifeChange'da Xellouin: 1-noyabrgacha har kuni kiring va uchqun oling", [T.btn]: '100 uchqunni olish', [T.got]: '🎃 Bonus olindi: +100 uchqun', [T.later]: 'Keyinroq', [T.have]: 'Bugungi bonus allaqachon olingan' }); } catch(e) {}
+  let busy = false, shown = '';
+  const tz = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Tashkent' }).format(new Date());
+  function ask() {
+    if(document.getElementById('hwBonus')) return;
+    const o = document.createElement('div'); o.id = 'hwBonus';
+    o.style.cssText = 'position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;background:rgba(5,3,15,.78);padding:16px';
+    o.innerHTML = '<div style="max-width:340px;width:100%;text-align:center;padding:26px 22px;border-radius:22px;background:linear-gradient(160deg,#2e1065,#1a1033 60%,#7c2d12);border:1px solid rgba(249,115,22,.7);box-shadow:0 0 40px rgba(249,115,22,.35);color:#fff7ed">'
+      + '<div style="font-size:3.2rem;line-height:1;filter:drop-shadow(0 0 12px rgba(251,146,60,.9))">🎃</div>'
+      + '<h3 style="margin:10px 0 6px;font-size:1.35rem;color:#fed7aa">' + T.title + '</h3>'
+      + '<p style="margin:0 0 18px;font-size:.95rem;opacity:.9;line-height:1.4">' + T.sub + '</p>'
+      + '<button id="hwGo" style="width:100%;padding:13px;border:none;border-radius:999px;background:linear-gradient(90deg,#fbbf24,#f97316);color:#1a0f05;font-weight:800;font-size:1.05rem;cursor:pointer">⚡ ' + T.btn + '</button>'
+      + '<button id="hwLater" style="margin-top:10px;background:none;border:none;color:#c4b5fd;cursor:pointer;font-size:.9rem">' + T.later + '</button></div>';
+    document.body.appendChild(o);
+    o.querySelector('#hwLater').onclick = () => o.remove();
+    o.querySelector('#hwGo').onclick = async () => {
+      if(busy) return; busy = true;
+      try {
+        const r = await rpc('claim_event_bonus');
+        o.remove();
+        if(r && r.gain > 0) { if(r.points != null) { points = r.points; syncUI(); } toast(T.got); } else toast(T.have);
+      } catch(e) { console.warn('claim_event_bonus', e); o.remove(); toast('Не получилось, попробуй позже'); }
+      busy = false;
+    };
   }
-  const _a = applyState; applyState = function(st) { _a(st); setTimeout(go, 1500); };
-  setTimeout(go, 3000);
+  async function check() {
+    if(shown === tz || typeof sbUid === 'undefined' || !sbUid || document.getElementById('hwBonus')) return;
+    shown = tz;
+    let claimed = false;
+    try { const { data } = await sb.from('achievements_claimed').select('key').eq('key', 'ev_halloween_' + tz).limit(1); claimed = !!(data && data.length); } catch(e) {}
+    if(!claimed) setTimeout(ask, 1200);
+  }
+  const _a = applyState; applyState = function(st) { _a(st); setTimeout(check, 1500); };
+  setTimeout(check, 3000);
 })();
 </script>
 <script>
