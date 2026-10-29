@@ -4466,14 +4466,14 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     } else {
       html += '<div class="card"><h3 style="margin-bottom:8px">Назови аскезу</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'
         + PRESETS.map(p => '<button class="btn btn-outline" style="width:auto;padding:6px 12px;font-size:.85rem;' + (form.asc === p ? 'border-color:var(--gold-color);color:var(--gold-color)' : '') + '" onclick="letterPreset(this.textContent)">' + esc(p) + '</button>').join('') + '</div>'
-        + '<input id="lAsc" maxlength="80" placeholder="Или свою" value="' + esc(form.asc) + '" oninput="letterField(\'asc\',this.value)" style="width:100%;padding:10px;margin-bottom:14px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)">'
+        + '<input id="lAsc" type="text" name="ascesis_title" autocomplete="off" autocapitalize="sentences" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="80" placeholder="Или свою" value="' + esc(form.asc) + '" oninput="letterField(\'asc\',this.value)" style="width:100%;padding:10px;margin-bottom:14px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)">'
         + '<h3 style="margin-bottom:8px">Срок</h3><div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
         + DAYS.map(d => '<button class="btn ' + (form.days === d ? 'btn-gold' : 'btn-outline') + '" style="width:auto;padding:8px 14px" onclick="letterDays(' + d + ')">' + d + ' ' + dword(d) + '</button>').join('') + '</div>'
         + '<p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:14px">Награда: +' + form.days * 4 + ' искр, если отметишь не меньше ' + Math.ceil(form.days * .6) + ' ' + dword(Math.ceil(form.days * .6)) + '</p>'
         + '<h3 style="margin-bottom:8px">Напиши своё письмо</h3>'
-        + '<textarea id="lBody" rows="8" maxlength="3000" placeholder="Зачем ты это делаешь? Что чувствуешь сейчас? Чего хочешь добиться? Что напомнить себе, когда будет тяжело?" oninput="letterField(\'body\',this.value)" style="width:100%;padding:10px;margin-bottom:6px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.body) + '</textarea>'
+        + '<textarea id="lBody" name="letter_text" autocomplete="off" data-lpignore="true" rows="8" maxlength="3000" placeholder="Зачем ты это делаешь? Что чувствуешь сейчас? Чего хочешь добиться? Что напомнить себе, когда будет тяжело?" oninput="letterField(\'body\',this.value)" style="width:100%;padding:10px;margin-bottom:6px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.body) + '</textarea>'
         + '<h3 style="margin:6px 0 4px">Чего ты просишь за свою аскезу?</h3><p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:8px">Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.</p>'
-        + '<textarea id="lWish" rows="3" maxlength="500" placeholder="Например: хочу сдать экзамен, накопить на мечту, наладить отношения" oninput="letterField(\'wish\',this.value)" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.wish) + '</textarea>'
+        + '<textarea id="lWish" name="letter_wish" autocomplete="off" data-lpignore="true" rows="3" maxlength="500" placeholder="Например: хочу сдать экзамен, накопить на мечту, наладить отношения" oninput="letterField(\'wish\',this.value)" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.wish) + '</textarea>'
         + '<p style="color:var(--text-secondary);font-size:.78rem;margin-bottom:14px">После отправки письмо закроется: прочитать его можно будет только в последний день.</p>'
         + '<button class="btn btn-gold" onclick="letterCreate()">🔒 Запечатать письмо</button>' + ((typeof sbUid === 'undefined' || !sbUid) ? '<p style="color:var(--text-secondary);font-size:.78rem;margin-top:10px;text-align:center">Чтобы запечатать письмо, понадобится войти в аккаунт</p>' : '') + '</div>';
     }
@@ -4487,6 +4487,8 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     hist.forEach(x => { const el = root.querySelector('.hbody[data-b="' + x.id + '"]'); if(el) el.textContent = x.body; const w = root.querySelector('.hwish[data-w="' + x.id + '"]'); if(w) w.textContent = '🌟 ' + x.wish; });
   }
   window.letterField = (k, v) => { form[k] = v; };
+  document.addEventListener('animationstart', () => {}, true);
+  setInterval(() => { const i = $('lAsc'); if(i && !form.asc && /@/.test(i.value) && document.activeElement !== i) i.value = ''; }, 400);
   window.letterPreset = t => { form.asc = t; const i = $('lAsc'); if(i) i.value = t; render(); };
   window.letterDays = d => { form.days = d; render(); };
   window.letterGive = v => { confirmGive = v; render(); };
