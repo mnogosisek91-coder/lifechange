@@ -4292,7 +4292,7 @@ setTimeout(() => {
 // Праздничный бонус Хэллоуина: +100 искр, нужно нажать «Забрать» (раз в день; сервер проверяет дату и повтор)
 (function(){
   const md = String(new Date().getMonth() + 1).padStart(2, '0') + '-' + String(new Date().getDate()).padStart(2, '0');
-  if(!(md >= '10-29' || md === '11-01') || (md > '11-01' && md < '10-29')) return;
+  if(!(md >= '10-29' && md <= '11-01')) return;
   if(new URLSearchParams(location.search).get('season') === 'off') return;
   const T = { title: 'Праздничный бонус!', sub: 'Хэллоуин в LifeChange: заходи до 1 ноября и забирай искры каждый день', btn: 'Забрать 100 искр', got: '🎃 Бонус получен: +100 искр', later: 'Позже', have: 'Сегодняшний бонус уже получен' };
   try { Object.assign(UZ_EXACT, { [T.title]: 'Bayram bonusi!', [T.sub]: "LifeChange'da Xellouin: 1-noyabrgacha har kuni kiring va uchqun oling", [T.btn]: '100 uchqunni olish', [T.got]: '🎃 Bonus olindi: +100 uchqun', [T.later]: 'Keyinroq', [T.have]: 'Bugungi bonus allaqachon olingan' }); } catch(e) {}
