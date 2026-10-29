@@ -648,7 +648,7 @@
         <!-- ================= ВКЛАДКА 1: ГЛАВНАЯ ================= -->
         <div id="tab-home" class="tab-content active">
         <div class="bonus-strip" id="bonusStrip"><span>🎁 Подпишитесь на наш Telegram-канал и получите <b>+500 искр</b>: там идут розыгрыши искр!</span><button class="btn btn-gold" style="width:auto;" onclick="claimChannelBonus()">Получить 500 искр</button></div>
-        <div class="bonus-strip" id="letterStrip" style="border-color:#a78bfa;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(236,72,153,.12))"><span id="letterStripText">✉️ <b>Письмо себе</b>: выбери аскезу, запечатай письмо и открой его в конце срока</span><button class="btn btn-gold" style="width:auto;" id="letterStripBtn" onclick="switchTab('letter')">Написать</button></div>
+        <div class="bonus-strip" id="letterStrip" style="border-color:#a78bfa;background:linear-gradient(135deg,rgba(124,58,237,.2),rgba(236,72,153,.12))"><span id="letterStripText">✉️ <b>Письмо себе</b>: выбери аскезу, загадай желание, запечатай письмо и открой его в конце срока</span><button class="btn btn-gold" style="width:auto;" id="letterStripBtn" onclick="switchTab('letter')">Написать</button></div>
         
             <div class="page-banner">
                 <section class="hero-section">
@@ -1261,7 +1261,7 @@
     <div id="tab-letter" class="tab-content"><div class="page-banner" style="text-align:center;">
         <h2 style="margin-bottom:6px;">✉️ Письмо себе</h2>
         <p style="color:var(--text-secondary);max-width:640px;margin:0 auto 1rem;line-height:1.55;">Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.</p>
-        <p style="max-width:640px;margin:0 auto;padding:10px 14px;border-radius:12px;background:rgba(124,58,237,.16);line-height:1.5;font-size:.92rem;color:#ddd6fe;">💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце.</p>
+        <p style="max-width:640px;margin:0 auto;padding:10px 14px;border-radius:12px;background:rgba(124,58,237,.16);line-height:1.5;font-size:.92rem;color:#ddd6fe;">💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце. А за выполненную аскезу ты получаешь искры: срок × 4 (например, 30 дней = 120 искр).</p>
     </div>
     <div id="letterBody" style="max-width:640px;margin:0 auto;text-align:left;"></div>
     </div>
@@ -4365,17 +4365,18 @@ setTimeout(() => {
   Object.assign(U, {
     '✉️ Письмо себе': "✉️ O'zingizga xat",
     'Возьми аскезу на срок: что-то, от чего ты отказываешься или что делаешь каждый день. Напиши письмо себе: зачем ты это делаешь. Оно закроется до конца срока. В последний день ты откроешь его и увидишь свои же слова.': "Muddatga askeza oling: nimadandir voz kechasiz yoki har kuni nimadir qilasiz. O'zingizga xat yozing: buni nima uchun qilyapsiz. U muddat oxirigacha yopiq turadi. Oxirgi kuni uni ochib, o'z so'zlaringizni ko'rasiz.",
-    ': выбери аскезу, запечатай письмо и открой его в конце срока': ": askezani tanlang, xatni muhrlang va muddat oxirida oching",
+    ': выбери аскезу, загадай желание, запечатай письмо и открой его в конце срока': ": askezani tanlang, istak tilang, xatni muhrlang va muddat oxirida oching",
     'Войди в аккаунт, чтобы написать письмо себе': "O'zingizga xat yozish uchun hisobingizga kiring",
     'Без сладкого': "Shirinliksiz", 'Без соцсетей': "Ijtimoiy tarmoqlarsiz", 'Подъём в 6 утра': "Ertalab 6 da turish", 'Без сигарет и вейпа': "Sigaret va veypsiz", 'Без фастфуда': "Fastfudsiz", 'Без алкоголя': "Alkogolsiz", 'Без жалоб': "Shikoyatsiz",
     'После отправки письмо закроется: прочитать его можно будет только в последний день.': "Yuborilgandan keyin xat yopiladi: uni faqat oxirgi kuni o'qish mumkin.",
     '🔒 Запечатать письмо': '🔒 Xatni muhrlash', '✊ Держусь сегодня': '✊ Bugun bardoshliman', '✅ Сегодня отмечено': '✅ Bugun belgilandi', '📬 Открыть письмо': '📬 Xatni ochish', '✅ Справился': '✅ Uddaladim',
     'Ты справился?': 'Uddaladingizmi?', 'Срок вышел. Открой письмо и посмотри, что ты написал себе': "Muddat tugadi. Xatni oching va o'zingizga nima yozganingizni ko'ring",
     'Твоя аскеза: ': 'Sizning askezangiz: ', 'Сдаться': "Taslim bo'lish", 'Это тоже опыт. Начни заново, когда будешь готов': "Bu ham tajriba. Tayyor bo'lganda qaytadan boshlang",
-    '💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце.': "💡 Askeza: biror narsadan ixtiyoriy voz kechish yoki muddatga majburiyat. Masalan: 30 kun shirinliksiz, ijtimoiy tarmoqlarsiz yoki ertalab 6 da turish. Askezaga chidasangiz, eng aziz narsani so'rashga haqli bo'lasiz: istak xatda yoziladi va oxirida sizni kutadi.",
+    '💡 Аскеза: добровольный отказ от чего-то или обязательство на срок. Например: 30 дней без сладкого, без соцсетей или подъём в 6 утра. Выдержал аскезу, значит, заслужил право попросить о заветном: желание записывается в письме и ждёт тебя в конце. А за выполненную аскезу ты получаешь искры: срок × 4 (например, 30 дней = 120 искр).': "💡 Askeza: biror narsadan ixtiyoriy voz kechish yoki muddatga majburiyat. Masalan: 30 kun shirinliksiz, ijtimoiy tarmoqlarsiz yoki ertalab 6 da turish. Askezaga chidasangiz, eng aziz narsani so'rashga haqli bo'lasiz: istak xatda yoziladi va oxirida sizni kutadi. Bajarilgan askeza uchun uchqun olasiz: muddat × 4 (masalan, 30 kun = 120 uchqun).",
     '🌟 Моё желание': '🌟 Mening istagim', 'Чего ты просишь за свою аскезу?': "Askezangiz evaziga nimani so'raysiz?",
     'Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.': "Majburiy emas, lekin shunda kuchliroq: bu askeza evaziga nimani so'rayotganingizni yozing. Buni oxirida ko'rasiz.",
     'Ты прошёл аскезу, теперь можешь просить. Сделай сегодня первый шаг к своему желанию.': "Siz askezadan o'tdingiz, endi so'rashingiz mumkin. Bugun istagingiz sari birinchi qadamni qiling.",
+    'Чтобы запечатать письмо, понадобится войти в аккаунт': "Xatni muhrlash uchun hisobga kirish kerak",
     '✊ Отлично, день засчитан': "✊ Ajoyib, kun hisoblandi"
   });
   try { Object.assign(UZ_EXACT, U); UZ_PAT.unshift(
@@ -4402,11 +4403,10 @@ setTimeout(() => {
     const a = ST && ST.active;
     if(a && a.ready) { t.innerHTML = '📬 <b>Письмо ждёт тебя</b>'; b.textContent = 'Открыть письмо'; }
     else if(a) { t.innerHTML = '✉️ Письмо запечатано до ' + fmt(a.unlock_day); b.textContent = 'Отметить день'; }
-    else { t.innerHTML = '✉️ <b>Письмо себе</b>: выбери аскезу, запечатай письмо и открой его в конце срока'; b.textContent = 'Написать'; }
+    else { t.innerHTML = '✉️ <b>Письмо себе</b>: выбери аскезу, загадай желание, запечатай письмо и открой его в конце срока'; b.textContent = 'Написать'; }
   }
   function render() {
     const root = $('letterBody'); if(!root) return;
-    if(typeof sbUid === 'undefined' || !sbUid) { root.innerHTML = '<div class="card" style="text-align:center"><p style="margin-bottom:12px">Войди в аккаунт, чтобы написать письмо себе</p><button class="btn btn-gold" style="width:auto" onclick="requireAuth()">Войти</button></div>'; return; }
     const a = ST && ST.active; let html = '';
     if(result) {
       html += '<div class="card" style="text-align:center;border-color:' + (result.status === 'kept' ? 'var(--gold-color)' : '#a78bfa') + '">'
@@ -4450,7 +4450,7 @@ setTimeout(() => {
         + '<h3 style="margin:6px 0 4px">Чего ты просишь за свою аскезу?</h3><p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:8px">Не обязательно, но так сильнее: запиши, о чём ты просишь за эту аскезу. Ты увидишь это в конце.</p>'
         + '<textarea id="lWish" rows="3" maxlength="500" placeholder="Например: хочу сдать экзамен, накопить на мечту, наладить отношения" oninput="letterField(\'wish\',this.value)" style="width:100%;padding:10px;margin-bottom:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:vertical;line-height:1.5">' + esc(form.wish) + '</textarea>'
         + '<p style="color:var(--text-secondary);font-size:.78rem;margin-bottom:14px">После отправки письмо закроется: прочитать его можно будет только в последний день.</p>'
-        + '<button class="btn btn-gold" onclick="letterCreate()">🔒 Запечатать письмо</button></div>';
+        + '<button class="btn btn-gold" onclick="letterCreate()">🔒 Запечатать письмо</button>' + ((typeof sbUid === 'undefined' || !sbUid) ? '<p style="color:var(--text-secondary);font-size:.78rem;margin-top:10px;text-align:center">Чтобы запечатать письмо, понадобится войти в аккаунт</p>' : '') + '</div>';
     }
     const hist = (ST && ST.history) || [];
     if(hist.length && !result && !opened) {
