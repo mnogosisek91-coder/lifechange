@@ -3439,9 +3439,9 @@ function updateFileName() { const f = document.getElementById('reportFile').file
 </script>
 <script>
 // ===================== Акция PRO, лимиты бесплатного тарифа, блокировка прокрутки =====================
-Object.assign(UZ_EXACT, {"🔥 АКЦИЯ: ТОЛЬКО 1 МЕСЯЦ": "🔥 AKSIYA: FAQAT 1 OY", "🔥 Акция месяца: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!": "🔥 Oy aksiyasi: PRO 399 000 o'rniga 299 000. Ulgurib qoling, taklif cheklangan!", "С PRO открываются все челленджи (бесплатно: 1 из каждой группы), искры x2 и подарок.": "PRO bilan barcha chellenjlar ochiladi (bepul: har bir guruhdan 1 ta), uchqunlar x2 va sovg'a.", "В бесплатном тарифе из каждой группы доступен 1 челлендж. Оформите PRO, чтобы участвовать во всех.": "Bepul tarifda har bir guruhdan 1 ta chellenj mavjud. Barchasida qatnashish uchun PRO'ni rasmiylashtiring.", "Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.": "Ushbu chellenjni tanlaysizmi? Bepul tarifda har bir guruhdan faqat bittasida qatnashish mumkin."});
+Object.assign(UZ_EXACT, {"🔥 АКЦИЯ ДО НОВОГО ГОДА": "🔥 AKSIYA: YANGI YILGACHA", "🔥 Новогодняя акция: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!": "🔥 Yangi yil aksiyasi: PRO 399 000 o'rniga 299 000. Ulgurib qoling, taklif cheklangan!", "С PRO открываются все челленджи (бесплатно: 1 из каждой группы), искры x2 и подарок.": "PRO bilan barcha chellenjlar ochiladi (bepul: har bir guruhdan 1 ta), uchqunlar x2 va sovg'a.", "В бесплатном тарифе из каждой группы доступен 1 челлендж. Оформите PRO, чтобы участвовать во всех.": "Bepul tarifda har bir guruhdan 1 ta chellenj mavjud. Barchasida qatnashish uchun PRO'ni rasmiylashtiring.", "Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.": "Ushbu chellenjni tanlaysizmi? Bepul tarifda har bir guruhdan faqat bittasida qatnashish mumkin."});
 UZ_PAT.unshift([/^Ограниченное предложение: успейте купить PRO за 299 000 вместо 399 000\. Акция до ([\d.]+), осталось (\d+) дн\.$/, m => `Cheklangan taklif: PRO'ni 399 000 o'rniga 299 000 ga ulgurib oling. Aksiya ${m[1]} gacha, ${m[2]} kun qoldi.`]);
-const PROMO_END = new Date('2026-11-14T23:59:59+05:00');
+const PROMO_END = new Date('2026-12-31T23:59:59+05:00');
 function syncPromo() {
   const btn = document.querySelector('#tab-plans button[onclick*="Pro Intizom"]'); if(!btn) return;
   const card = btn.closest('.pricing-card'), pv = card.querySelector('.price-val'), on = Date.now() < PROMO_END.getTime();
@@ -3452,7 +3452,7 @@ function syncPromo() {
     pv.innerHTML = '<span class="old-price">399 000</span>299 000 <span>So\'m / мес</span>';
     btn.setAttribute('onclick', "openPayModal('Pro Intizom (PRO)', 299000)");
     const inner = Array.from(card.children).find(c => c.tagName === 'DIV' && !c.classList.contains('pricing-badge'));
-    const flag = document.createElement('div'); flag.className = 'promo-flag'; flag.textContent = '🔥 АКЦИЯ: ТОЛЬКО 1 МЕСЯЦ';
+    const flag = document.createElement('div'); flag.className = 'promo-flag'; flag.textContent = '🔥 АКЦИЯ ДО НОВОГО ГОДА';
     inner.insertBefore(flag, inner.firstChild);
     const line = document.createElement('div'); line.className = 'promo-line'; line.textContent = 'Ограниченное предложение: успейте купить PRO за 299 000 вместо 399 000. Акция до ' + fmt + ', осталось ' + days + ' дн.';
     pv.insertAdjacentElement('afterend', line);
@@ -3461,7 +3461,7 @@ function syncPromo() {
     btn.setAttribute('onclick', "openPayModal('Pro Intizom (PRO)', 399000)");
   }
   let bn = document.getElementById('promoBanner');
-  if(on && !bn) { bn = document.createElement('div'); bn.id = 'promoBanner'; bn.className = 'promo-line'; bn.style.textAlign = 'center'; bn.style.fontWeight = '700'; bn.textContent = '🔥 Акция месяца: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!'; document.getElementById('tab-plans').querySelector('.page-banner').insertBefore(bn, document.getElementById('planStatus')); }
+  if(on && !bn) { bn = document.createElement('div'); bn.id = 'promoBanner'; bn.className = 'promo-line'; bn.style.textAlign = 'center'; bn.style.fontWeight = '700'; bn.textContent = '🔥 Новогодняя акция: PRO за 299 000 вместо 399 000. Успейте купить, предложение ограничено!'; document.getElementById('tab-plans').querySelector('.page-banner').insertBefore(bn, document.getElementById('planStatus')); }
   if(!on && bn) bn.remove();
 }
 syncPromo(); setInterval(syncPromo, 3600000);
@@ -4466,7 +4466,7 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     } else {
       html += '<div class="card"><h3 style="margin-bottom:8px">Назови аскезу</h3><div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px">'
         + PRESETS.map(p => '<button class="btn btn-outline" style="width:auto;padding:6px 12px;font-size:.85rem;' + (form.asc === p ? 'border-color:var(--gold-color);color:var(--gold-color)' : '') + '" onclick="letterPreset(this.textContent)">' + esc(p) + '</button>').join('') + '</div>'
-        + '<input id="lAsc" type="text" name="ascesis_title" autocomplete="off" autocapitalize="sentences" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="80" placeholder="Или свою" value="' + esc(form.asc) + '" oninput="letterField(\'asc\',this.value)" style="width:100%;padding:10px;margin-bottom:14px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)">'
+        + '<textarea id="lAsc" rows="1" name="lc_ascesis_free" autocomplete="off" autocorrect="off" spellcheck="false" data-lpignore="true" data-1p-ignore="true" data-form-type="other" maxlength="80" placeholder="Или свою" oninput="this.dataset.t=1;this.value=this.value.replace(/\\n/g,\' \');letterField(\'asc\',this.value)" onkeydown="if(event.key===\'Enter\')event.preventDefault()" style="display:block;width:100%;padding:10px;margin-bottom:14px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:none;overflow:hidden;font:inherit;line-height:1.3">' + esc(form.asc) + '</textarea>'
         + '<h3 style="margin-bottom:8px">Срок</h3><div style="display:flex;gap:8px;margin-bottom:6px;flex-wrap:wrap">'
         + DAYS.map(d => '<button class="btn ' + (form.days === d ? 'btn-gold' : 'btn-outline') + '" style="width:auto;padding:8px 14px" onclick="letterDays(' + d + ')">' + d + ' ' + dword(d) + '</button>').join('') + '</div>'
         + '<p style="color:var(--text-secondary);font-size:.8rem;margin-bottom:14px">Награда: +' + form.days * 4 + ' искр, если отметишь не меньше ' + Math.ceil(form.days * .6) + ' ' + dword(Math.ceil(form.days * .6)) + '</p>'
@@ -4488,7 +4488,7 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
   }
   window.letterField = (k, v) => { form[k] = v; };
   document.addEventListener('animationstart', () => {}, true);
-  setInterval(() => { const i = $('lAsc'); if(i && !form.asc && /@/.test(i.value) && document.activeElement !== i) i.value = ''; }, 400);
+  setInterval(() => { const i = $('lAsc'); if(i && !i.dataset.t && !form.asc && i.value) i.value = ''; }, 300);
   window.letterPreset = t => { form.asc = t; const i = $('lAsc'); if(i) i.value = t; render(); };
   window.letterDays = d => { form.days = d; render(); };
   window.letterGive = v => { confirmGive = v; render(); };
