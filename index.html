@@ -4533,5 +4533,107 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
 /* Повторная загрузка состояния после полной загрузки страницы: на медленном старте вход мог восстановиться раньше, чем подключился код администратора, и кнопка «Админ-панель» не появлялась. */
 window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefined' && sbUid && typeof hydrate === 'function') hydrate(); } catch(e) {} });
 </script>
+<style>
+.lc-hint{display:flex;gap:12px;align-items:center;justify-content:space-between;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.55);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-size:.88rem;line-height:1.5;color:var(--text-primary)}
+.lc-hint button{flex-shrink:0;background:transparent;border:1px solid rgba(251,191,36,.7);color:#fbbf24;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.82rem}
+.gift-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,rgba(236,72,153,.14),rgba(124,58,237,.16));border:1px solid rgba(236,72,153,.5);border-radius:12px;padding:12px 16px;margin:0 auto 1rem;max-width:760px;font-size:.92rem}
+.gift-opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border-color);border-radius:10px;margin-bottom:8px;cursor:pointer}
+.gift-opt span{flex:1}.gift-opt input{accent-color:#fbbf24}
+</style>
+<script>
+// ===================== Подсказки новичку (один раз) и подарок тарифа другу =====================
+(function(){
+  const HINTS = {
+    challenges: '💡 Выбери один челлендж и начни с него. Каждый день отмечай задания и прикрепляй фото или видео: за отчёт идут искры и опыт. В бесплатном тарифе доступен один челлендж из каждой группы.',
+    shop: '💡 Здесь искры, которые ты зарабатываешь за отчёты и ежедневный вход, меняются на призы. Заходи за наградой каждый день: серия даёт бонусы.',
+    psychology: '💡 Выбери услугу, удобное время, и специалист подтвердит запись в Telegram. Если сейчас тяжело, кнопка «Мне плохо» всегда рядом.'
+  };
+  Object.assign(UZ_EXACT, {
+    '💡 Выбери один челлендж и начни с него. Каждый день отмечай задания и прикрепляй фото или видео: за отчёт идут искры и опыт. В бесплатном тарифе доступен один челлендж из каждой группы.': "💡 Bitta chellenjni tanlab, shundan boshlang. Har kuni topshiriqlarni belgilang va foto yoki video ilova qiling: hisobot uchun uchqun va tajriba beriladi. Bepul tarifda har bir guruhdan bitta chellenj ochiq.",
+    '💡 Здесь искры, которые ты зарабатываешь за отчёты и ежедневный вход, меняются на призы. Заходи за наградой каждый день: серия даёт бонусы.': "💡 Bu yerda hisobotlar va kunlik kirish uchun yig'gan uchqunlaringizni sovg'alarga almashtirasiz. Har kuni mukofot uchun kiring: ketma-ketlik bonus beradi.",
+    '💡 Выбери услугу, удобное время, и специалист подтвердит запись в Telegram. Если сейчас тяжело, кнопка «Мне плохо» всегда рядом.': "💡 Xizmat va qulay vaqtni tanlang, mutaxassis yozilishni Telegramda tasdiqlaydi. Agar hozir qiyin bo'lsa, «Menga yomon» tugmasi doim yonida.",
+    'Понятно': 'Tushunarli'
+  });
+  function seen(k){ try { return localStorage.getItem('lc_hint_' + k) === '1'; } catch(e) { return false; } }
+  function mark(k){ try { localStorage.setItem('lc_hint_' + k, '1'); } catch(e) {} }
+  function showHint(tab){
+    const text = HINTS[tab]; if(!text || seen(tab)) return;
+    const root = document.getElementById('tab-' + tab); if(!root || root.querySelector('.lc-hint')) return;
+    const d = document.createElement('div'); d.className = 'lc-hint';
+    d.innerHTML = '<span></span><button type="button">Понятно</button>';
+    d.firstChild.textContent = text;
+    d.lastChild.onclick = function(){ mark(tab); d.remove(); };
+    const host = root.querySelector('.page-banner') || root; host.insertBefore(d, host.firstChild);
+  }
+  const _st = switchTab; switchTab = function(t){ _st.apply(this, arguments); try { showHint(t); } catch(e) {} };
+
+  // ---------- подарок ----------
+  let gift = null;
+  const proMonth = () => (typeof PROMO_END !== 'undefined' && Date.now() < PROMO_END.getTime()) ? 299000 : 399000;
+  const OPTS = () => [
+    { n: 'PRO · 1 месяц', p: proMonth() },
+    { n: 'PRO · 3 месяца', p: 1077000 },
+    { n: 'VIP Transformatsiya', p: 999000 }
+  ];
+  const fmt = n => n.toLocaleString('ru-RU');
+  function build(){
+    if(document.getElementById('pgModal')) return;
+    const m = document.createElement('div'); m.className = 'modal'; m.id = 'pgModal';
+    m.innerHTML = '<div class="modal-content" style="max-width:460px"><span class="close-modal" onclick="closeModal(\'pgModal\')">&times;</span>'
+      + '<h3 style="margin-bottom:6px">🎁 Подарить тариф другу</h3>'
+      + '<p style="color:var(--text-secondary);font-size:.88rem;margin-bottom:12px">Ты оплачиваешь, а мы включаем тариф на аккаунт друга. Друг должен быть зарегистрирован в LifeChange.</p>'
+      + '<div id="pgOpts"></div>'
+      + '<input id="pgWho" type="text" maxlength="80" autocomplete="off" placeholder="Email или @username друга в LifeChange" style="width:100%;padding:10px;margin:10px 0 8px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)">'
+      + '<textarea id="pgNote" rows="2" maxlength="200" autocomplete="off" placeholder="Пожелание (необязательно)" style="width:100%;padding:10px;margin-bottom:12px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary);resize:none;font:inherit"></textarea>'
+      + '<button class="btn btn-gold" onclick="giftGo()">Перейти к оплате</button></div>';
+    document.body.appendChild(m);
+  }
+  window.giftOpen = function(){
+    build();
+    const box = document.getElementById('pgOpts'); const o = OPTS();
+    box.innerHTML = o.map((x, i) => '<label class="gift-opt"><input type="radio" name="giftPlan" value="' + i + '"' + (i === 0 ? ' checked' : '') + '><span>' + x.n + '</span><b>' + fmt(x.p) + " So'm</b></label>").join('');
+    openModal('pgModal');
+  };
+  window.giftGo = function(){
+    const r = document.querySelector('input[name="giftPlan"]:checked'); if(!r) return;
+    const who = document.getElementById('pgWho').value.trim();
+    if(!who) { toast('Укажи email или @username друга'); return; }
+    const x = OPTS()[+r.value];
+    gift = { who, note: document.getElementById('pgNote').value.trim(), plan: x.n };
+    closeModal('pgModal');
+    openPayModal('Подарок: ' + x.n, x.p);
+  };
+  const _pm = openPayModal; openPayModal = function(t){
+    if(!/^Подарок/.test(String(t))) gift = null;
+    _pm.apply(this, arguments);
+    if(gift) { const a = document.getElementById('payGift'), b = document.getElementById('payBenefit');
+      if(a) a.style.display = 'none';
+      if(b) { b.style.display = ''; b.textContent = '🎁 Подарок для: ' + gift.who + '. После оплаты мы включим тариф на его аккаунте.'; } }
+  };
+  const _sr = sendReceipt;
+  sendReceipt = function(){
+    if(!gift) return _sr.apply(this, arguments);
+    track('gift_receipt');
+    const text = 'Здравствуйте! Оплатил(а) подарок в LifeChange.\nТариф: ' + gift.plan + '\nСумма: ' + selectedPayPrice.toLocaleString('ru-RU') + " So'm\nКому: " + gift.who + (gift.note ? '\nПожелание: ' + gift.note : '') + '\nЧек прикрепляю.';
+    window.open('https://t.me/' + TG_USERNAME + '?text=' + encodeURIComponent(text), '_blank');
+    closeModal('payModal');
+  };
+  // кнопка в тарифах
+  function mountBtn(){
+    const st = document.getElementById('planStatus'); if(!st || document.getElementById('pgBtnRow')) return;
+    const row = document.createElement('div'); row.id = 'pgBtnRow'; row.className = 'gift-row';
+    row.innerHTML = '<span>🎁 Хочешь порадовать близкого? Подари тариф.</span><button class="btn btn-gold" style="width:auto" onclick="giftOpen()">Подарить</button>';
+    st.insertAdjacentElement('afterend', row);
+  }
+  mountBtn();
+  Object.assign(UZ_EXACT, {
+    '🎁 Хочешь порадовать близкого? Подари тариф.': "🎁 Yaqiningizni xursand qilmoqchimisiz? Tarifni sovg'a qiling.", 'Подарить': "Sovg'a qilish",
+    '🎁 Подарить тариф другу': "🎁 Tarifni do'stga sovg'a qilish",
+    'Ты оплачиваешь, а мы включаем тариф на аккаунт друга. Друг должен быть зарегистрирован в LifeChange.': "To'lovni siz qilasiz, biz esa tarifni do'stingiz akkauntida yoqamiz. Do'stingiz LifeChange'da ro'yxatdan o'tgan bo'lishi kerak.",
+    'Email или @username друга в LifeChange': "Do'stingizning LifeChange'dagi emaili yoki @username'i", 'Пожелание (необязательно)': "Tilak (ixtiyoriy)", 'Перейти к оплате': "To'lovga o'tish",
+    'Укажи email или @username друга': "Do'stingizning emaili yoki @username'ini yozing"
+  });
+})();
+</script>
 </body>
 </html>
