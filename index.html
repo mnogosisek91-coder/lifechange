@@ -3675,7 +3675,8 @@ async function claimProgress(force) {
       r.granted.forEach((g, n) => {
         claimedSet.add(g.key);
         const isRank = /^rank_/.test(g.key), name = isRank ? (RANKS[+g.key.slice(5)] || {}).n : (/^ref_/.test(g.key) ? 'Друзья: ' + (+g.key.slice(4) * 10) + ' приглашённых' : (BADGES.find(b => b.id === g.key) || {}).t || (CHALLENGES[g.key.slice(3)] ? '«' + CHALLENGES[g.key.slice(3)].title + '» пройден' : 'Достижение'));
-        setTimeout(() => toast((isRank ? '🆙 Новый ранг: ' : '🏅 Достижение: ') + name + ' · +' + g.reward + ' искр'), n * 1800);
+        const _b = BADGES.find(b => b.id === g.key), _r = isRank ? RANKS[+g.key.slice(5)] : null;
+        try { lcCelebrate({ kind: isRank ? 'rank' : 'badge', ico: isRank ? (_r && _r.e) || '🏆' : (_b && _b.ico) || '🏅', name: name, desc: isRank ? '' : (_b && _b.d) || '', reward: g.reward }); } catch(e) { toast((isRank ? '🆙 Новый ранг: ' : '🏅 Достижение: ') + name + ' · +' + g.reward + ' искр'); }
       });
     }
   } catch(e) { console.warn('claim_progress', e); }
@@ -4733,6 +4734,53 @@ window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefine
     'Email или @username друга в LifeChange': "Do'stingizning LifeChange'dagi emaili yoki @username'i", 'Пожелание (необязательно)': "Tilak (ixtiyoriy)", 'Перейти к оплате': "To'lovga o'tish",
     'Укажи email или @username друга': "Do'stingizning emaili yoki @username'ini yozing"
   });
+})();
+</script>
+<style>
+.lcc{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;background:rgba(6,4,16,.82);backdrop-filter:blur(6px);animation:lctIn .35s ease both}.lcc.out{opacity:0;transition:opacity .3s}
+.lcc-card{position:relative;width:min(340px,90vw);text-align:center;padding:30px 22px 24px;border-radius:24px;background:linear-gradient(165deg,#2a1d4a,#150f28);border:2px solid #fbbf24;box-shadow:0 0 60px rgba(251,191,36,.35),0 20px 60px rgba(0,0,0,.6);animation:lccPop .65s cubic-bezier(.2,1.4,.4,1) both;overflow:hidden}
+@keyframes lccPop{0%{transform:scale(.3) rotate(-8deg);opacity:0}100%{transform:none;opacity:1}}
+.lcc-rays{position:absolute;left:50%;top:78px;width:340px;height:340px;margin:-170px 0 0 -170px;background:repeating-conic-gradient(rgba(251,191,36,.22) 0 8deg,transparent 8deg 24deg);border-radius:50%;animation:lccSpin 14s linear infinite;-webkit-mask:radial-gradient(circle,#000 8%,transparent 66%);mask:radial-gradient(circle,#000 8%,transparent 66%)}
+@keyframes lccSpin{to{transform:rotate(360deg)}}
+.lcc-ico{position:relative;font-size:84px;line-height:1;margin:6px 0 10px;animation:lccBob 2.2s ease-in-out infinite;filter:drop-shadow(0 6px 18px rgba(251,191,36,.6))}
+@keyframes lccBob{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.07)}}
+.lcc-kicker{position:relative;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#fbbf24;font-weight:800}
+.lcc-name{position:relative;font-size:1.55rem;font-weight:900;margin:6px 0 6px;color:#fff;line-height:1.2;animation:lccUp .5s .35s both}
+.lcc-desc{position:relative;font-size:.9rem;color:#cbd5e1;margin:0 0 10px;animation:lccUp .5s .45s both}
+.lcc-rew{position:relative;display:inline-block;margin:6px 0 16px;padding:8px 20px;border-radius:999px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1f1300;font-weight:900;font-size:1.2rem;animation:lccUp .5s .6s both}
+@keyframes lccUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.lcc-btn{position:relative;display:block;width:100%;border:0;border-radius:12px;padding:12px;font-weight:800;font-size:1rem;cursor:pointer;background:#fff;color:#1b1233}
+.lcc-bit{position:fixed;top:-30px;z-index:100001;pointer-events:none;animation:lccFall linear forwards}
+@keyframes lccFall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){.lcc-rays,.lcc-ico,.lcc-bit{animation:none!important}}
+</style>
+<script>
+// ===================== Поздравления: новый ранг и достижения =====================
+(function(){
+  Object.assign(UZ_EXACT, { '🆙 Новый ранг!': '🆙 Yangi daraja!', '🏅 Новое достижение!': '🏅 Yangi yutuq!', 'Отлично!': 'Ajoyib!' });
+  const Q = []; let busy = false;
+  function bits(){
+    const em = ['🎉', '✨', '⚡', '⭐', '🔥', '🎊'];
+    for(let i = 0; i < 38; i++) { const s = document.createElement('span'); s.className = 'lcc-bit'; s.textContent = em[i % em.length]; s.style.left = (Math.random() * 96) + 'vw'; s.style.fontSize = (16 + Math.random() * 18) + 'px'; s.style.animationDuration = (2.4 + Math.random() * 2) + 's'; s.style.animationDelay = (Math.random() * 0.9) + 's'; document.body.appendChild(s); setTimeout(() => s.remove(), 5600); }
+  }
+  function next(){
+    if(busy || !Q.length) return; busy = true;
+    const c = Q.shift(), rank = c.kind === 'rank';
+    const root = document.createElement('div'); root.className = 'lcc';
+    root.innerHTML = '<div class="lcc-card"><div class="lcc-rays"></div><div class="lcc-ico"></div><div class="lcc-kicker"></div><div class="lcc-name"></div><p class="lcc-desc"></p><div class="lcc-rew"></div><button type="button" class="lcc-btn">Отлично!</button></div>';
+    root.querySelector('.lcc-ico').textContent = c.ico;
+    root.querySelector('.lcc-kicker').textContent = rank ? '🆙 Новый ранг!' : '🏅 Новое достижение!';
+    root.querySelector('.lcc-name').textContent = c.name || '';
+    const d = root.querySelector('.lcc-desc'); if(c.desc) d.textContent = c.desc; else d.style.display = 'none';
+    const rw = root.querySelector('.lcc-rew'); if(c.reward) { let v = 0; const end = +c.reward, st = Math.max(1, Math.round(end / 30)); rw.textContent = '+0 ⚡'; setTimeout(function tick(){ v = Math.min(end, v + st); rw.textContent = '+' + v + ' ⚡'; if(v < end && rw.isConnected) setTimeout(tick, 30); }, 700); } else rw.style.display = 'none';
+    document.body.appendChild(root);
+    try { playSound('win'); } catch(e) {}
+    bits();
+    root.querySelector('.lcc-btn').onclick = () => { root.classList.add('out'); setTimeout(() => { root.remove(); busy = false; next(); }, 300); };
+  }
+  window.lcCelebrate = c => { Q.push(c); next(); };
+  const m = /[?&]celebrate=(\w+)/.exec(location.search);
+  if(m) setTimeout(() => { if(m[1] === 'rank') lcCelebrate({ kind: 'rank', ico: '🥋', name: 'Практик', reward: 30 }); else { lcCelebrate({ kind: 'badge', ico: '🔥', name: '7 дней без пропусков', desc: 'Отчёты 7 дней подряд', reward: 30 }); } }, 1500);
 })();
 </script>
 </body>
