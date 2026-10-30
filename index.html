@@ -662,6 +662,7 @@
                         <button class="btn" onclick="switchTab('challenges')" data-i18n="btn_start_now">Выбрать челлендж</button>
                         <button class="btn btn-outline" onclick="switchTab('plans')" data-i18n="btn_plans">Тарифы подписки</button>
                     </div>
+                    <p id="installLine" style="text-align:center;margin:-1rem 0 1.4rem;font-size:.85rem"><a href="#" class="link" onclick="installApp();return false">📲 Установить приложение на телефон</a></p>
 
                     <div class="onb-card" id="onbCard" style="display:none">
                         <div class="onb-head"><b>🚀 Первые шаги</b><span><span id="onbCount">0 / 3</span> <button type="button" class="onb-x" onclick="onbHide()" aria-label="Скрыть">✕</button></span></div>
@@ -695,7 +696,7 @@
                 <p style="color: var(--text-secondary); font-size:0.92rem; line-height:1.6;">Пара минут в день — и вы чувствуете силу в руках, снимаете напряжение и закрепляете привычку доводить дело до конца. В подарок при любой платной подписке или за 5 000 искр.</p>
                 <button class="btn btn-gold" style="width:auto; margin-top:12px;" onclick="switchTab('expander')">Узнать больше</button>
             </div></div></section>
-        <section style="margin-top:2rem;"><div class="exp-hero" style="border-color: var(--accent-color); text-align:center; justify-content:center;">
+        <section class="chb-card" style="margin-top:2rem;"><div class="exp-hero" style="border-color: var(--accent-color); text-align:center; justify-content:center;">
             <div style="min-width:260px;">
                 <h3 style="margin-bottom:6px;">📣 Подпишись и получи 500 искр</h3>
                 <p style="color: var(--text-secondary); font-size:0.92rem; line-height:1.6; margin-bottom:12px;">Подпишитесь и получите <b>+500 искр</b> сразу! В канале постоянные интерактивные розыгрыши искр, конкурсы, разборы и новости платформы.</p>
@@ -1426,14 +1427,27 @@
     </div></div>
     <!-- ================= ВКЛАДКА 8: ПРОФИЛЬ (СЮДА ПЕРЕМЕЩЕНЫ НАГРАДЫ) ================= -->
         <div id="tab-profile" class="tab-content">
-            <div class="page-banner"><div class="pcard" id="accountCard"><h4>👤 Аккаунт</h4>
+            <div class="page-banner">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <h2>👤 Мой Профиль</h2>
+                        <p style="color: var(--text-secondary);">Имя: <b style="color: #fff;" id="profileUserTitle">Гость</b></p>
+                        <p style="color: var(--text-secondary);">Звание: <b style="color: var(--accent-color);" id="profileRank">Новичок (Уровень 1)</b></p>
+                        <p style="color: var(--gold-color); font-size: 0.88rem; margin-top: 4px;" id="profileGoalsDisplay">Цель: пока не выбрана</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline" style="font-size: 0.85rem; width: auto;" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">📲 Наш Telegram</button>
+                <button id="logoutBtn" style="display:none!important" tabindex="-1" aria-hidden="true"></button>
+                    </div>
+                </div>
+<div class="pcard" id="accountCard">
   <p class="note" id="accountInfo" style="margin:0 0 10px;">Вы не вошли в аккаунт</p>
   <div class="rem-row"><button class="btn btn-outline" id="accountLoginBtn" style="width:auto" onclick="authBtnClick()">Войти или создать профиль</button>
   <button class="btn btn-outline" id="accountLogoutBtn" style="width:auto; border-color:#ef4444; color:#f87171; display:none" onclick="logoutLocal()">Выйти из аккаунта</button>
   <button class="btn btn-gold" id="adminOpenBtn" style="width:auto; display:none" onclick="switchTab('admin')">🛠 Админ-панель</button>
   <button class="btn btn-gold" id="psyOpenBtn" style="width:auto; display:none" onclick="switchTab('psycab')">🧠 Кабинет психолога</button></div></div>
 <div class="deadline-timer"><span class="dt-label">⏳ До конца сдачи сегодняшнего отчёта осталось</span><b class="dt-time">--:--:--</b></div>
-<div class="pcard"><h4>📣 Подпишись и получи 500 искр</h4><p class="note" style="margin:0 0 10px;">Подпишитесь и получите <b>+500 искр</b> сразу! В канале постоянные интерактивные розыгрыши искр, конкурсы, разборы и новости платформы.</p><div class="rem-row"><button class="btn btn-outline" style="width:auto;" onclick="joinChannel()">📣 Открыть канал</button><button class="btn btn-gold chbonus-btn" style="width:auto;" onclick="claimChannelBonus()">🎁 Получить 500 искр</button></div></div>
+<div class="pcard chb-card"><h4>📣 Подпишись и получи 500 искр</h4><p class="note" style="margin:0 0 10px;">Подпишитесь и получите <b>+500 искр</b> сразу! В канале постоянные интерактивные розыгрыши искр, конкурсы, разборы и новости платформы.</p><div class="rem-row"><button class="btn btn-outline" style="width:auto;" onclick="joinChannel()">📣 Открыть канал</button><button class="btn btn-gold chbonus-btn" style="width:auto;" onclick="claimChannelBonus()">🎁 Получить 500 искр</button></div></div>
 <div class="pcard" id="rankCard"><h4>🏆 Ранг и опыт</h4>
   <div class="rank-line"><span id="rankEmoji">🌱</span> <b id="rankName">Новичок</b> <span class="rank-xp" id="rankXp">0 XP</span></div>
   <div class="xp-bar"><div class="xp-fill" id="xpFill"></div></div>
@@ -1444,23 +1458,7 @@
   <button type="button" class="ach-more" id="achMore">Показать все</button>
   <details style="margin-top:12px"><summary class="link">Пройденные челленджи</summary><div class="badge-grid" id="badgesChall" style="margin-top:10px"></div></details></div>
 <div class="pcard"><h4>📈 Динамика состояния</h4><div class="mood-chart" id="moodChart"></div><p class="note" id="moodAvg"></p></div>
-<div class="pcard"><h4>⏰ Напоминание о сдаче отчёта</h4>
-  <div class="rem-row"><input type="time" id="remTime" value="20:00"><button class="btn btn-outline" style="width:auto" onclick="enableReminder()">🔔 Включить в браузере</button><button class="btn btn-outline" style="width:auto" onclick="downloadICS()">📅 Добавить в календарь</button></div>
-  <p class="note">Напоминание в браузере работает, пока приложение открыто. Чтобы напоминания приходили на закрытый телефон, добавьте их в календарь.</p>
-  <button class="btn btn-gold" style="margin-top:10px" onclick="installApp()">📲 Установить приложение</button></div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2>👤 Мой Профиль</h2>
-                        <p style="color: var(--text-secondary);">Имя: <b style="color: #fff;" id="profileUserTitle">Гость</b></p>
-                        <p style="color: var(--text-secondary);">Звание: <b style="color: var(--accent-color);" id="profileRank">Новичок (Уровень 1)</b></p>
-                        <p style="color: var(--gold-color); font-size: 0.88rem; margin-top: 4px;" id="profileGoalsDisplay">Цель: пока не выбрана</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-outline" style="font-size: 0.85rem; width: auto;" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">📲 Наш Telegram</button>
-                <button class="btn btn-outline" id="logoutBtn" style="font-size: 0.85rem; width: auto; margin-left: 6px; display: none;" onclick="logoutLocal()">Выйти</button>
-                    </div>
-                </div>
 
                 <div class="card ref-card" id="refCard">
                     <h3>🔗 Реферальная программа «Пригласи друга»</h3>
@@ -1681,6 +1679,10 @@
             <label for="reportFile" class="file-btn">📎 Прикрепить фото или видео</label>
             <span id="fileName" class="file-name">Файл не выбран</span>
             <button class="btn" onclick="submitChallengeReport()" data-i18n="btn_send_report">Отправить отчёт</button>
+            <details class="rem-fold" style="margin-top:14px"><summary style="cursor:pointer;color:var(--gold-color);font-size:.9rem">⏰ Напоминать о сдаче отчёта</summary>
+              <div class="rem-row" style="margin-top:10px"><input type="time" id="remTime" value="20:00"><button class="btn btn-outline" style="width:auto" onclick="enableReminder()">🔔 Включить в браузере</button><button class="btn btn-outline" style="width:auto" onclick="downloadICS()">📅 В календарь</button></div>
+              <p class="note" style="margin-top:8px">Напоминание в браузере работает, пока приложение открыто. Чтобы оно приходило на закрытый телефон, добавьте его в календарь.</p>
+            </details>
         </div>
     </div>
 
@@ -2267,6 +2269,7 @@
         // ===== PWA, напоминания =====
         let deferredInstall = null;
         window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); deferredInstall = e; });
+        if(window.matchMedia && matchMedia('(display-mode: standalone)').matches) { const il = document.getElementById('installLine'); if(il) il.style.display = 'none'; }
         function installApp() {
             if(deferredInstall) { deferredInstall.prompt(); deferredInstall = null; track('pwa_install'); }
             else alert('Чтобы установить: на iPhone откройте сайт в Safari, нажмите «Поделиться» и «На экран Домой». На Android нажмите меню браузера и «Установить приложение».');
@@ -3381,6 +3384,7 @@ let channelBonus = false, tgLinked = false;
 function syncChannel() {
   document.querySelectorAll('.chbonus-btn').forEach(b => { b.textContent = channelBonus ? '✅ Бонус получен' : '🎁 Получить 500 искр'; b.disabled = channelBonus; });
   const st = document.getElementById('bonusStrip'); if(st) st.style.display = channelBonus ? 'none' : '';
+  document.querySelectorAll('.chb-card').forEach(c => c.style.display = channelBonus ? 'none' : '');
 }
 { const _as = applyState; applyState = function(st) { _as(st); channelBonus = !!st.channel_bonus; tgLinked = !!st.tg_linked; syncChannel(); renderBadges(false); }; }
 { const _m = metric; metric = function(m) { return m === 'channel' ? (channelBonus ? 1 : 0) : _m(m); }; }
@@ -4189,8 +4193,8 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     + '.s-ghost{filter:drop-shadow(0 0 14px rgba(167,139,250,.95));animation:sBob 9s ease-in-out infinite,sFade 5s ease-in-out infinite}@keyframes sBob{0%,100%{transform:translate(0,0) rotate(-4deg)}50%{transform:translate(22px,-34px) rotate(5deg)}}@keyframes sFade{0%,100%{opacity:.25}50%{opacity:.65}}'
     + '.s-pump{opacity:.9;animation:sGlow 3s ease-in-out infinite}@keyframes sGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(251,146,60,.55))}50%{filter:drop-shadow(0 0 18px rgba(251,191,36,.95))}}'
     + '.s-moon{opacity:.8;filter:drop-shadow(0 0 36px rgba(252,211,77,.7))}'
-    + '.s-web{opacity:.55}.s-spider{animation:sDrop 7s ease-in-out infinite;transform-origin:50% 0}@keyframes sDrop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(38px) rotate(3deg)}}'
-    + '@media (prefers-reduced-motion:reduce){.s-bat,.s-bat svg,.s-ghost,.s-pump,.s-spider{animation:none}.s-bat{left:30%!important}}';
+    + '.s-web{opacity:.55}.s-spider{animation:sDrop 9s ease-in-out infinite;transform-origin:50% 0}@keyframes sDrop{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(130px) rotate(3deg)}}.s-spider>i{animation:sThr 9s ease-in-out infinite}@keyframes sThr{0%,100%{height:70px}50%{height:200px}}'
+    + '@media (prefers-reduced-motion:reduce){.s-bat,.s-bat svg,.s-ghost,.s-pump,.s-spider,.s-spider>i{animation:none}.s-bat{left:30%!important}}';
   document.head.appendChild(st);
   const L = document.createElement('div'); L.className = 'season-layer';
   const add = (cls, svg, css) => { const d = document.createElement('div'); d.className = 'it ' + cls; d.innerHTML = svg; Object.assign(d.style, css); L.appendChild(d); return d; };
