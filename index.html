@@ -3780,6 +3780,12 @@ async function claimGiftBox() {
   const t0 = Date.now(); let r;
   try { r = await rpc('claim_daily', { p_double: false }); }
   catch(e) { boxBusy = false; closeModal('boxModal'); return alert(errMsg(e)); }
+  if(!r.box) {
+    // сервер выдал обычную награду дня (не бокс): не показываем рулетку с «чужим» призом
+    boxBusy = false; closeModal('boxModal');
+    xpAdd(r.gain); points = r.points; dailyClaimed = true; dailyCount += 1; lastClaim = srvToday; currentDailyDay = r.day; syncUI(); renderDailyRewards(); playSound('win');
+    return alert('🎉 Ежедневная награда получена: +' + r.gain + ' искр!');
+  }
   await sleep(Math.max(0, 1400 - (Date.now() - t0)));
   const W = 92, N = 44, WIN = 36, filler = Array.from({ length: N }, () => pickPrize(b)); filler[WIN] = r.gain;
   $('bxStrip').innerHTML = filler.map(p => chipHtml(p, 100)).join('');
