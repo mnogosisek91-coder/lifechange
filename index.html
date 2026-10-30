@@ -4534,38 +4534,138 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
 window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefined' && sbUid && typeof hydrate === 'function') hydrate(); } catch(e) {} });
 </script>
 <style>
-.lc-hint{display:flex;gap:12px;align-items:center;justify-content:space-between;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.55);border-radius:12px;padding:10px 14px;margin:0 0 14px;font-size:.88rem;line-height:1.5;color:var(--text-primary)}
-.lc-hint button{flex-shrink:0;background:transparent;border:1px solid rgba(251,191,36,.7);color:#fbbf24;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.82rem}
+.lct{position:fixed;inset:0;z-index:99990;animation:lctIn .3s ease both;touch-action:none}.lct.out{opacity:0;transition:opacity .25s}
+@keyframes lctIn{from{opacity:0}to{opacity:1}}
+.lct-hole{position:absolute;border-radius:16px;box-shadow:0 0 0 9999px rgba(6,4,16,.78),0 0 0 3px #fbbf24,0 0 28px 6px rgba(251,191,36,.55);transition:left .45s cubic-bezier(.4,0,.2,1),top .45s cubic-bezier(.4,0,.2,1),width .45s cubic-bezier(.4,0,.2,1),height .45s cubic-bezier(.4,0,.2,1);pointer-events:none}
+.lct-hole::after{content:"";position:absolute;inset:-6px;border-radius:20px;border:2px solid rgba(251,191,36,.85);animation:lctPulse 1.6s ease-out infinite}
+@keyframes lctPulse{0%{transform:scale(1);opacity:.9}100%{transform:scale(1.18);opacity:0}}
+.lct-arrow{position:absolute;width:26px;margin-left:-13px;pointer-events:none;filter:drop-shadow(0 2px 6px rgba(0,0,0,.6));transition:left .45s,top .45s}
+.lct-arrow.up svg{animation:lctUp 1s ease-in-out infinite}.lct-arrow.down svg{transform:rotate(180deg);animation:lctDown 1s ease-in-out infinite}
+@keyframes lctUp{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes lctDown{0%,100%{transform:rotate(180deg) translateY(0)}50%{transform:rotate(180deg) translateY(-8px)}}
+.lct-bubble{position:absolute;background:linear-gradient(160deg,#241a3d,#171028);border:1.5px solid #fbbf24;border-radius:18px;padding:14px 16px;color:#f8fafc;box-shadow:0 10px 36px rgba(0,0,0,.6),0 0 22px rgba(251,191,36,.25);transition:left .45s cubic-bezier(.4,0,.2,1),top .45s cubic-bezier(.4,0,.2,1)}
+.lct-bubble.pop .lct-txt{animation:lctTxt .4s ease both}@keyframes lctTxt{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.lct-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:.78rem;color:#fbbf24;font-weight:700}
+.lct-skip{background:none;border:0;color:#94a3b8;font-size:.78rem;cursor:pointer;padding:2px 0}
+.lct-txt{margin:0 0 12px;font-size:.95rem;line-height:1.5}
+.lct-bot{display:flex;justify-content:space-between;align-items:center}
+.lct-dots{display:flex;gap:6px}.lct-dots i{width:7px;height:7px;border-radius:50%;background:#475569;transition:all .3s}.lct-dots i.on{background:#fbbf24;width:20px;border-radius:4px}
+.lct-next{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#1f1300;border:0;border-radius:10px;padding:9px 18px;font-weight:800;cursor:pointer;font-size:.9rem}
+@media (prefers-reduced-motion:reduce){.lct-hole::after,.lct-arrow svg{animation:none!important}.lct-hole,.lct-bubble{transition:none}}
 .gift-row{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:linear-gradient(135deg,rgba(236,72,153,.14),rgba(124,58,237,.16));border:1px solid rgba(236,72,153,.5);border-radius:12px;padding:12px 16px;margin:0 auto 1rem;max-width:760px;font-size:.92rem}
 .gift-opt{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--border-color);border-radius:10px;margin-bottom:8px;cursor:pointer}
 .gift-opt span{flex:1}.gift-opt input{accent-color:#fbbf24}
 </style>
 <script>
-// ===================== Подсказки новичку (один раз) и подарок тарифа другу =====================
+// ===================== Подсказки новичку (тур) и подарок тарифа другу =====================
 (function(){
-  const HINTS = {
-    challenges: '💡 Выбери один челлендж и начни с него. Каждый день отмечай задания и прикрепляй фото или видео: за отчёт идут искры и опыт. В бесплатном тарифе доступен один челлендж из каждой группы.',
-    shop: '💡 Здесь искры, которые ты зарабатываешь за отчёты и ежедневный вход, меняются на призы. Заходи за наградой каждый день: серия даёт бонусы.',
-    psychology: '💡 Выбери услугу, удобное время, и специалист подтвердит запись в Telegram. Если сейчас тяжело, кнопка «Мне плохо» всегда рядом.'
+  const $q = s => document.querySelector(s);
+  const STEPS = {
+    home: [
+      { el: () => Array.from(document.querySelectorAll('#tab-home .hero-section .btn')).find(b => /Выбрать челлендж/.test(b.textContent)), t: 'Начни отсюда: нажми «Выбрать челлендж» и выбери свой первый челлендж.' },
+      { el: '#onbCard', t: 'Здесь три простых первых шага. Выполняй их по порядку, и платформа сама подскажет дальше.' },
+      { el: '#authBtn', t: 'Войди или зарегистрируйся, чтобы искры, серия и награды сохранялись за тобой.' }
+    ],
+    challenges: [
+      { el: '#tab-challenges .grp-title', t: 'Челленджи собраны по направлениям. Нажми на название, чтобы раскрыть или скрыть группу.' },
+      { el: () => Array.from(document.querySelectorAll('#tab-challenges .card .btn')).find(b => b.offsetParent), t: 'Выбери челлендж и нажми «Начать челлендж». Лучше начать с одного.' },
+      { el: '#tab-challenges .deadline-timer', t: 'Отчёт нужно сдать до конца дня. Здесь идёт обратный отсчёт.' },
+      { el: '.points-badge', t: 'За отчёты ты получаешь искры. Они копятся здесь.' }
+    ],
+    shop: [
+      { el: '#tab-shop .seg', t: 'Здесь два раздела: заработать искры и потратить их на призы.' },
+      { el: '.points-badge', t: 'Это твои искры. На них покупаются призы в магазине.' }
+    ],
+    psychology: [
+      { el: '#tab-psychology .psy-photo', t: 'Твой психолог: Сабина. Здесь её опыт и образование.' },
+      { el: '#tab-psychology .psy-info .btn-gold', t: 'Нажми, выбери удобное время, и она подтвердит запись в Telegram.' },
+      { el: '[onclick*="crisisModal"]', t: 'Если сейчас тяжело, нажми «Мне плохо»: там быстрая помощь.' }
+    ]
   };
   Object.assign(UZ_EXACT, {
-    '💡 Выбери один челлендж и начни с него. Каждый день отмечай задания и прикрепляй фото или видео: за отчёт идут искры и опыт. В бесплатном тарифе доступен один челлендж из каждой группы.': "💡 Bitta chellenjni tanlab, shundan boshlang. Har kuni topshiriqlarni belgilang va foto yoki video ilova qiling: hisobot uchun uchqun va tajriba beriladi. Bepul tarifda har bir guruhdan bitta chellenj ochiq.",
-    '💡 Здесь искры, которые ты зарабатываешь за отчёты и ежедневный вход, меняются на призы. Заходи за наградой каждый день: серия даёт бонусы.': "💡 Bu yerda hisobotlar va kunlik kirish uchun yig'gan uchqunlaringizni sovg'alarga almashtirasiz. Har kuni mukofot uchun kiring: ketma-ketlik bonus beradi.",
-    '💡 Выбери услугу, удобное время, и специалист подтвердит запись в Telegram. Если сейчас тяжело, кнопка «Мне плохо» всегда рядом.': "💡 Xizmat va qulay vaqtni tanlang, mutaxassis yozilishni Telegramda tasdiqlaydi. Agar hozir qiyin bo'lsa, «Menga yomon» tugmasi doim yonida.",
-    'Понятно': 'Tushunarli'
+    'Челленджи собраны по направлениям. Нажми на название, чтобы раскрыть или скрыть группу.': "Chellenjlar yo'nalishlar bo'yicha jamlangan. Guruhni ochish yoki yopish uchun nomiga bosing.",
+    'Выбери челлендж и нажми «Начать челлендж». Лучше начать с одного.': "Chellenjni tanlab, «Chellenjni boshlash» tugmasini bosing. Bittadan boshlagan yaxshi.",
+    'Отчёт нужно сдать до конца дня. Здесь идёт обратный отсчёт.': "Hisobotni kun tugaguncha topshirish kerak. Bu yerda teskari sanoq ketmoqda.",
+    'За отчёты ты получаешь искры. Они копятся здесь.': "Hisobotlar uchun uchqun olasiz. Ular shu yerda yig'iladi.",
+    'Здесь два раздела: заработать искры и потратить их на призы.': "Bu yerda ikki bo'lim bor: uchqun ishlash va ularni sovg'alarga sarflash.",
+    'Это твои искры. На них покупаются призы в магазине.': "Bu sizning uchqunlaringiz. Do'konda ular evaziga sovg'alar olinadi.",
+    'Твой психолог: Сабина. Здесь её опыт и образование.': "Sizning psixologingiz: Sabina. Bu yerda uning tajribasi va ma'lumoti.",
+    'Нажми, выбери удобное время, и она подтвердит запись в Telegram.': "Bosing, qulay vaqtni tanlang, u yozilishni Telegramda tasdiqlaydi.",
+    'Если сейчас тяжело, нажми «Мне плохо»: там быстрая помощь.': "Agar hozir qiyin bo'lsa, «Menga yomon» tugmasini bosing: u yerda tezkor yordam bor.",
+    'Начни отсюда: нажми «Выбрать челлендж» и выбери свой первый челлендж.': "Shu yerdan boshlang: «Chellenj tanlash» tugmasini bosing va birinchi chellenjingizni tanlang.",
+    'Здесь три простых первых шага. Выполняй их по порядку, и платформа сама подскажет дальше.': "Bu yerda uchta oddiy birinchi qadam bor. Ularni ketma-ket bajaring, platforma keyingisini o'zi aytadi.",
+    'Войди или зарегистрируйся, чтобы искры, серия и награды сохранялись за тобой.': "Uchqunlar, ketma-ketlik va mukofotlar siz uchun saqlanishi uchun kiring yoki ro'yxatdan o'ting.",
+    'Далее': 'Keyingi', 'Понятно!': 'Tushunarli!', 'Пропустить': "O'tkazib yuborish"
   });
-  function seen(k){ try { return localStorage.getItem('lc_hint_' + k) === '1'; } catch(e) { return false; } }
-  function mark(k){ try { localStorage.setItem('lc_hint_' + k, '1'); } catch(e) {} }
-  function showHint(tab){
-    const text = HINTS[tab]; if(!text || seen(tab)) return;
-    const root = document.getElementById('tab-' + tab); if(!root || root.querySelector('.lc-hint')) return;
-    const d = document.createElement('div'); d.className = 'lc-hint';
-    d.innerHTML = '<span></span><button type="button">Понятно</button>';
-    d.firstChild.textContent = text;
-    d.lastChild.onclick = function(){ mark(tab); d.remove(); };
-    const host = root.querySelector('.page-banner') || root; host.insertBefore(d, host.firstChild);
+  const force = /[?&]tour=1/.test(location.search);
+  const key = t => 'lc_tour2_' + t;
+  function seen(t){ if(force) return false; try { return localStorage.getItem(key(t)) === '1'; } catch(e) { return false; } }
+  function mark(t){ try { localStorage.setItem(key(t), '1'); } catch(e) {} }
+  let run = null;
+  const vis = e => e && (e.offsetParent || getComputedStyle(e).position === 'fixed') && e.getBoundingClientRect().width > 0;
+  function resolve(s){ if(typeof s.el === 'function') { const e = s.el(); return vis(e) ? e : null; } return Array.from(document.querySelectorAll(s.el)).find(vis) || null; }
+  function stop(done){ if(!run) return; if(done) mark(run.tab); run.root.classList.add('out'); const r = run.root; setTimeout(() => r.remove(), 250); window.removeEventListener('resize', run.rs); document.removeEventListener('keydown', run.kd); run = null; }
+  function place(){
+    if(!run) return; const s = run.list[run.i]; const el = s.node; if(!el) return;
+    const r = el.getBoundingClientRect(), pad = 8, W = innerWidth, H = innerHeight;
+    const hole = run.hole, bub = run.bub, arr = run.arr;
+    hole.style.cssText = 'left:' + (r.left - pad) + 'px;top:' + (r.top - pad) + 'px;width:' + (r.width + pad * 2) + 'px;height:' + (r.height + pad * 2) + 'px';
+    const bw = Math.min(320, W - 24); bub.style.width = bw + 'px';
+    const bh = bub.offsetHeight, gap = 54;
+    const below = H - r.bottom - pad >= bh + gap + 10 || r.top - pad < bh + gap + 10;
+    let top = below ? r.bottom + pad + gap : r.top - pad - gap - bh;
+    top = Math.max(10, Math.min(H - bh - 10, top));
+    const cx = r.left + r.width / 2;
+    const left = Math.max(12, Math.min(W - bw - 12, cx - bw / 2));
+    bub.style.left = left + 'px'; bub.style.top = top + 'px';
+    arr.className = 'lct-arrow ' + (below ? 'up' : 'down');
+    const ax = Math.max(18, Math.min(W - 18, cx));
+    arr.style.left = ax + 'px';
+    arr.style.top = below ? (r.bottom + pad + 4) + 'px' : (r.top - pad - 4 - 40) + 'px';
   }
-  const _st = switchTab; switchTab = function(t){ _st.apply(this, arguments); try { showHint(t); } catch(e) {} };
+  function show(i){
+    if(!run) return;
+    // пропускаем шаги, чья цель недоступна
+    while(i < run.list.length && !(run.list[i].node = resolve(run.list[i]))) i++;
+    if(i >= run.list.length) return stop(true);
+    run.i = i; const s = run.list[i], el = s.node;
+    const r0 = el.getBoundingClientRect();
+    if(r0.top < 90 || r0.bottom > innerHeight - 90) { try { window.scrollTo({ top: window.scrollY + r0.top - innerHeight / 2 + r0.height / 2, behavior: 'instant' }); } catch(e) { el.scrollIntoView({ block: 'center' }); } }
+    const left = run.list.slice(i + 1).some(x => resolve(x));
+    run.cnt.textContent = (run.shown = (run.shown || 0) + 1) + ' / ' + run.total;
+    run.txt.textContent = s.t;
+    run.next.textContent = left ? 'Далее' : 'Понятно!';
+    run.dots.innerHTML = run.list.map((x, k) => '<i class="' + (k === i ? 'on' : '') + '"></i>').join('');
+    run.bub.classList.remove('pop'); void run.bub.offsetWidth; run.bub.classList.add('pop');
+    requestAnimationFrame(place);
+  }
+  function start(tab){
+    if(run || seen(tab) || !STEPS[tab]) return;
+    if(Array.from(document.querySelectorAll('.modal')).some(m => m.style.display === 'flex' || getComputedStyle(m).display === 'flex')) return;
+    const list = STEPS[tab].map(s => ({ el: s.el, t: s.t })).filter(s => resolve(s)); if(!list.length) return;
+    const root = document.createElement('div'); root.className = 'lct';
+    root.innerHTML = '<div class="lct-hole"></div><div class="lct-arrow up"><svg viewBox="0 0 24 40" width="26" height="40"><path d="M12 38V6M3 15L12 5l9 10" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+      + '<div class="lct-bubble"><div class="lct-top"><span class="lct-cnt"></span><button type="button" class="lct-skip">Пропустить</button></div><p class="lct-txt"></p><div class="lct-bot"><span class="lct-dots"></span><button type="button" class="lct-next">Далее</button></div></div>';
+    document.body.appendChild(root);
+    run = { tab, list, i: 0, total: list.length, root, hole: root.querySelector('.lct-hole'), arr: root.querySelector('.lct-arrow'), bub: root.querySelector('.lct-bubble'), cnt: root.querySelector('.lct-cnt'), txt: root.querySelector('.lct-txt'), dots: root.querySelector('.lct-dots'), next: root.querySelector('.lct-next') };
+    run.rs = () => place(); window.addEventListener('resize', run.rs);
+    run.kd = e => { if(e.key === 'Escape') stop(true); };
+    document.addEventListener('keydown', run.kd);
+    root.querySelector('.lct-skip').onclick = () => stop(true);
+    run.next.onclick = () => show(run.i + 1);
+    ['wheel', 'touchmove'].forEach(ev => root.addEventListener(ev, e => e.preventDefault(), { passive: false }));
+    show(0);
+  }
+  const _st = switchTab; switchTab = function(t){ if(run) stop(false); _st.apply(this, arguments); setTimeout(() => { try { start(t); } catch(e) {} }, 600); };
+  window.lcTourStart = start;
+  // тур главной: ждём, пока закроются приветствие и бонус-окна
+  let tries = 0;
+  (function waitHome(){
+    if(seen('home') || tries++ > 40) return;
+    const home = document.getElementById('tab-home');
+    if(home && home.classList.contains('active')) start('home');
+    if(!seen('home') && !run) setTimeout(waitHome, 1500);
+  })();
 
   // ---------- подарок ----------
   let gift = null;
