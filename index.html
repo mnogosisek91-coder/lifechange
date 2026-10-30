@@ -1427,23 +1427,16 @@
     </div></div>
     <!-- ================= ВКЛАДКА 8: ПРОФИЛЬ (СЮДА ПЕРЕМЕЩЕНЫ НАГРАДЫ) ================= -->
         <div id="tab-profile" class="tab-content">
-            <div class="page-banner">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <h2>👤 Мой Профиль</h2>
-                        <p style="color: var(--text-secondary);">Имя: <b style="color: #fff;" id="profileUserTitle">Гость</b></p>
-                        <p style="color: var(--text-secondary);">Звание: <b style="color: var(--accent-color);" id="profileRank">Новичок (Уровень 1)</b></p>
-                        <p style="color: var(--gold-color); font-size: 0.88rem; margin-top: 4px;" id="profileGoalsDisplay">Цель: пока не выбрана</p>
-                    </div>
-                    <div>
-                        <button class="btn btn-outline" style="font-size: 0.85rem; width: auto;" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">📲 Наш Telegram</button>
-                <button id="logoutBtn" style="display:none!important" tabindex="-1" aria-hidden="true"></button>
-                    </div>
-                </div>
-<div class="pcard" id="accountCard">
-  <p class="note" id="accountInfo" style="margin:0 0 10px;">Вы не вошли в аккаунт</p>
-  <div class="rem-row"><button class="btn btn-outline" id="accountLoginBtn" style="width:auto" onclick="authBtnClick()">Войти или создать профиль</button>
-  <button class="btn btn-outline" id="accountLogoutBtn" style="width:auto; border-color:#ef4444; color:#f87171; display:none" onclick="logoutLocal()">Выйти из аккаунта</button>
+            <div class="page-banner"><div class="pcard" id="accountCard">
+  <h2 style="margin-bottom:6px">👤 Мой профиль</h2>
+  <p style="color: var(--text-secondary);">Имя: <b style="color: #fff;" id="profileUserTitle">Гость</b></p>
+  <p style="color: var(--text-secondary);">Звание: <b style="color: var(--accent-color);" id="profileRank">Новичок (Уровень 1)</b></p>
+  <p style="color: var(--gold-color); font-size: 0.9rem; margin-top: 4px;" id="profileGoalsDisplay">Цель: пока не выбрана</p>
+  <select id="goalPick" style="display:none;margin-top:6px;width:100%;padding:9px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:8px;color:var(--text-primary)" onchange="setGoal(this.value)"><option value="">Выбрать основную цель…</option><option>Бросить курить / Вредные привычки</option><option>Сбросить вес / Похудеть</option><option>Набрать мышечную массу</option><option>Развить дисциплину и чтение</option><option>Улучшить ментальное здоровье</option></select>
+  <p class="note" id="accountInfo" style="margin:10px 0;">Вы не вошли в аккаунт</p>
+  <div class="rem-row"><button class="btn btn-outline" style="width:auto" onclick="window.open('https://t.me/LifeChangeSuLen', '_blank')">📲 Наш Telegram</button>
+  <button class="btn btn-outline" id="accountLoginBtn" style="width:auto" onclick="authBtnClick()">Войти или создать профиль</button>
+  <button class="btn btn-outline" id="accountLogoutBtn" style="width:auto; border-color:#ef4444; color:#f87171; display:none" onclick="logoutLocal()">Выйти</button>
   <button class="btn btn-gold" id="adminOpenBtn" style="width:auto; display:none" onclick="switchTab('admin')">🛠 Админ-панель</button>
   <button class="btn btn-gold" id="psyOpenBtn" style="width:auto; display:none" onclick="switchTab('psycab')">🧠 Кабинет психолога</button></div></div>
 <div class="deadline-timer"><span class="dt-label">⏳ До конца сдачи сегодняшнего отчёта осталось</span><b class="dt-time">--:--:--</b></div>
@@ -2306,11 +2299,16 @@
             document.getElementById('profileUserTitle').textContent = n || 'Гость';
             document.getElementById('profileNameDisplay').textContent = n || 'Вы';
             document.getElementById('authBtn').textContent = n || 'Вход';
-            document.getElementById('profileGoalsDisplay').textContent = user ? 'Основная цель: ' + user.goal : 'Цель: пока не выбрана';
+            document.getElementById('profileGoalsDisplay').textContent = (user && user.goal) ? 'Основная цель: ' + user.goal : 'Цель: пока не выбрана'; { const gp = document.getElementById('goalPick'); if(gp) gp.style.display = (user && !user.goal) ? '' : 'none'; }
             document.getElementById('refLink').value = user ? 'https://lifechange.uz/?ref=' + user.code : 'Войдите, чтобы получить ссылку';
-            document.getElementById('logoutBtn').style.display = user ? 'inline-block' : 'none';
+            
             document.getElementById('lbUserStreak').textContent = '🔥 Стрик: ' + streak + ' дн.';
-            document.getElementById('profileRank').textContent = streak >= 14 ? 'Мастер дисциплины (Уровень 4)' : streak >= 7 ? 'Воин Дисциплины (Уровень 3)' : streak >= 3 ? 'Участник (Уровень 2)' : 'Новичок (Уровень 1)';
+            try { renderRank(); } catch(e) {}
+        }
+        async function setGoal(v) {
+            if(!v || !user) return;
+            try { await rpc('set_goal', { p_goal: v }); user.goal = v; syncUI(); toast('Цель сохранена'); }
+            catch(e) { alert('Не удалось сохранить цель. Попробуйте позже.'); }
         }
         function requireAuth() {
             if(user) return true;
@@ -3041,11 +3039,11 @@ renderBadges(false);
 </script>
 <script>
 // ===================== Аккаунт и администратор =====================
-Object.assign(UZ_EXACT, {"👤 Аккаунт": "👤 Akkaunt", "🛠 Админ": "🛠 Admin", "🛠 Админ-панель": "🛠 Admin paneli", "Вы не вошли в аккаунт": "Siz akkauntga kirmagansiz", "Войти или создать профиль": "Kirish yoki profil yaratish", "Выйти из аккаунта": "Akkauntdan chiqish", "Условия будут объявлены позже.": "Shartlar keyinroq e'lon qilinadi."});
+Object.assign(UZ_EXACT, {"👤 Мой профиль": "👤 Mening profilim", "Выбрать основную цель…": "Asosiy maqsadni tanlash…", "Цель сохранена": "Maqsad saqlandi", "Выйти": "Chiqish", "👤 Аккаунт": "👤 Akkaunt", "🛠 Админ": "🛠 Admin", "🛠 Админ-панель": "🛠 Admin paneli", "Вы не вошли в аккаунт": "Siz akkauntga kirmagansiz", "Войти или создать профиль": "Kirish yoki profil yaratish", "Выйти из аккаунта": "Akkauntdan chiqish", "Условия будут объявлены позже.": "Shartlar keyinroq e'lon qilinadi."});
 let isAdmin = false, accountEmail = '', planTier = 'pro';
 function syncAccount() {
   const info = document.getElementById('accountInfo');
-  if(user) info.textContent = (user.name || '') + (accountEmail ? ' · ' + accountEmail : '') + (userPlan === 'pro' && planUntil > Date.now() ? ' · ' + (planTier === 'vip' ? 'VIP' : 'PRO') + ' (' + new Date(planUntil).toLocaleDateString('ru-RU') + ')' : '') + (isAdmin ? ' · администратор' : '');
+  if(user) info.textContent = ((accountEmail || '') + (userPlan === 'pro' && planUntil > Date.now() ? ' · ' + (planTier === 'vip' ? 'VIP' : 'PRO') + ' (' + new Date(planUntil).toLocaleDateString('ru-RU') + ')' : '') + (isAdmin ? ' · администратор' : '')).replace(/^ · /, '');
   else info.textContent = 'Вы не вошли в аккаунт';
   document.getElementById('accountLoginBtn').style.display = user ? 'none' : '';
   document.getElementById('accountLogoutBtn').style.display = user ? '' : 'none';
