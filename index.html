@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.5 · 31.10.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.6 · 31.10.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -4819,7 +4819,7 @@ body.rehab-norandom .rnd{display:none!important}
     'Добавить выпускника': "Bitiruvchi qo'shish", 'Добавить': "Qo'shish", 'Алкоголь': 'Alkogol', 'Никотин': 'Nikotin', 'Наркотики': 'Giyohvandlik', 'Игровая зависимость': "O'yin qaramligi", 'Другое': 'Boshqa',
     'Почта или @username в LifeChange': "LifeChange'dagi pochta yoki @username",
     'Куратор видит только имя, вид зависимости и сводку по активности. Содержимое отчётов не видно.': "Kurator faqat ism, qaramlik turi va faollik xulosasini ko'radi. Hisobotlar mazmuni ko'rinmaydi.",
-    'Убрать': 'Olib tashlash', 'Показать остальные челленджи': "Boshqa chellenjlarni ko'rsatish", 'Скрыть остальные челленджи': 'Boshqa chellenjlarni yashirish', '⏳ ждёт согласия': '⏳ rozilik kutilmoqda'
+    'Убрать': 'Olib tashlash', 'Включить': 'Yoqish', 'Выключить': "O'chirish", 'Показать остальные челленджи': "Boshqa chellenjlarni ko'rsatish", 'Скрыть остальные челленджи': 'Boshqa chellenjlarni yashirish', '⏳ ждёт согласия': '⏳ rozilik kutilmoqda'
   };
   Object.assign(UZ_EXACT, T);
   const KIND = { alcohol: 'Алкоголь', nicotine: 'Никотин', drugs: 'Наркотики', gambling: 'Игровая зависимость', other: 'Другое' };
@@ -4943,6 +4943,7 @@ body.rehab-norandom .rnd{display:none!important}
     try { curData = await rpc('rehab_overview', { p_rehab: curRid }); } catch(e) { body.innerHTML = '<p class="note" style="text-align:center">' + esc2(errMsg(e)) + '</p>'; return; }
     curRid = curData.rehab.id; curRender();
   }
+  function dw(n){ n = +n || 0; const m = n % 100, l = n % 10; return n + ' ' + ((m > 10 && m < 15) ? 'дней' : l === 1 ? 'день' : (l >= 2 && l <= 4) ? 'дня' : 'дней'); }
   function days(a, b){ return Math.round((new Date(b) - new Date(a)) / 864e5); }
   function stOf(m, today){
     if(m.status === 'pending') return { c: 3, t: '⏳ ждёт согласия', col: '#94a3b8' };
@@ -4958,10 +4959,10 @@ body.rehab-norandom .rnd{display:none!important}
     ms.forEach(m => m._s = stOf(m, today)); ms.sort((a, b) => a._s.c - b._s.c || String(a.name).localeCompare(b.name));
     const act = ms.filter(m => m.status === 'active'), done = act.filter(m => m.today).length, bad = act.filter(m => m._s.c === 1).length;
     let h = '<div class="pcard"><h4>📋 Сегодня</h4><p style="font-size:1.05rem;margin:0 0 4px"><b>' + done + '</b> из ' + act.length + ' участников сдали отчёт' + (bad ? ' · <span style="color:#f87171">' + bad + ' давно молчат</span>' : '') + '</p><p class="note" style="margin:0">Если человек пропал на 3 дня и больше, напишите или позвоните ему: тишина часто предшествует срыву.</p></div>';
-    h += '<div class="pcard"><h4>⚙️ Колесо и боксы</h4><div class="rem-row" style="align-items:center"><span>Для участников программы: <b>' + (r.hide_random ? 'Выключены' : 'Включены') + '</b></span><button class="btn btn-outline" style="width:auto" onclick="curToggleRandom()">' + (r.hide_random ? 'Включить' : 'Выключить') + '</button></div><p class="note" style="margin-top:8px">Выключенные колесо и боксы скрываются, а бокс седьмого дня заменяется фиксированным подарком 300 ⚡. Решение за вашим специалистом.</p></div>';
     h += '<div class="pcard"><h4>➕ Добавить выпускника</h4><div class="rem-row"><input id="curWho2" type="text" autocomplete="off" name="cur_member_who" placeholder="Почта или @username в LifeChange" style="flex:1;min-width:180px"><select id="curKind" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curAdd()">Добавить</button></div><p class="note" style="margin-top:8px">Человек должен уже быть зарегистрирован. Он получит уведомление и подтвердит участие сам.</p></div>';
     h += ms.length ? ms.map(m => '<div class="pcard" style="border-left:4px solid ' + m._s.col + '"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>' + esc2(m.name) + '</b><span class="note" style="margin:0">' + esc2(KIND[m.kind] || '') + '</span></div><div class="note" style="margin:2px 0 6px">' + esc2(m.email) + '</div><div style="color:' + m._s.col + ';font-weight:700;margin-bottom:6px">' + m._s.t + '</div>'
-      + (m.status === 'active' ? '<div class="note" style="margin:0 0 8px">Серия: ' + m.streak + ' дн. · за 7 дней: ' + m.r7 + ' из 7 · за 30 дней: ' + m.r30 + ' из 30</div>' : '')
+      + (m.status === 'active' ? '<div style="font-size:.9rem;line-height:1.7;margin:0 0 8px"><div>🔥 Подряд без пропусков: <b>' + dw(m.streak) + '</b></div><div>📅 За последние 7 дней: отчёт сдан в <b>' + m.r7 + ' из 7</b> дней</div><div>📅 За последние 30 дней: отчёт сдан в <b>' + m.r30 + ' из 30</b> дней</div></div>' : '')
+      + (m.status === 'active' ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04)"><span style="font-size:.88rem">🎡 Колесо и боксы: <b>' + (m.hide_random ? 'выключены' : 'включены') + '</b></span><button class="btn btn-outline" style="width:auto;padding:5px 12px;font-size:.82rem" onclick="curMemberRandom(\'' + m.user_id + '\',' + (!m.hide_random) + ')">' + (m.hide_random ? 'Включить' : 'Выключить') + '</button></div>' : '')
       + '<span class="link" onclick="curRemove(\'' + m.user_id + '\')">Убрать</span></div>').join('') : '<p class="note" style="text-align:center">Пока никого нет. Добавьте первого выпускника.</p>';
     h += '<p class="note" style="text-align:center;margin-top:14px">Куратор видит только имя, вид зависимости и сводку по активности. Содержимое отчётов не видно.</p>';
     $('curBody').innerHTML = h;
@@ -4974,8 +4975,8 @@ body.rehab-norandom .rnd{display:none!important}
     if(!confirm('Убрать этого участника из программы?')) return;
     try { await rpc('rehab_remove_member', { p_rehab: curRid, p_user: uid }); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
   };
-  window.curToggleRandom = async function(){
-    try { await rpc('rehab_set_hide_random', { p_rehab: curRid, p_hide: !curData.rehab.hide_random }); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
+  window.curMemberRandom = async function(uid, hide){
+    try { await rpc('rehab_set_member_random', { p_rehab: curRid, p_user: uid, p_hide: !!hide }); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
   };
   // ---------- админка: создать рехаб ----------
   (function mountAdmin(){
