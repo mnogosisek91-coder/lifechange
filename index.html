@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.9 · 31.10.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v2.0 · 31.10.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -4836,7 +4836,7 @@ body.rehab-norandom .rnd{display:none!important}
     const first = document.querySelector('#tab-challenges details.grp'); if(!first) return;
     const d = document.createElement('details'); d.className = 'grp'; d.id = 'grpR'; d.style.display = 'none';
     d.innerHTML = '<summary class="grp-title">🌿 Восстановление <span class="grp-count">(' + IDS.length + ')</span></summary>'
-      + '<p class="note" style="margin:0 0 12px;padding:0 4px;color:#fde68a">' + NOTE + '</p><div class="grid">'
+      + '<p class="note" style="margin:0 0 12px;padding:0 4px;color:#fde68a">' + NOTE + '</p><div id="rhPath"></div><div class="grid">'
       + IDS.map(k => '<div class="card"><div><span class="card-tag tag-mind">Восстановление</span><h3 style="margin-bottom:.5rem">' + D.CHAL[k].title + '</h3><p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:1rem">' + D.DESC[k] + '</p></div><button class="btn" onclick="openChallengeModal(\'' + k + '\')" data-i18n="btn_start">Начать челлендж</button></div>').join('')
       + '</div>';
     first.parentNode.insertBefore(d, first);
@@ -4874,10 +4874,45 @@ body.rehab-norandom .rnd{display:none!important}
     ['.wheel-container', '#spinBtn', '#boxResult', '#giftNote'].forEach(s => { const e = q(s); if(e) e.classList.add('rnd'); });
     const bc = q('.box-card'); if(bc) { const g = bc.closest('.grid'); if(g) { g.classList.add('rnd'); let p = g.previousElementSibling; for(let i = 0; i < 2 && p; i++) { p.classList.add('rnd'); p = p.previousElementSibling; } } }
   }
+  // ---------- рекомендуемый путь на 90 дней ----------
+  const PATH = ['r2_title', 'r1_title', 'r3_title', 'r4_title', 'r5_title'];
+  try {
+    Object.assign(UZ_EXACT, {
+      '🧭 Ваш путь на 90 дней': "🧭 Sizning 90 kunlik yo'lingiz",
+      'Рекомендуемый порядок. Остальные челленджи можно брать в любой момент.': "Tavsiya etilgan tartib. Qolgan chellenjlarni istalgan vaqtda olish mumkin.",
+      'Сейчас:': 'Hozir:', 'Продолжить': 'Davom etish', 'Следующий шаг': 'Keyingi qadam', 'Начать': 'Boshlash', 'пройден': "o'tilgan",
+      '🎉 Вы прошли весь путь. Дальше выбирайте любой челлендж или повторяйте пройденные.': "🎉 Siz butun yo'lni bosib o'tdingiz. Endi istalgan chellenjni tanlang yoki o'tilganlarini takrorlang."
+    });
+    UZ_PAT.push([/^Шаг (\d+) из (\d+)$/, m => m[1] + '-qadam, jami ' + m[2]], [/^(\d+) из (\d+) дн\.$/, m => m[1] + ' / ' + m[2] + ' kun'], [/^(\d+) дн\.$/, m => m[1] + ' kun']);
+  } catch(e) {}
+  function renderPath(){
+    const box = $('rhPath'); if(!box) return;
+    const rb = (typeof stats !== 'undefined' && stats && stats.rep_by) || {};
+    const n = k => rb[k] || 0, need = k => (CHALLENGES[k] && CHALLENGES[k].days) || 1;
+    const done = k => n(k) >= need(k);
+    let cur = PATH.findIndex(k => !done(k));
+    const rows = PATH.map((k, i) => {
+      const c = CHALLENGES[k]; if(!c) return '';
+      try { const sh = c.title.replace(/\s*\(\d+ (?:день|дня|дней)\)\s*$/, ''), u = UZ_EXACT[c.title]; if(u && !UZ_EXACT[sh]) UZ_EXACT[sh] = u.replace(/\s*\(\d+ kun\)\s*$/, ''); } catch(e) {}
+      const ico = done(k) ? '✅' : i === cur ? '▶️' : '⚪';
+      const st = done(k) ? 'пройден' : (i === cur && n(k) > 0 ? n(k) + ' из ' + need(k) + ' дн.' : need(k) + ' дн.');
+      return '<div style="display:flex;justify-content:space-between;gap:10px;padding:5px 0;' + (i === cur ? 'font-weight:700;color:#fde68a' : (done(k) ? 'opacity:.75' : '')) + '"><span><span>' + ico + '</span> <span>' + c.title.replace(/\s*\(\d+ (?:день|дня|дней)\)\s*$/, '') + '</span></span><span style="white-space:nowrap">' + st + '</span></div>';
+    }).join('');
+    let foot;
+    if(cur < 0) foot = '<p style="margin:10px 0 0">🎉 Вы прошли весь путь. Дальше выбирайте любой челлендж или повторяйте пройденные.</p>';
+    else {
+      const k = PATH[cur], lab = n(k) > 0 ? 'Продолжить' : (cur === 0 ? 'Начать' : 'Следующий шаг');
+      foot = '<button class="btn btn-gold" style="margin-top:10px" onclick="openChallengeModal(\'' + k + '\')">' + lab + '</button>';
+    }
+    const stepLine = cur < 0 ? '' : '<p style="margin:0 0 6px;color:var(--text-secondary);font-size:.85rem">Шаг ' + (cur + 1) + ' из ' + PATH.length + '</p>';
+    box.innerHTML = '<div class="card" style="border-color:#34d399;margin-bottom:14px"><h3 style="margin:0 0 4px">🧭 Ваш путь на 90 дней</h3>'
+      + '<p style="margin:0 0 8px;color:var(--text-secondary);font-size:.85rem">Рекомендуемый порядок. Остальные челленджи можно брать в любой момент.</p>' + stepLine + rows + foot + '</div>';
+  }
+  window.rehabPathRender = renderPath;
   // ---------- применение состояния ----------
   function inProgram(){ return !!(REHAB && REHAB.consent && REHAB.role === 'member'); }
   function apply(){
-    buildGroup(); tagRnd();
+    buildGroup(); tagRnd(); try { renderPath(); } catch(e) {}
     const g = $('grpR'); if(g) g.style.display = (inProgram() || (typeof isAdmin !== 'undefined' && isAdmin)) ? '' : 'none';
     applyOthers();
     document.body.classList.toggle('rehab-norandom', inProgram() && !!REHAB.hide_random);
