@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.4 · 31.10.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.5 · 31.10.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -4819,7 +4819,7 @@ body.rehab-norandom .rnd{display:none!important}
     'Добавить выпускника': "Bitiruvchi qo'shish", 'Добавить': "Qo'shish", 'Алкоголь': 'Alkogol', 'Никотин': 'Nikotin', 'Наркотики': 'Giyohvandlik', 'Игровая зависимость': "O'yin qaramligi", 'Другое': 'Boshqa',
     'Почта или @username в LifeChange': "LifeChange'dagi pochta yoki @username",
     'Куратор видит только имя, вид зависимости и сводку по активности. Содержимое отчётов не видно.': "Kurator faqat ism, qaramlik turi va faollik xulosasini ko'radi. Hisobotlar mazmuni ko'rinmaydi.",
-    'Убрать': 'Olib tashlash', '⏳ ждёт согласия': '⏳ rozilik kutilmoqda'
+    'Убрать': 'Olib tashlash', 'Показать остальные челленджи': "Boshqa chellenjlarni ko'rsatish", 'Скрыть остальные челленджи': 'Boshqa chellenjlarni yashirish', '⏳ ждёт согласия': '⏳ rozilik kutilmoqda'
   };
   Object.assign(UZ_EXACT, T);
   const KIND = { alcohol: 'Алкоголь', nicotine: 'Никотин', drugs: 'Наркотики', gambling: 'Игровая зависимость', other: 'Другое' };
@@ -4840,6 +4840,29 @@ body.rehab-norandom .rnd{display:none!important}
     d.addEventListener('toggle', () => { try { grpTouched = true; } catch(e) {} });
     try { refreshLocks(); } catch(e) {}
   }
+  // ---------- остальные челленджи свёрнуты для участников ----------
+  let othersOpen = false;
+  function applyOthers(){
+    const g = $('grpR'); if(!g) return;
+    const others = [...document.querySelectorAll('#tab-challenges details.grp')].filter(d => d.id !== 'grpR');
+    const ctl = document.querySelector('#tab-challenges .grp-ctl');
+    let btn = $('othersBtn');
+    if(inProgram()) {
+      if(!btn) {
+        btn = document.createElement('button'); btn.id = 'othersBtn'; btn.className = 'btn btn-outline'; btn.style.cssText = 'margin:6px 0 14px';
+        btn.onclick = () => { othersOpen = !othersOpen; applyOthers(); };
+        g.insertAdjacentElement('afterend', btn);
+      }
+      if(!g.dataset.opened) { g.dataset.opened = '1'; g.open = true; }
+      btn.textContent = othersOpen ? 'Скрыть остальные челленджи' : 'Показать остальные челленджи';
+      others.forEach(d => d.style.display = othersOpen ? '' : 'none');
+      if(ctl) ctl.style.display = othersOpen ? '' : 'none';
+    } else {
+      if(btn) btn.remove();
+      others.forEach(d => d.style.display = '');
+      if(ctl) ctl.style.display = '';
+    }
+  }
   // ---------- колесо и боксы ----------
   function tagRnd(){
     const q = s => document.querySelector(s);
@@ -4853,6 +4876,7 @@ body.rehab-norandom .rnd{display:none!important}
   function apply(){
     buildGroup(); tagRnd();
     const g = $('grpR'); if(g) g.style.display = (inProgram() || (typeof isAdmin !== 'undefined' && isAdmin)) ? '' : 'none';
+    applyOthers();
     document.body.classList.toggle('rehab-norandom', inProgram() && !!REHAB.hide_random);
     const isCur = !!(REHAB && REHAB.role === 'curator');
     const cb = $('curatorOpenBtn'); if(cb) cb.style.display = isCur ? '' : 'none';
@@ -4962,7 +4986,11 @@ body.rehab-norandom .rnd{display:none!important}
   })();
   window.admRehabList = async function(){
     const box = $('admRhList'); if(!box) return;
-    try { const l = await rpc('admin_rehab_list'); box.innerHTML = l.length ? l.map(x => '<div class="note" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0"><span><b>' + esc2(x.name) + '</b> · участников: ' + x.members + ' · куратор: ' + esc2(x.curators) + '</span><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="curatorOpen(' + x.id + ')">Открыть кабинет</button></div>').join('') : '<p class="note">Пока нет ни одного рехаба.</p>'; } catch(e) { box.innerHTML = ''; }
+    try { const l = await rpc('admin_rehab_list'); box.innerHTML = l.length ? l.map(x => '<div class="note" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0"><span><b>' + esc2(x.name) + '</b> · участников: ' + x.members + ' · куратор: ' + esc2(x.curators) + '</span><span><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="curatorOpen(' + x.id + ')">Открыть кабинет</button> <button class="btn btn-outline" style="width:auto;padding:6px 12px;border-color:#ef4444;color:#f87171" onclick="admRehabDelete(' + x.id + ')">Удалить</button></span></div>').join('') : '<p class="note">Пока нет ни одного рехаба.</p>'; } catch(e) { box.innerHTML = ''; }
+  };
+  window.admRehabDelete = async function(id){
+    if(!confirm('Удалить этот рехаб вместе со всеми его участниками? Это нельзя отменить.')) return;
+    try { await rpc('admin_rehab_delete', { p_rehab: id }); toast('Рехаб удалён'); admRehabList(); } catch(e) { alert(errMsg(e)); }
   };
   window.admRehabCreate = async function(){
     const n = $('admRhName').value.trim(), c = $('admRhCur').value.trim(); if(!n || !c) return toast('Заполните название и куратора');
