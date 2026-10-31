@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.7 · 31.10.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v1.9 · 31.10.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -2623,6 +2623,7 @@ const ERRMAP = {
   already_reported: 'Отчёт по этому челленджу за сегодня уже принят. Приходите завтра!',
   free_limit: 'В бесплатном тарифе доступен только 1 челлендж. Оформите PRO, чтобы участвовать во всех.',
   dup_file: 'Этот файл уже использован в другом отчёте. Загрузите новое фото или видео.',
+  no_file: 'Прикрепите фото или видео-подтверждение.',
   already_claimed: 'Награда за сегодня уже получена. Приходите завтра!', already_spun: 'Вы уже крутили колесо сегодня!',
   not_enough: 'Недостаточно искр!', already_watched: 'Искры за это видео уже получены. Повторный просмотр награду не даёт.',
   bad_code: 'Неверный код. Проверьте и введите ещё раз.', used_code: 'Этот код уже использован.', file_big: 'Файл слишком большой (до 10 МБ).'
@@ -2878,17 +2879,18 @@ async function submitChallengeReport() {
   const key = currentChallenge;
   if(!Array.from(document.querySelectorAll('.task-check')).every(c => c.checked)) return alert('Искры начисляются только после выполнения всех 3 заданий. Отметьте каждое выполненное задание.');
   const file = document.getElementById('reportFile').files[0];
-  if(!file) return alert('Прикрепите фото или видео-подтверждение.');
+  const optional = /^r\d_title$/.test(String(key)); // «Восстановление»: подтверждение необязательно
+  if(!file && !optional) return alert('Прикрепите фото или видео-подтверждение.');
   if(reportedToday.has(key)) return alert('Отчёт по этому челленджу за сегодня уже принят. Приходите завтра!');
-  const fk = fileKey(file);
-  if(usedFiles.has(fk)) return alert('Этот файл уже использован в другом отчёте. Загрузите новое фото или видео.');
+  const fk = file ? fileKey(file) : null;
+  if(fk && usedFiles.has(fk)) return alert('Этот файл уже использован в другом отчёте. Загрузите новое фото или видео.');
   busy = true;
   const btn = document.querySelector('#challengeModal .btn-gold'); if(btn) btn.disabled = true;
   try {
-    const path = await uploadProof(file, key);
-    const r = await rpc('submit_report', { p_challenge: key, p_file_key: fk, p_hash: pendingHash, p_file_path: path });
-    usedFiles.add(fk); reportedToday.add(key);
-    if(pendingHash) { usedHashes.push(pendingHash); if(usedHashes.length > 300) usedHashes.shift(); pendingHash = null; }
+    const path = file ? await uploadProof(file, key) : null;
+    const r = await rpc('submit_report', { p_challenge: key, p_file_key: fk, p_hash: file ? pendingHash : null, p_file_path: path });
+    if(fk) usedFiles.add(fk); reportedToday.add(key);
+    if(file && pendingHash) { usedHashes.push(pendingHash); if(usedHashes.length > 300) usedHashes.shift(); pendingHash = null; }
     xpAdd(r.gain); points = r.points; histDays.add(srvToday || TODAY); streak = computeStreak();
     if(userPlan === 'free') activeChallenges.add(key);
     syncUI(); initHabitGrid(); tickTimer(); playSound('success'); track('report_accepted');
@@ -4999,7 +5001,21 @@ body.rehab-norandom .rnd{display:none!important}
     try { await rpc('admin_rehab_create', { p_name: n, p_curator: c }); toast('Рехаб создан'); $('admRhName').value = ''; $('admRhCur').value = ''; admRehabList(); } catch(e) { alert(errMsg(e)); }
   };
   // ---------- подключение к состоянию ----------
-  { const _oc = openChallengeModal; openChallengeModal = function(k){ if(/^r\d_title$/.test(String(k))) activeChallenges.add(k); return _oc.apply(this, arguments); }; }
+  // ---------- подтверждение (фото/видео) необязательно ----------
+  const P_INTRO = 'Отметьте все 3 задания дня. Фото или видео по желанию. Искры начисляются только за полностью выполненный день.';
+  const P_LABEL = '📎 Прикрепить фото или видео (необязательно)';
+  const P_INTRO0 = 'Отметьте все 3 задания дня и прикрепите подтверждение. Искры начисляются только за полностью выполненный день.', P_LABEL0 = '📎 Прикрепить фото или видео';
+  try { UZ_EXACT[P_INTRO] = "Kunning barcha 3 topshirig'ini belgilang. Foto yoki video ixtiyoriy. Uchqunlar faqat to'liq bajarilgan kun uchun beriladi."; UZ_EXACT[P_LABEL] = "📎 Foto yoki video ilova qilish (ixtiyoriy)"; } catch(e) {}
+  try { UZ_PAT.push([/^Если захотите приложить: (.+)\.$/, m => 'Xohlasangiz, ilova qiling: ' + trUz(m[1]) + '.']); } catch(e) {}
+  function proofMode(k){
+    const m = document.querySelector('#challengeModal .modal-content'); if(!m) return;
+    const intro = m.querySelector(':scope > p'), lab = m.querySelector('label[for="reportFile"]'), hint = $('proofHint');
+    const opt = /^r\d_title$/.test(String(k));
+    if(intro) intro.textContent = opt ? P_INTRO : P_INTRO0;
+    if(lab) lab.textContent = opt ? P_LABEL : P_LABEL0;
+    if(opt && hint && CHALLENGES[k]) hint.textContent = 'Если захотите приложить: ' + CHALLENGES[k].proof + '.';
+  }
+  { const _oc = openChallengeModal; openChallengeModal = function(k){ if(/^r\d_title$/.test(String(k))) activeChallenges.add(k); const r = _oc.apply(this, arguments); try { proofMode(k); } catch(e) {} return r; }; }
   { const _as = applyState; applyState = function(st){ _as.apply(this, arguments); load(); if(typeof isAdmin !== 'undefined' && isAdmin) admRehabList(); }; }
   { const _st = switchTab; switchTab = function(t){ _st.apply(this, arguments); if(t === 'admin') admRehabList(); }; }
   { const _gl = typeof logoutLocal === 'function' ? logoutLocal : null; if(_gl) logoutLocal = function(){ REHAB = null; asked = false; const r = _gl.apply(this, arguments); try { apply(); } catch(e) {} return r; }; }
