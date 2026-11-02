@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v2.9 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.0 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5197,6 +5197,31 @@ body.rehab-norandom .rnd{display:none!important}
     document.body.insertBefore(el, document.body.firstChild); document.body.classList.add('sbg-on');
   }
   if(document.body) start(); else document.addEventListener('DOMContentLoaded', start);
+})();
+</script>
+<script>
+/* ===== Уже зарегистрированным: сразу «Войти», без анкеты и без тура ===== */
+(function(){
+  const KEY = 'lc_has_acc';
+  function get(k){ try { return localStorage.getItem(k); } catch(e) { return null; } }
+  function set(k,v){ try { localStorage.setItem(k,v); } catch(e) {} }
+  function hasToken(){ try { for(let i=0;i<localStorage.length;i++){ const k = localStorage.key(i); if(/^sb-.*-auth-token$/.test(k) && localStorage.getItem(k)) return true; } } catch(e) {} return false; }
+  const known = () => get(KEY) === '1';
+  let pending = hasToken();                       // сессия есть, профиль ещё грузится
+  if(pending) { set(KEY, '1'); setTimeout(() => { pending = false; }, 6000); }
+  if(known() || pending) set('lc_tour_seen', '1'); // приветственный тур — только для новичков
+  const _as = window.applyState;
+  if(typeof _as === 'function') window.applyState = function(){ pending = false; set(KEY, '1'); return _as.apply(this, arguments); };
+  const _om = window.openModal;
+  window.openModal = function(id){
+    if(id === 'authModal' && typeof setAuthMode === 'function' && known()) { try { setAuthMode('login'); } catch(e) {} }
+    return _om.apply(this, arguments);
+  };
+  const wait = () => { try { toast('Загружаю ваш профиль…'); } catch(e) {} };
+  const _ra = window.requireAuth;
+  window.requireAuth = function(){ if(!user && pending) { wait(); return false; } return _ra.apply(this, arguments); };
+  const _ab = window.authBtnClick;
+  window.authBtnClick = function(){ if(!user && pending) { wait(); return; } return _ab.apply(this, arguments); };
 })();
 </script>
 </body>
