@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.2 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.3 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -4823,7 +4823,8 @@ body.rehab-norandom .rnd{display:none!important}
   Object.assign(ERRMAP, {
     rehab_only: 'Этот челлендж доступен участникам программы «Восстановление».', disabled: 'Эта функция отключена в вашей программе.',
     already_member: 'Этот пользователь уже участвует в программе.', not_allowed: 'Недостаточно прав.',
-    bad_kind: 'Выберите вид зависимости.', bad_name: 'Введите название (минимум 2 символа).'
+    bad_kind: 'Выберите вид зависимости.', bad_name: 'Введите название (минимум 2 символа).',
+    bad_invite: 'Ссылка недействительна, устарела или уже использована. Попросите куратора создать новую.', too_soon: 'Вы уже отправили сообщение. Куратор получил его, подождите немного.', not_member: 'Эта функция доступна участникам программы.'
   });
   const T = {
     '🌿 Восстановление': '🌿 Tiklanish', 'Эти челленджи дополняют лечение, а не заменяют его. Если стало тяжело, нажмите «Мне плохо» или позвоните куратору.': "Bu chellenjlar davolanishni to'ldiradi, uning o'rnini bosmaydi. Agar qiyin bo'lsa, «Menga yomon» tugmasini bosing yoki kuratorga qo'ng'iroq qiling.",
@@ -4926,6 +4927,7 @@ body.rehab-norandom .rnd{display:none!important}
   // ---------- применение состояния ----------
   function inProgram(){ return !!(REHAB && REHAB.consent && REHAB.role === 'member'); }
   function apply(){
+    window.__rehab = REHAB;
     buildGroup(); tagRnd(); try { renderPath(); } catch(e) {}
     const g = $('grpR'); if(g) g.style.display = (inProgram() || (typeof isAdmin !== 'undefined' && isAdmin)) ? '' : 'none';
     applyOthers();
@@ -5011,6 +5013,7 @@ body.rehab-norandom .rnd{display:none!important}
     ms.forEach(m => m._s = stOf(m, today)); ms.sort((a, b) => a._s.c - b._s.c || String(a.name).localeCompare(b.name));
     const act = ms.filter(m => m.status === 'active'), done = act.filter(m => m.today).length, bad = act.filter(m => m._s.c === 1).length;
     let h = '<div class="pcard"><h4>📋 Сегодня</h4><p style="font-size:1.05rem;margin:0 0 4px"><b>' + done + '</b> из ' + act.length + ' участников сдали отчёт' + (bad ? ' · <span style="color:#f87171">' + bad + ' давно молчат</span>' : '') + '</p><p class="note" style="margin:0">Если человек пропал на 3 дня и больше, напишите или позвоните ему: тишина часто предшествует срыву.</p></div>';
+    h += '<div class="pcard"><h4>🔗 Пригласить по ссылке</h4><p class="note" style="margin:0 0 8px">Создайте ссылку и отправьте выпускнику. Он зарегистрируется (или войдёт) и сразу попадёт в вашу программу. Одна ссылка для одного человека, действует 14 дней.</p><div class="rem-row"><select id="curKindL" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curInvite()">Создать ссылку</button></div><div id="curInviteOut"></div></div>';
     h += '<div class="pcard"><h4>➕ Добавить выпускника</h4><div class="rem-row"><input id="curWho2" type="text" autocomplete="off" name="cur_member_who" placeholder="Почта или @username в LifeChange" style="flex:1;min-width:180px"><select id="curKind" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curAdd()">Добавить</button></div><p class="note" style="margin-top:8px">Человек должен уже быть зарегистрирован. Он получит уведомление и подтвердит участие сам.</p></div>';
     h += ms.length ? ms.map(m => '<div class="pcard" style="border-left:4px solid ' + m._s.col + '"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>' + esc2(m.name) + '</b><span class="note" style="margin:0">' + esc2(KIND[m.kind] || '') + '</span></div><div class="note" style="margin:2px 0 6px">' + esc2(m.email) + '</div><div style="color:' + m._s.col + ';font-weight:700;margin-bottom:6px">' + m._s.t + '</div>'
       + (m.status === 'active' ? '<div style="font-size:.9rem;line-height:1.7;margin:0 0 8px"><div>🔥 Подряд без пропусков: <b>' + dw(m.streak) + '</b></div><div>📅 За последние 7 дней: отчёт сдан в <b>' + m.r7 + ' из 7</b> дней</div><div>📅 За последние 30 дней: отчёт сдан в <b>' + m.r30 + ' из 30</b> дней</div></div>' : '')
@@ -5019,6 +5022,24 @@ body.rehab-norandom .rnd{display:none!important}
     h += '<p class="note" style="text-align:center;margin-top:14px">Куратор видит только имя, вид зависимости и сводку по активности. Содержимое отчётов не видно.</p>';
     $('curBody').innerHTML = h;
   }
+  window.curInvite = async function(){
+    try {
+      const code = await rpc('rehab_invite_create', { p_rehab: curRid, p_kind: $('curKindL').value });
+      const url = location.origin + '/?join=' + code;
+      $('curInviteOut').innerHTML = '<div style="margin-top:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,.06);word-break:break-all;font-size:.9rem" id="curInviteUrl">' + esc2(url) + '</div><div class="rem-row" style="margin-top:8px"><button class="btn btn-gold" style="width:auto" onclick="curInviteCopy()">Скопировать</button><button class="btn btn-outline" style="width:auto" onclick="curInviteShare()">Отправить…</button></div>';
+      window.__lcInvite = url; curInviteCopy(true);
+    } catch(e) { alert(errMsg(e)); }
+  };
+  window.curInviteCopy = function(quiet){
+    const u = window.__lcInvite || ''; if(!u) return;
+    const done = () => toast(quiet === true ? 'Ссылка создана и скопирована' : 'Ссылка скопирована');
+    try { navigator.clipboard.writeText(u).then(done, () => toast('Ссылка создана: выделите и скопируйте её вручную')); } catch(e) { toast('Ссылка создана: выделите и скопируйте её вручную'); }
+  };
+  window.curInviteShare = function(){
+    const u = window.__lcInvite || ''; if(!u) return;
+    const text = 'Приглашение в программу поддержки LifeChange: ' + u;
+    if(navigator.share) navigator.share({ text }).catch(() => {}); else curInviteCopy();
+  };
   window.curAdd = async function(){
     const w = $('curWho2').value.trim(); if(!w) return toast('Введите почту или @username');
     try { await rpc('rehab_add_member', { p_rehab: curRid, p_who: w, p_kind: $('curKind').value }); toast('Выпускник добавлен'); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
@@ -5222,6 +5243,84 @@ body.rehab-norandom .rnd{display:none!important}
   window.requireAuth = function(){ if(!user && pending) { wait(); return false; } return _ra.apply(this, arguments); };
   const _ab = window.authBtnClick;
   window.authBtnClick = function(){ if(!user && pending) { wait(); return; } return _ab.apply(this, arguments); };
+})();
+</script>
+<script>
+/* ===== Приглашение по ссылке (?join=код) и «Мне плохо» → куратору ===== */
+(function(){
+  const $ = id => document.getElementById(id);
+  const KEYJ = 'lc_join';
+  const uz = () => { try { return currentLang === 'uz'; } catch(e) { return false; } };
+  try { Object.assign(UZ_EXACT, {
+    'Сообщить куратору': 'Kuratorga xabar berish',
+    'Куратор получит сообщение и свяжется с вами. Это ваш выбор: он сработает только если вы нажмёте кнопку.': "Kurator xabar oladi va siz bilan bog'lanadi. Bu sizning tanlovingiz: faqat tugmani bossangiz yuboriladi.",
+    'Куратор получил ваше сообщение и свяжется с вами.': "Kurator xabaringizni oldi va siz bilan bog'lanadi.",
+    'Вас приглашает программа': 'Sizni dastur taklif qilmoqda',
+    'Ссылка недействительна, устарела или уже использована. Попросите куратора создать новую.': "Havola yaroqsiz, eskirgan yoki ishlatilgan. Kuratordan yangisini so'rang.",
+    'Вы присоединились. Подтвердите участие в окне, которое откроется.': "Siz qo'shildingiz. Ochiladigan oynada ishtirokni tasdiqlang.",
+    'Вы уже отправили сообщение. Куратор получил его, подождите немного.': "Siz allaqachon xabar yubordingiz. Kurator uni oldi, biroz kuting.",
+    'Приглашение в программу поддержки LifeChange: ': "LifeChange qo'llab-quvvatlash dasturiga taklif: "
+  }); } catch(e) {}
+  // 1) ловим код из адреса
+  let code = null;
+  try {
+    const q = new URLSearchParams(location.search), c = (q.get('join') || '').replace(/[^a-zA-Z0-9]/g, '').slice(0, 40);
+    if(c) { localStorage.setItem(KEYJ, c); q.delete('join'); const s = q.toString(); history.replaceState(history.state, '', location.pathname + (s ? '?' + s : '') + location.hash); }
+    code = localStorage.getItem(KEYJ);
+  } catch(e) {}
+  async function joinNow(){
+    let c = null; try { c = localStorage.getItem(KEYJ); } catch(e) {}
+    if(!c) return;
+    try { localStorage.removeItem(KEYJ); } catch(e) {}
+    try { await rpc('rehab_invite_join', { p_code: c }); toast(uz() ? trUz('Вы присоединились. Подтвердите участие в окне, которое откроется.') : 'Вы присоединились. Подтвердите участие в окне, которое откроется.'); if(window.rehabReload) await window.rehabReload(); }
+    catch(e) { const m = String(e && e.message || ''); if(/already_member/.test(m)) { try { window.rehabReload && window.rehabReload(); } catch(x) {} return; } alert(errMsg(e)); }
+  }
+  // 2) после входа — присоединяем
+  const _as = window.applyState;
+  if(typeof _as === 'function') window.applyState = function(){ const r = _as.apply(this, arguments); if(code) setTimeout(joinNow, 300); return r; };
+  // 3) неавторизованному показываем окно входа с пояснением
+  async function showInvite(){
+    if(!code) return;
+    try {
+      const info = await rpc('rehab_invite_info', { p_code: code });
+      if(!info) { try { localStorage.removeItem(KEYJ); } catch(e) {} code = null; try { toast(errMsg({ message: 'bad_invite' })); } catch(e) {} return; }
+      window.__lcInviteName = info.name;
+      if(typeof user !== 'undefined' && user) return;
+      const n = $('authNotice');
+      if(n) { n.style.display = 'block'; n.textContent = (uz() ? trUz('Вас приглашает программа') : 'Вас приглашает программа') + ' «' + info.name + '». ' + (uz() ? "Ro'yxatdan o'ting yoki kiring." : 'Создайте профиль или войдите.'); }
+      openModal('authModal');
+      if(typeof setAuthMode === 'function' && (document.getElementById('authToggle'))) { /* выбор режима оставляем как есть: новичок — регистрация, вернувшийся — вход */ }
+      const sb = document.querySelector('.survey-box'); if(sb) sb.style.display = 'none';
+    } catch(e) {}
+  }
+  if(code) setTimeout(showInvite, 1800);
+  // 4) «Мне плохо» → куратору
+  const _om = window.openModal;
+  window.openModal = function(id){
+    const r = _om.apply(this, arguments);
+    if(id === 'crisisModal') mountSos();
+    return r;
+  };
+  function mountSos(){
+    const R = window.__rehab, ok = !!(R && R.role === 'member' && R.consent);
+    let box = $('sosCur');
+    if(!ok) { if(box) box.style.display = 'none'; return; }
+    if(!box) {
+      box = document.createElement('div'); box.id = 'sosCur'; box.style.cssText = 'margin:0 0 14px;padding:12px;border-radius:12px;background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.4)';
+      box.innerHTML = '<p id="sosCurTxt" style="font-size:.88rem;line-height:1.55;margin:0 0 10px;color:var(--text-secondary)"></p><button id="sosCurBtn" class="btn btn-gold" type="button"></button>';
+      const m = document.querySelector('#crisisModal .modal-content'), last = m && m.querySelector('button.btn-gold');
+      if(m && last) m.insertBefore(box, last); else if(m) m.appendChild(box);
+      $('sosCurBtn').onclick = async function(){
+        this.disabled = true;
+        try { await rpc('rehab_sos'); toast(uz() ? trUz('Куратор получил ваше сообщение и свяжется с вами.') : 'Куратор получил ваше сообщение и свяжется с вами.'); closeModal('crisisModal'); }
+        catch(e) { alert(errMsg(e)); }
+        finally { this.disabled = false; }
+      };
+    }
+    box.style.display = '';
+    $('sosCurTxt').textContent = uz() ? trUz('Куратор получит сообщение и свяжется с вами. Это ваш выбор: он сработает только если вы нажмёте кнопку.') : 'Куратор получит сообщение и свяжется с вами. Это ваш выбор: он сработает только если вы нажмёте кнопку.';
+    $('sosCurBtn').textContent = uz() ? trUz('Сообщить куратору') : 'Сообщить куратору';
+  }
 })();
 </script>
 </body>
