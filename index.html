@@ -1482,7 +1482,7 @@
   <button class="btn btn-outline" id="accountLoginBtn" style="width:auto" onclick="authBtnClick()">Войти или создать профиль</button>
   <button class="btn btn-outline" id="accountLogoutBtn" style="width:auto; border-color:#ef4444; color:#f87171; display:none" onclick="logoutLocal()">Выйти</button>
   <button class="btn btn-gold" id="adminOpenBtn" style="width:auto; display:none" onclick="switchTab('admin')">🛠 Админ-панель</button>
-  <button class="btn btn-gold" id="psyOpenBtn" style="width:auto; display:none" onclick="switchTab('psycab')">🧠 Кабинет психолога</button></div></div>
+  <button class="btn btn-gold" id="psyOpenBtn" style="width:auto; display:none" onclick="switchTab('psycab')">🧠 Кабинет психолога</button></div></div></div>
 <div class="deadline-timer"><span class="dt-label">⏳ До конца сдачи сегодняшнего отчёта осталось</span><b class="dt-time">--:--:--</b></div>
 <div class="pcard chb-card"><h4>📣 Подпишись и получи 500 искр</h4><p class="note" style="margin:0 0 10px;">Подпишитесь и получите <b>+500 искр</b> сразу! В канале постоянные интерактивные розыгрыши искр, конкурсы, разборы и новости платформы.</p><div class="rem-row"><button class="btn btn-outline" style="width:auto;" onclick="joinChannel()">📣 Открыть канал</button><button class="btn btn-gold chbonus-btn" style="width:auto;" onclick="claimChannelBonus()">🎁 Получить 500 искр</button></div></div>
 <div class="pcard" id="rankCard"><h4>🏆 Ранг и опыт</h4>
@@ -1527,7 +1527,7 @@
                     <div class="habit-grid" id="habitGrid"></div>
                 </div>
             </div>
-        </div>
+        
 
     
     <div id="tab-legal" class="tab-content"><div class="page-banner">
@@ -1775,7 +1775,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.9 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.0 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5276,6 +5276,8 @@ body.rehab-norandom .rnd{display:none!important}
 @keyframes sbgFall{0%{transform:translate3d(0,0,0) rotate(0);opacity:0}8%{opacity:.8}92%{opacity:.7}100%{transform:translate3d(var(--dx,60px),112vh,0) rotate(var(--rot,540deg));opacity:0}}
 .sbg-on .page-banner{background:rgba(10,12,28,.46)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 .sbg-on .page-banner::before{display:none}
+.sbg-on .page-banner>.pcard{background:transparent!important;border:0!important;box-shadow:none!important;margin-bottom:0}
+.sbg-on #accountCard h2,.sbg-on #accountCard b,.sbg-on #accountCard .note{text-shadow:0 1px 8px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.6)}
 .sbg-on .hero-section h1{filter:drop-shadow(0 2px 8px rgba(0,0,0,.95))}
 .sbg-on #tab-challenges h2,.sbg-on #tab-challenges .link{text-shadow:0 2px 10px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.8)}
 .sbg-on .page-banner p,.sbg-on .page-banner li,.sbg-on .page-banner label,.sbg-on .page-banner small{text-shadow:0 1px 8px rgba(0,0,0,.85),0 0 2px rgba(0,0,0,.6)}
