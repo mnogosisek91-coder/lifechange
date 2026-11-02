@@ -522,7 +522,7 @@
         .result-box ul { list-style: none; display: grid; gap: 6px; font-size: 0.85rem; color: #e6e9ff; line-height: 1.45; margin: 0; }
         .result-box li::before { content: '✓ '; color: #34d399; font-weight: 800; }
         .result-box small { display: block; margin-top: 8px; font-size: 0.7rem; color: var(--text-secondary); }
-        details.grp { margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(255,255,255,0.02); overflow: hidden; }
+        details.grp { margin-bottom: 12px; border: 1px solid var(--border-color); border-radius: 12px; background: rgba(15,23,42,0.62); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); overflow: hidden; }
         details.grp > summary.grp-title { list-style: none; cursor: pointer; margin: 0; padding: 14px 16px; display: flex; align-items: center; gap: 8px; font-size: 1.05rem; color: #f6dc9a; }
         details.grp > summary::-webkit-details-marker { display: none; }
         details.grp > summary::after { content: '▾'; margin-left: auto; transition: transform 0.2s; color: var(--text-secondary); }
@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.4 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.5 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5232,6 +5232,7 @@ body.rehab-norandom .rnd{display:none!important}
 .sbg-on .page-banner{background:rgba(13,10,26,.22)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}
 .sbg-on .page-banner::before{display:none}
 .sbg-on .hero-section h1{filter:drop-shadow(0 2px 8px rgba(0,0,0,.95))}
+.sbg-on #tab-challenges h2,.sbg-on #tab-challenges .link{text-shadow:0 2px 10px rgba(0,0,0,.95),0 0 3px rgba(0,0,0,.8)}
 .sbg-on .hero-section p{text-shadow:0 2px 10px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.8)}
 @media (prefers-reduced-motion:reduce){.sbg .pic,.sbg .glow,.sbg .rays,.sbg .mist,.sbg .leaf,.sbg .ember{animation:none}.sbg .leaf,.sbg .ember{display:none}}
 </style>
