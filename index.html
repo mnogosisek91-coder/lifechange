@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.3 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.4 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -1969,8 +1969,8 @@
         }
         function copyCard() {
             const n = '5614686811723116';
-            if(navigator.clipboard) navigator.clipboard.writeText(n).then(() => alert('Номер карты скопирован'), () => prompt('Скопируйте номер карты:', n));
-            else prompt('Скопируйте номер карты:', n);
+            if(navigator.clipboard) navigator.clipboard.writeText(n).then(() => alert('Номер карты скопирован'), () => lcPrompt('Скопируйте номер карты:', n, { readonly: true }));
+            else lcPrompt('Скопируйте номер карты:', n, { readonly: true });
         }
         function sendReceipt() {
             track('receipt_sent');
@@ -2322,8 +2322,8 @@
             if(user) return switchTab('profile');
             document.getElementById('authNotice').style.display = 'none'; openModal('authModal');
         }
-        function logoutLocal() {
-            if(!confirm('Выйти и стереть данные на этом устройстве? Искры и прогресс будут потеряны.')) return;
+        async function logoutLocal() {
+            if(!(await lcConfirm('Выйти и стереть данные на этом устройстве? Искры и прогресс будут потеряны.', { danger: true }))) return;
             window.__noSave = true; try { localStorage.removeItem('lc_state_v2'); } catch(e) {}
             location.reload();
         }
@@ -2363,8 +2363,8 @@
                 switchTab('plans'); return;
             }
             if(userPlan === 'free' && !activeChallenges.has(titleKey)) {
-                if(!confirm('Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.')) return;
-                activeChallenges.add(titleKey); saveState(); refreshLocks();
+                lcConfirm('Выбрать этот челлендж? В бесплатном тарифе из каждой группы можно участвовать только в одном.').then(ok => { if(ok) { activeChallenges.add(titleKey); saveState(); refreshLocks(); openChallengeModal(titleKey); } });
+                return;
             }
             currentChallenge = titleKey;
             if(!checkins[TODAY] && !checkinSkipped) { pendingChallenge = titleKey; renderCheckin(); openModal('checkinModal'); return; }
@@ -2726,7 +2726,7 @@ async function processRegistration() {
   finally { busy = false; }
 }
 async function logoutLocal() {
-  if(!confirm('Выйти из аккаунта?')) return;
+  if(!(await lcConfirm('Выйти из аккаунта?'))) return;
   window.__noSave = true;
   try { await sb.auth.signOut(); } catch(e) {}
   try { localStorage.removeItem('lc_state_v2'); } catch(e) {}
@@ -3082,12 +3082,12 @@ async function adminProof(path) {
   if(error) return alert(errMsg(error)); window.open(data.signedUrl, '_blank');
 }
 async function adminOrderDone(id) { try { await rpc('admin_order_done', { p_id: id }); renderAdmin(); } catch(e) { alert(errMsg(e)); } }
-async function adminReject(id) { if(!confirm('Отклонить отчёт? Искры будут списаны.')) return; try { await rpc('admin_reject_report', { p_id: id }); renderAdmin(); } catch(e) { alert(errMsg(e)); } }
+async function adminReject(id) { if(!(await lcConfirm('Отклонить отчёт? Искры будут списаны.', { danger: true }))) return; try { await rpc('admin_reject_report', { p_id: id }); renderAdmin(); } catch(e) { alert(errMsg(e)); } }
 async function adminAddPoints(n) { try { points = await rpc('admin_add_points', { p_points: n }); syncUI(); } catch(e) { alert(errMsg(e)); } }
 async function adminPlan(d) {
   try { const r = await rpc('admin_set_plan', { p_days: d }); planUntil = r ? Date.parse(r) : 0; userPlan = planUntil > Date.now() ? 'pro' : 'free'; await hydrate(); alert(d ? 'PRO включён на ' + d + ' дней.' : 'Тариф: бесплатный.'); } catch(e) { alert(errMsg(e)); }
 }
-async function adminReset() { if(!confirm('Сбросить ваши искры, отчёты, заказы и тариф как у нового пользователя?')) return; try { await rpc('admin_reset_me'); await hydrate(); alert('Прогресс сброшен.'); } catch(e) { alert(errMsg(e)); } }
+async function adminReset() { if(!(await lcConfirm('Сбросить ваши искры, отчёты, заказы и тариф как у нового пользователя?', { danger: true }))) return; try { await rpc('admin_reset_me'); await hydrate(); alert('Прогресс сброшен.'); } catch(e) { alert(errMsg(e)); } }
 { const _st = switchTab; switchTab = function(t) { if(t === 'admin' && !isAdmin) return; _st(t); if(t === 'admin') renderAdmin(); try { if(YM_ID && window.ym) window.ym(YM_ID, 'hit', location.pathname + '#' + t, { title: t }); } catch(e) {} }; }
 syncAccount();
 </script>
@@ -3203,7 +3203,7 @@ setInterval(() => { if(sbUid) loadUserNotifs(); }, 60000);
 async function adminRevoke() {
   const email = document.getElementById('grantEmail').value.trim();
   if(!email) return alert('Введите email клиента.');
-  if(!confirm('Забрать платный тариф у ' + email + '?')) return;
+  if(!(await lcConfirm('Забрать платный тариф у ' + email + '?', { danger: true }))) return;
   try { await rpc('admin_revoke_plan', { p_email: email }); alert('Тариф отключён.'); document.getElementById('grantEmail').value = ''; }
   catch(e) { alert(errMsg(e)); }
 }
@@ -3350,8 +3350,11 @@ renderBadges(false); refreshLocks();
 // забытый пароль
 function forgotPassword() {
   if(!sb) return alert('Нет связи с сервером. Проверьте интернет и повторите.');
-  const email = document.getElementById('authEmail').value.trim() || (prompt('Введите email вашего аккаунта:') || '').trim();
-  if(!email) return;
+  const typed = document.getElementById('authEmail').value.trim();
+  if(!typed) { lcPrompt('Введите email вашего аккаунта:', '', { type: 'email' }).then(v => { const e2 = (v || '').trim(); if(e2) forgotSend(e2); }); return; }
+  forgotSend(typed);
+}
+function forgotSend(email) {
   sb.auth.resetPasswordForEmail(email, { redirectTo: 'https://lifechange.uz/' })
     .then(({ error }) => { if(error) throw error; alert('Если такой email зарегистрирован, мы отправили письмо со ссылкой для смены пароля. Проверьте и папку «Спам».'); })
     .catch(e => { console.warn(e); alert(/rate limit|too many/i.test(String(e && e.message)) ? errMsg(e) : 'Не удалось отправить письмо. Попробуйте позже или напишите нам в Telegram.'); });
@@ -3389,8 +3392,8 @@ function applyCardFor(t) {
 { const _pm = openPayModal; openPayModal = function(t) { _pm.apply(this, arguments); applyCardFor(t); }; }
 function copyCard() {
   const n = CURRENT_CARD;
-  if(navigator.clipboard) navigator.clipboard.writeText(n).then(() => alert('Номер карты скопирован'), () => prompt('Скопируйте номер карты:', n));
-  else prompt('Скопируйте номер карты:', n);
+  if(navigator.clipboard) navigator.clipboard.writeText(n).then(() => alert('Номер карты скопирован'), () => lcPrompt('Скопируйте номер карты:', n, { readonly: true }));
+  else lcPrompt('Скопируйте номер карты:', n, { readonly: true });
 }
 </script>
 <script>
@@ -3977,11 +3980,11 @@ async function psyPublish() {
   } catch(e) { alert(errMsg(e)); }
 }
 async function psyDeletePost(id) {
-  if(!confirm('Удалить публикацию?')) return;
+  if(!(await lcConfirm('Удалить публикацию?', { danger: true }))) return;
   try { await rpc('psy_delete_post', { p_id: id }); await loadPsyPosts(); renderPsyMyPosts(); } catch(e) { alert(errMsg(e)); }
 }
 async function psySetStatus(id, st) {
-  if(st === 'cancelled' && !confirm('Отменить заявку? Клиент получит уведомление.')) return;
+  if(st === 'cancelled' && !(await lcConfirm('Отменить заявку? Клиент получит уведомление.', { danger: true }))) return;
   try { await rpc('psy_set_status', { p_id: id, p_status: st }); await loadPsyBookings(); } catch(e) { alert(errMsg(e)); }
 }
 async function psyMarkPaid(id, v) {
@@ -4058,7 +4061,7 @@ document.querySelectorAll('.onb-step').forEach(el => el.addEventListener('keydow
 // после бонуса за канал подсказываем следующий шаг
 { const _cs = checkChannelSub; checkChannelSub = async function() {
     const before = channelBonus; await _cs.apply(this, arguments);
-    if(!before && channelBonus && !onbSteps()[0] && confirm('Бонус получен! Теперь выберите челлендж и получите ещё. Перейти к выбору?')) switchTab('challenges');
+    if(!before && channelBonus && !onbSteps()[0] && await lcConfirm('Бонус получен! Теперь выберите челлендж и получите ещё. Перейти к выбору?')) switchTab('challenges');
   }; }
 renderOnboarding();
 </script>
@@ -4824,6 +4827,7 @@ body.rehab-norandom .rnd{display:none!important}
     rehab_only: 'Этот челлендж доступен участникам программы «Восстановление».', disabled: 'Эта функция отключена в вашей программе.',
     already_member: 'Этот пользователь уже участвует в программе.', not_allowed: 'Недостаточно прав.',
     bad_kind: 'Выберите вид зависимости.', bad_name: 'Введите название (минимум 2 символа).',
+    msg_soon: 'Вы только что отправили этому человеку сообщение. Подождите несколько минут.', bad_message: 'Сообщение не найдено.',
     bad_invite: 'Ссылка недействительна, устарела или уже использована. Попросите куратора создать новую.', too_soon: 'Вы уже отправили сообщение. Куратор получил его, подождите немного.', not_member: 'Эта функция доступна участникам программы.'
   });
   const T = {
@@ -4958,7 +4962,7 @@ body.rehab-norandom .rnd{display:none!important}
     openModal('rehabConsent');
   }
   window.rehabLeave = async function(){
-    if(!confirm('Выйти из программы? Куратор перестанет видеть вашу активность, а раздел «Восстановление» скроется.')) return;
+    if(!(await lcConfirm('Выйти из программы? Куратор перестанет видеть вашу активность, а раздел «Восстановление» скроется.', { danger: true }))) return;
     try { await rpc('rehab_leave'); REHAB = null; apply(); toast('Вы вышли из программы'); } catch(e) { alert(errMsg(e)); }
   };
   // ---------- профиль и меню ----------
@@ -5014,14 +5018,19 @@ body.rehab-norandom .rnd{display:none!important}
     const act = ms.filter(m => m.status === 'active'), done = act.filter(m => m.today).length, bad = act.filter(m => m._s.c === 1).length;
     let h = '<div class="pcard"><h4>📋 Сегодня</h4><p style="font-size:1.05rem;margin:0 0 4px"><b>' + done + '</b> из ' + act.length + ' участников сдали отчёт' + (bad ? ' · <span style="color:#f87171">' + bad + ' давно молчат</span>' : '') + '</p><p class="note" style="margin:0">Если человек пропал на 3 дня и больше, напишите или позвоните ему: тишина часто предшествует срыву.</p></div>';
     h += '<div class="pcard"><h4>🔗 Пригласить по ссылке</h4><p class="note" style="margin:0 0 8px">Создайте ссылку и отправьте выпускнику. Он зарегистрируется (или войдёт) и сразу попадёт в вашу программу. Одна ссылка для одного человека, действует 14 дней.</p><div class="rem-row"><select id="curKindL" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curInvite()">Создать ссылку</button></div><div id="curInviteOut"></div></div>';
-    h += '<div class="pcard"><h4>➕ Добавить выпускника</h4><div class="rem-row"><input id="curWho2" type="text" autocomplete="off" name="cur_member_who" placeholder="Почта или @username в LifeChange" style="flex:1;min-width:180px"><select id="curKind" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curAdd()">Добавить</button></div><p class="note" style="margin-top:8px">Человек должен уже быть зарегистрирован. Он получит уведомление и подтвердит участие сам.</p></div>';
+    h += '<div class="pcard"><h4>➕ Добавить выпускника</h4><div class="rem-row"><input id="curWho2" type="text" autocomplete="off" name="cur_member_who" placeholder="Почта или Telegram @ник" style="flex:1;min-width:180px"><select id="curKind" style="min-width:150px">' + Object.keys(KIND).map(k => '<option value="' + k + '">' + KIND[k] + '</option>').join('') + '</select><button class="btn btn-gold" style="width:auto" onclick="curAdd()">Добавить</button></div><p class="note" style="margin-top:8px">Человек должен уже быть зарегистрирован. Он получит уведомление и подтвердит участие сам.</p></div>';
     h += ms.length ? ms.map(m => '<div class="pcard" style="border-left:4px solid ' + m._s.col + '"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>' + esc2(m.name) + '</b><span class="note" style="margin:0">' + esc2(KIND[m.kind] || '') + '</span></div><div class="note" style="margin:2px 0 6px">' + esc2(m.email) + '</div><div style="color:' + m._s.col + ';font-weight:700;margin-bottom:6px">' + m._s.t + '</div>'
       + (m.status === 'active' ? '<div style="font-size:.9rem;line-height:1.7;margin:0 0 8px"><div>🔥 Подряд без пропусков: <b>' + dw(m.streak) + '</b></div><div>📅 За последние 7 дней: отчёт сдан в <b>' + m.r7 + ' из 7</b> дней</div><div>📅 За последние 30 дней: отчёт сдан в <b>' + m.r30 + ' из 30</b> дней</div></div>' : '')
       + (m.status === 'active' ? '<div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:0 0 8px;padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.04)"><span style="font-size:.88rem">🎡 Колесо и боксы: <b>' + (m.hide_random ? 'выключены' : 'включены') + '</b></span><button class="btn btn-outline" style="width:auto;padding:5px 12px;font-size:.82rem" onclick="curMemberRandom(\'' + m.user_id + '\',' + (!m.hide_random) + ')">' + (m.hide_random ? 'Включить' : 'Выключить') + '</button></div>' : '')
+      + (m.status === 'active' ? '<div style="margin:0 0 10px"><div class="note" style="margin:0 0 6px">Отправить сообщение:</div><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-outline" style="width:auto;padding:5px 12px;font-size:.82rem" onclick="curMsg(\'' + m.user_id + '\',\'proud\')">💚 Горжусь тобой</button><button class="btn btn-outline" style="width:auto;padding:5px 12px;font-size:.82rem" onclick="curMsg(\'' + m.user_id + '\',\'how\')">🤝 Как ты?</button><button class="btn btn-outline" style="width:auto;padding:5px 12px;font-size:.82rem" onclick="curMsg(\'' + m.user_id + '\',\'call\')">📞 Позвони мне</button></div></div>' : '')
       + '<span class="link" onclick="curRemove(\'' + m.user_id + '\')">Убрать</span></div>').join('') : '<p class="note" style="text-align:center">Пока никого нет. Добавьте первого выпускника.</p>';
     h += '<p class="note" style="text-align:center;margin-top:14px">Куратор видит только имя, вид зависимости и сводку по активности. Содержимое отчётов не видно.</p>';
     $('curBody').innerHTML = h;
   }
+  window.curMsg = async function(uid, code){
+    try { await rpc('rehab_message', { p_rehab: curRid, p_user: uid, p_code: code }); toast('Сообщение отправлено'); }
+    catch(e) { alert(errMsg(e)); }
+  };
   window.curInvite = async function(){
     try {
       const code = await rpc('rehab_invite_create', { p_rehab: curRid, p_kind: $('curKindL').value });
@@ -5041,11 +5050,11 @@ body.rehab-norandom .rnd{display:none!important}
     if(navigator.share) navigator.share({ text }).catch(() => {}); else curInviteCopy();
   };
   window.curAdd = async function(){
-    const w = $('curWho2').value.trim(); if(!w) return toast('Введите почту или @username');
+    const w = $('curWho2').value.trim(); if(!w) return toast('Введите почту или Telegram @ник');
     try { await rpc('rehab_add_member', { p_rehab: curRid, p_who: w, p_kind: $('curKind').value }); toast('Выпускник добавлен'); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
   };
   window.curRemove = async function(uid){
-    if(!confirm('Убрать этого участника из программы?')) return;
+    if(!(await lcConfirm('Убрать этого участника из программы?', { danger: true }))) return;
     try { await rpc('rehab_remove_member', { p_rehab: curRid, p_user: uid }); await curatorRefresh(); } catch(e) { alert(errMsg(e)); }
   };
   window.curMemberRandom = async function(uid, hide){
@@ -5063,7 +5072,7 @@ body.rehab-norandom .rnd{display:none!important}
     try { const l = await rpc('admin_rehab_list'); box.innerHTML = l.length ? l.map(x => '<div class="note" style="display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0"><span><b>' + esc2(x.name) + '</b> · участников: ' + x.members + ' · куратор: ' + esc2(x.curators) + '</span><span><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="curatorOpen(' + x.id + ')">Открыть кабинет</button> <button class="btn btn-outline" style="width:auto;padding:6px 12px;border-color:#ef4444;color:#f87171" onclick="admRehabDelete(' + x.id + ')">Удалить</button></span></div>').join('') : '<p class="note">Пока нет ни одного рехаба.</p>'; } catch(e) { box.innerHTML = ''; }
   };
   window.admRehabDelete = async function(id){
-    if(!confirm('Удалить этот рехаб вместе со всеми его участниками? Это нельзя отменить.')) return;
+    if(!(await lcConfirm('Удалить этот рехаб вместе со всеми его участниками? Это нельзя отменить.', { danger: true }))) return;
     try { await rpc('admin_rehab_delete', { p_rehab: id }); toast('Рехаб удалён'); admRehabList(); } catch(e) { alert(errMsg(e)); }
   };
   window.admRehabCreate = async function(){
@@ -5122,6 +5131,7 @@ body.rehab-norandom .rnd{display:none!important}
 .lca-brand{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-color,#f6c453);margin-bottom:10px;opacity:.9}
 .lca-msg{white-space:pre-line;line-height:1.5;font-size:1rem;margin-bottom:18px;word-break:break-word;max-height:55vh;overflow:auto}
 .lca-ok{width:100%}
+.lca-row{display:flex;gap:10px}.lca-row .btn{flex:1;width:auto;margin:0}.lca-body:empty{display:none}.lca-input{width:100%;padding:12px;margin:0 0 14px;border-radius:10px;border:1px solid var(--border-color,rgba(255,255,255,.2));background:var(--bg-color,#0f172a);color:#fff;font-size:1rem}.lca-danger{background:#dc2626!important;border-color:#dc2626!important;color:#fff!important}
 @keyframes lcaIn{from{opacity:0}to{opacity:1}}
 @keyframes lcaPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
 </style>
@@ -5143,6 +5153,51 @@ body.rehab-norandom .rnd{display:none!important}
     document.body.appendChild(root); cur = root;
     try { ok.focus(); } catch(e) {}
   }
+  // ----- подтверждение и ввод вместо confirm()/prompt() -----
+  const isUz = () => { try { return currentLang === 'uz'; } catch(e) { return false; } };
+  const tr = s => { try { return typeof trAny === 'function' ? trAny(s) : s; } catch(e) { return s; } };
+  function dlg(msg, build){
+    return new Promise(resolve => {
+      const root = document.createElement('div'); root.className = 'lca'; root.setAttribute('role', 'dialog'); root.setAttribute('aria-modal', 'true');
+      root.innerHTML = '<div class="lca-box"><div class="lca-brand">LifeChange</div><div class="lca-msg"></div><div class="lca-body"></div><div class="lca-row"></div></div>';
+      root.querySelector('.lca-msg').textContent = tr(String(msg == null ? '' : msg));
+      const body = root.querySelector('.lca-body'), row = root.querySelector('.lca-row');
+      let done = false;
+      const finish = v => { if(done) return; done = true; document.removeEventListener('keydown', key, true); root.remove(); resolve(v); };
+      const api = build(body, row, finish);
+      const key = e => { if(e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); finish(api.cancel); } else if(e.key === 'Enter' && !(e.target && e.target.tagName === 'BUTTON')) { e.preventDefault(); e.stopPropagation(); finish(api.enter()); } };
+      document.addEventListener('keydown', key, true);
+      root.addEventListener('mousedown', e => { if(e.target === root) finish(api.cancel); });
+      document.body.appendChild(root);
+      try { api.focus && api.focus(); } catch(e) {}
+    });
+  }
+  function btn(label, cls, onclick){ const b = document.createElement('button'); b.type = 'button'; b.className = 'btn ' + cls; b.textContent = label; b.onclick = onclick; return b; }
+  window.lcConfirm = function(msg, opts){
+    opts = opts || {};
+    if(!document.body) return Promise.resolve(window.confirm(msg));
+    return dlg(msg, (body, row, finish) => {
+      const no = btn(isUz() ? 'Bekor qilish' : 'Отмена', 'btn-outline', () => finish(false));
+      const yes = btn(opts.ok || (isUz() ? 'Ha' : 'Да'), opts.danger ? 'btn-gold lca-danger' : 'btn-gold', () => finish(true));
+      row.appendChild(no); row.appendChild(yes);
+      return { cancel: false, enter: () => true, focus: () => yes.focus() };
+    });
+  };
+  window.lcPrompt = function(msg, def, opts){
+    opts = opts || {};
+    if(!document.body) return Promise.resolve(window.prompt(msg, def));
+    return dlg(msg, (body, row, finish) => {
+      const inp = document.createElement('input'); inp.type = opts.type || 'text'; inp.value = def || ''; inp.className = 'lca-input';
+      if(opts.readonly) inp.readOnly = true;
+      inp.setAttribute('autocomplete', 'off');
+      body.appendChild(inp);
+      const no = btn(isUz() ? 'Yopish' : (opts.readonly ? 'Закрыть' : 'Отмена'), 'btn-outline', () => finish(null));
+      row.appendChild(no);
+      if(!opts.readonly) row.appendChild(btn('OK', 'btn-gold', () => finish(inp.value)));
+      else row.appendChild(btn(isUz() ? 'Nusxa olish' : 'Скопировать', 'btn-gold', () => { try { inp.select(); document.execCommand('copy'); } catch(e) {} finish(null); }));
+      return { cancel: null, enter: () => (opts.readonly ? null : inp.value), focus: () => { inp.focus(); inp.select(); } };
+    });
+  };
   const native = window.alert.bind(window);
   window.alert = function(m){
     let s = (m === undefined || m === null) ? '' : String(m);
@@ -5322,6 +5377,21 @@ body.rehab-norandom .rnd{display:none!important}
     $('sosCurBtn').textContent = uz() ? trUz('Сообщить куратору') : 'Сообщить куратору';
   }
 })();
+</script>
+<script>
+try { Object.assign(UZ_EXACT, {
+  '🔗 Пригласить по ссылке': '🔗 Havola orqali taklif qilish',
+  'Создайте ссылку и отправьте выпускнику. Он зарегистрируется (или войдёт) и сразу попадёт в вашу программу. Одна ссылка для одного человека, действует 14 дней.': "Havola yarating va bitiruvchiga yuboring. U ro'yxatdan o'tadi (yoki kiradi) va darhol dasturingizga qo'shiladi. Bitta havola — bitta odam uchun, 14 kun amal qiladi.",
+  'Создать ссылку': 'Havola yaratish', 'Скопировать': 'Nusxa olish', 'Отправить…': 'Yuborish…',
+  'Ссылка скопирована': 'Havola nusxalandi', 'Ссылка создана и скопирована': 'Havola yaratildi va nusxalandi',
+  'Отправить сообщение:': 'Xabar yuborish:', '💚 Горжусь тобой': '💚 Sen bilan faxrlanaman', '🤝 Как ты?': '🤝 Qandaysan?', '📞 Позвони мне': "📞 Menga qo'ng'iroq qil",
+  'Сообщение отправлено': 'Xabar yuborildi',
+  'Вы только что отправили этому человеку сообщение. Подождите несколько минут.': "Siz hozirgina bu odamga xabar yubordingiz. Bir necha daqiqa kuting.",
+  'Введите почту или Telegram @ник': 'Pochta yoki Telegram @nik kiriting',
+  'Выйти из аккаунта?': 'Akkauntdan chiqasizmi?', 'Удалить публикацию?': "Nashrni o'chirasizmi?",
+  'Убрать этого участника из программы?': "Bu ishtirokchini dasturdan olib tashlaysizmi?",
+  'Введите email вашего аккаунта:': 'Akkauntingiz emailini kiriting:', 'Скопируйте номер карты:': 'Karta raqamini nusxalang:'
+}); } catch(e) {}
 </script>
 </body>
 </html>
