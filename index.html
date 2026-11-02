@@ -607,6 +607,48 @@
     </style>
 </head>
 <body>
+<div id="lcSplash" aria-hidden="true">
+<style>
+#lcSplash{position:fixed;inset:0;z-index:200000;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(120% 90% at 50% 38%,#1b2150 0%,#0b1020 70%);transition:opacity .4s ease}
+#lcSplash.out{opacity:0;pointer-events:none}
+#lcSplash svg.sp-mark{width:118px;height:118px;overflow:visible;filter:drop-shadow(0 8px 28px rgba(99,102,241,.45))}
+#lcSplash .sp-ring{stroke-dasharray:300;stroke-dashoffset:300;animation:spRing 1s .1s cubic-bezier(.4,0,.2,1) forwards}
+#lcSplash .sp-bar{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);animation:spBar .55s cubic-bezier(.2,.9,.3,1.15) forwards}
+#lcSplash .sp-b1{animation-delay:.45s}#lcSplash .sp-b2{animation-delay:.65s}#lcSplash .sp-b3{animation-delay:.85s}
+#lcSplash .sp-name{margin-top:22px;font:800 2.1rem/1 Inter,system-ui,sans-serif;color:#fff;letter-spacing:.2px;opacity:0;transform:translateY(8px);animation:spUp .5s 1.15s ease-out forwards}
+#lcSplash .sp-name b{color:#f2cf74}
+#lcSplash .sp-by{margin-top:10px;font:600 .95rem/1 Inter,system-ui,sans-serif;color:#a5b4fc;letter-spacing:.18em;opacity:0;transform:translateY(6px);animation:spUp .5s 1.65s ease-out forwards}
+#lcSplash .sp-by i{font-style:normal;color:#f6dc9a}
+#lcSplash .sp-load{position:absolute;left:50%;bottom:calc(9vh + env(safe-area-inset-bottom,0px));width:120px;height:3px;margin-left:-60px;border-radius:3px;background:rgba(255,255,255,.12);overflow:hidden}
+#lcSplash .sp-load::after{content:"";display:block;height:100%;width:100%;border-radius:3px;background:linear-gradient(90deg,#6366f1,#f2cf74);transform:scaleX(0);transform-origin:0 50%;animation:spLoad 2.3s .1s cubic-bezier(.3,.1,.3,1) forwards}
+@keyframes spRing{to{stroke-dashoffset:0}}
+@keyframes spBar{to{transform:scaleY(1)}}
+@keyframes spUp{to{opacity:1;transform:none}}
+@keyframes spLoad{to{transform:scaleX(1)}}
+@media (prefers-reduced-motion:reduce){#lcSplash .sp-ring{animation:none;stroke-dashoffset:0}#lcSplash .sp-bar{animation:none;transform:none}#lcSplash .sp-name,#lcSplash .sp-by{animation:none;opacity:1;transform:none}#lcSplash .sp-load::after{animation:none;transform:none}}
+</style>
+<svg class="sp-mark" viewBox="0 0 120 120"><defs>
+<linearGradient id="spring" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#818cf8"/></linearGradient>
+<linearGradient id="spgold" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#d9a63c"/><stop offset="1" stop-color="#fff1c1"/></linearGradient>
+<linearGradient id="spbar" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#6366f1"/><stop offset="1" stop-color="#a5b4fc"/></linearGradient></defs>
+<path class="sp-ring" d="M93.64 28.63 A46 46 0 1 1 67.20 14.57" fill="none" stroke="url(#spring)" stroke-width="7" stroke-linecap="round"/>
+<rect class="sp-bar sp-b1" x="37" y="62" width="13" height="24" rx="6.5" fill="url(#spbar)" opacity="0.75"/>
+<rect class="sp-bar sp-b2" x="56" y="42" width="13" height="44" rx="6.5" fill="url(#spbar)"/>
+<rect class="sp-bar sp-b3" x="75" y="12" width="13" height="74" rx="6.5" fill="url(#spgold)"/></svg>
+<div class="sp-name">Life<b>Change</b></div>
+<div class="sp-by">by <i>SuLen</i></div>
+<div class="sp-load"></div>
+<script>
+(function(){
+  var el = document.getElementById('lcSplash'); if(!el) return;
+  var skip = false;
+  try { skip = /[?&]splash=off/.test(location.search) || sessionStorage.getItem('lc_splash') === '1'; sessionStorage.setItem('lc_splash', '1'); } catch(e) {}
+  if(skip) { el.remove(); return; }
+  setTimeout(function(){ el.classList.add('out'); setTimeout(function(){ if(el.parentNode) el.remove(); }, 450); }, 2500);
+})();
+</script>
+</div>
+
 
     <!-- НАВИГАЦИЯ -->
     <header>
@@ -1731,7 +1773,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.5 · 02.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v3.6 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
