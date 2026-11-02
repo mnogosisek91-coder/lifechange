@@ -1255,8 +1255,8 @@
             <h3 style="text-align:center; margin: 2rem 0 0.4rem;">🎁 Мистери-боксы</h3>
             <p style="text-align:center; color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">Откройте бокс и выиграйте искры. Выигрыш может быть больше или меньше стоимости бокса, шансы указаны под каждым боксом.</p>
             <div class="grid">
-                <div class="shop-card box-card"><div class="shop-icon">🥈</div><h4>Серебряный бокс</h4><div class="box-odds">Выигрыш: 200 · 400 · 600 · 1 000 · 2 500 ⚡<br>Шансы: 45% · 30% · 15% · 8% · 2%</div><div class="shop-price">500 ⚡</div><button class="btn btn-outline" onclick="openBox('silver')">Открыть</button></div>
-                <div class="shop-card box-card"><div class="shop-icon">🥇</div><h4>Золотой бокс</h4><div class="box-odds">Выигрыш: 800 · 1 600 · 2 400 · 4 000 · 10 000 ⚡<br>Шансы: 45% · 30% · 15% · 8% · 2%</div><div class="shop-price">2 000 ⚡</div><button class="btn btn-outline" onclick="openBox('gold')">Открыть</button></div>
+                <div class="shop-card box-card" style="border-color: #cbd5e1;"><div class="shop-icon">🥈</div><h4>Серебряный бокс</h4><div class="box-odds">Выигрыш: 200 · 400 · 600 · 1 000 · 2 500 ⚡<br>Шансы: 45% · 30% · 15% · 8% · 2%</div><div class="shop-price">500 ⚡</div><button class="btn btn-outline" onclick="openBox('silver')">Открыть</button></div>
+                <div class="shop-card box-card" style="border-color: #f6c453;"><div class="shop-icon">🥇</div><h4>Золотой бокс</h4><div class="box-odds">Выигрыш: 800 · 1 600 · 2 400 · 4 000 · 10 000 ⚡<br>Шансы: 45% · 30% · 15% · 8% · 2%</div><div class="shop-price">2 000 ⚡</div><button class="btn btn-outline" onclick="openBox('gold')">Открыть</button></div>
                 <div class="shop-card box-card" style="border-color: #a5b4fc;"><div class="shop-icon">💎</div><h4>Платиновый бокс</h4><div class="box-odds">Выигрыш: 2 000 · 4 000 · 6 000 · 10 000 · 25 000 ⚡<br>Шансы: 45% · 30% · 15% · 8% · 2%</div><div class="shop-price">5 000 ⚡</div><button class="btn btn-gold" onclick="openBox('platinum')">Открыть</button></div>
             </div>
             <div id="boxResult" style="text-align:center; font-weight:800; font-size:1.1rem; margin-top:1.2rem; min-height:1.5rem;"></div>
@@ -1731,7 +1731,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v2.0 · 31.10.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v2.2 · 02.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -2064,7 +2064,7 @@
         const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         function renderNotifs(markRead) {
             const list = NOTIFS.slice().sort((a, b) => String(b.date).localeCompare(String(a.date)));
-            if(markRead) { list.forEach(n => readNotifs.add(n.id)); saveState(); }
+            if(markRead) { list.forEach(n => readNotifs.add(n.id)); saveState(); try { nSave(); } catch(x) {} }
             const unread = list.filter(n => !readNotifs.has(n.id)).length, dot = document.getElementById('bellDot');
             dot.textContent = unread; dot.style.display = unread ? 'block' : 'none';
             const panel = document.getElementById('notifPanel');
@@ -3179,11 +3179,25 @@ async function loadUserNotifs() {
     if(error) return;
     USER_NOTIFS = (data || []).map(r => ({ id: 'u' + r.id, title: r.title, text: r.text, date: String(r.created_at).slice(0, 10) }));
     window.mergeNotifs();
-    const fresh = USER_NOTIFS.find(n => !readNotifs.has(n.id) && !window.__toasted.has(n.id));
-    if(fresh) { window.__toasted.add(fresh.id); toast(fresh.title); }
+    nLoad();
+    if(!window.__nbase) window.__nbase = new Set(USER_NOTIFS.map(n => n.id)); // первая загрузка в сессии: старое не показываем всплывашкой
+    else {
+      const fresh = USER_NOTIFS.find(n => !readNotifs.has(n.id) && !window.__nbase.has(n.id) && !window.__toasted.has(n.id));
+      if(fresh) { window.__toasted.add(fresh.id); toast(fresh.title); }
+    }
   } catch(e) {}
 }
 window.__toasted = new Set();
+// прочитанные уведомления помним отдельно для каждого аккаунта (не стираются при выходе)
+function nKey(){ return 'lc_nread_' + (sbUid || 'guest'); }
+function nSave(){ try { localStorage.setItem(nKey(), JSON.stringify([...readNotifs])); } catch(e) {} }
+function nLoad(){
+  if(window.__nUid === sbUid) return; window.__nUid = sbUid;
+  let arr = null; try { const s = localStorage.getItem(nKey()); if(s) arr = JSON.parse(s); } catch(e) {}
+  if(Array.isArray(arr)) arr.forEach(id => readNotifs.add(id));
+  else { const lim = dateStr(-2); NOTIFS.forEach(n => { if(String(n.date || '') < lim) readNotifs.add(n.id); }); nSave(); } // новый аккаунт на устройстве: всё старше 2 дней считаем прочитанным
+  renderNotifs(false);
+}
 setInterval(() => { if(sbUid) loadUserNotifs(); }, 60000);
 { const _tn = toggleNotifs; toggleNotifs = function(e) { loadUserNotifs(); _tn(e); }; }
 async function adminRevoke() {
@@ -4323,14 +4337,14 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     if(!still) requestAnimationFrame(frame);
   }
   requestAnimationFrame(frame);
-  let closed = false; try { closed = localStorage.getItem('lc_season2_' + S.id) === '1'; } catch(e) {}
+  let closed = false; try { closed = localStorage.getItem('lc_season2_' + S.id + '_' + now.getFullYear()) === '1'; } catch(e) {}
   if(!closed) {
     const hdr = document.querySelector('header'), b = document.createElement('div'); b.className = 'season-banner';
     b.innerHTML = SVG.pumpkin + '<span></span>' + SVG.ghost + '<button type="button" aria-label="Закрыть">✕</button>';
     b.querySelector('span').textContent = S.banner[0];
     b.querySelectorAll('svg')[1].style.cssText = 'width:16px;height:27px';
     b.style.position = 'relative'; b.style.zIndex = '5';
-    b.querySelector('button').onclick = () => { b.remove(); try { localStorage.setItem('lc_season2_' + S.id, '1'); } catch(e) {} };
+    b.querySelector('button').onclick = () => { b.remove(); try { localStorage.setItem('lc_season2_' + S.id + '_' + now.getFullYear(), '1'); } catch(e) {} };
     hdr.parentNode.insertBefore(b, hdr.nextSibling);
     try { UZ_EXACT[S.banner[0]] = S.banner[1]; } catch(e) {}
   }
@@ -4968,7 +4982,7 @@ body.rehab-norandom .rnd{display:none!important}
   (function mountTab(){
     if($('tab-curator')) return;
     const t = document.createElement('div'); t.id = 'tab-curator'; t.className = 'tab-content';
-    t.innerHTML = '<div class="page-banner"><h2 style="text-align:center;margin-bottom:.3rem">🌿 Кабинет куратора</h2><p class="notice" id="curWho" style="margin:0 auto 1rem"></p><div id="curBody"></div></div>';
+    t.innerHTML = '<div class="page-banner"><p style="text-align:center;margin:0 0 .2rem;font-size:.9rem;color:var(--text-secondary)">🌿 Кабинет куратора</p><h2 id="curWho" style="text-align:center;font-size:2rem;line-height:1.2;margin:0 0 1.2rem;color:var(--gold-color,#f6dc9a)"></h2><div id="curBody"></div></div>';
     const legal = $('tab-legal'); legal.parentNode.insertBefore(t, legal);
   })();
   let curRid = null, curData = null;
@@ -5079,6 +5093,42 @@ body.rehab-norandom .rnd{display:none!important}
     }, 250);
   }
   if(document.readyState === 'complete') setTimeout(start, 0); else window.addEventListener('load', function(){ setTimeout(start, 0); });
+})();
+</script>
+<style>
+.lca{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(5,8,18,.62);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:lcaIn .18s ease-out}
+.lca-box{width:100%;max-width:380px;background:var(--card-bg,#151a2b);color:var(--text-primary,#f3f4f6);border:1px solid var(--gold-color,#f6c453);border-radius:18px;padding:22px 20px 18px;box-shadow:0 18px 60px rgba(0,0,0,.55);text-align:center;animation:lcaPop .22s cubic-bezier(.2,.9,.3,1.2)}
+.lca-brand{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-color,#f6c453);margin-bottom:10px;opacity:.9}
+.lca-msg{white-space:pre-line;line-height:1.5;font-size:1rem;margin-bottom:18px;word-break:break-word;max-height:55vh;overflow:auto}
+.lca-ok{width:100%}
+@keyframes lcaIn{from{opacity:0}to{opacity:1}}
+@keyframes lcaPop{from{transform:scale(.92);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+<script>
+// ===================== Своё окно вместо системного alert =====================
+(function(){
+  const Q = []; let cur = null;
+  function label(){ try { return currentLang === 'uz' ? 'Tushunarli' : 'Понятно'; } catch(e) { return 'OK'; } }
+  function show(){
+    if(cur || !Q.length) return;
+    const msg = Q.shift();
+    const root = document.createElement('div'); root.className = 'lca'; root.setAttribute('role', 'alertdialog'); root.setAttribute('aria-modal', 'true');
+    root.innerHTML = '<div class="lca-box"><div class="lca-brand">LifeChange</div><div class="lca-msg"></div><button class="btn btn-gold lca-ok" type="button"></button></div>';
+    root.querySelector('.lca-msg').textContent = msg;
+    const ok = root.querySelector('.lca-ok'); ok.textContent = label();
+    const close = () => { document.removeEventListener('keydown', key, true); root.remove(); cur = null; setTimeout(show, 120); };
+    const key = e => { if(e.key === 'Enter' || e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
+    ok.onclick = close; document.addEventListener('keydown', key, true);
+    document.body.appendChild(root); cur = root;
+    try { ok.focus(); } catch(e) {}
+  }
+  const native = window.alert.bind(window);
+  window.alert = function(m){
+    let s = (m === undefined || m === null) ? '' : String(m);
+    try { if(typeof trAny === 'function') s = trAny(s); } catch(e) {}
+    if(!document.body) return native(s);
+    Q.push(s); show();
+  };
 })();
 </script>
 </body>
