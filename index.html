@@ -1796,7 +1796,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.16 · 04.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.17 · 04.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5642,6 +5642,12 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   Object.assign(UZ_EXACT, UZT);
   try { Object.assign(window.EN_EXACT || {}, ENT); } catch(e) {}
   CH_GROUPS.L = KEYS.slice();
+  const NEXT = {}; Object.keys(PREV).forEach(k => { NEXT[PREV[k]] = k; });
+  const lvNo = k => Math.floor((parseInt(k.slice(1), 10) - 1) / 4) + 1;
+  function lvTxt(k, m){ return ({
+    ru: ['Уровень 1 из 3 · пройди 30 дней — и откроется уровень 2 🔓', 'Уровень 2 из 3 · пройди 30 дней — и откроется уровень 3 🔓', 'Финальный уровень 3 из 3 🏆', '🏆 Язык пройден!', '🏆 Пройдено'],
+    uz: ['1-daraja, 3 tadan · 30 kunni tugating — 2-daraja ochiladi 🔓', '2-daraja, 3 tadan · 30 kunni tugating — 3-daraja ochiladi 🔓', 'Yakuniy 3-daraja, 3 tadan 🏆', '🏆 Til yakunlandi!', '🏆 Tugallangan'],
+    en: ['Level 1 of 3 · finish 30 days and level 2 unlocks 🔓', 'Level 2 of 3 · finish 30 days and level 3 unlocks 🔓', 'Final level 3 of 3 🏆', '🏆 Language completed!', '🏆 Completed'] })[m] || null; }
   const TAGS = { l1_title: 'English', l2_title: 'Русский', l3_title: "O'zbek", l4_title: '中文' };
   // карточки
   (function(){
@@ -5649,7 +5655,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
     const last = all[0]; if(!last) return;
     const d = document.createElement('details'); d.className = 'grp'; d.id = 'grpL';
     d.innerHTML = '<summary class="grp-title">🌍 Языки <span class="grp-count">(' + KEYS.length + ')</span> <span class="grp-hit">Хит</span></summary><div class="grid">'
-      + ORDER.map(k => '<div class="card"><div><span class="card-tag tag-mind">Язык</span><h3 style="margin-bottom:0.5rem;">' + CH[k].title + '</h3><p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">' + CH[k].desc + '</p></div><button class="btn" onclick="openChallengeModal(\'' + k + '\')" data-i18n="btn_start">Начать челлендж</button></div>').join('') + '</div>';
+      + ORDER.map(k => '<div class="card"><div><span class="card-tag tag-mind">Язык</span><h3 style="margin-bottom:0.5rem;">' + CH[k].title + '</h3><p style="color:var(--text-secondary);font-size:0.9rem;margin-bottom:1rem;">' + CH[k].desc + '</p></div><button class="btn" onclick="openChallengeModal(\'' + k + '\')" data-i18n="btn_start">Начать челлендж</button><p class="lc-lvh" data-notr style="margin:.6rem 0 0;font-size:.8rem;color:var(--gold-color)"></p></div>').join('') + '</div>';
     last.insertAdjacentElement('afterend', d);
   })();
   // день челленджа: считается по сданным отчётам
@@ -5692,10 +5698,19 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   function cur(k){ mark(k); const n = done(k); const rep = reportedToday.has(k); return Math.min(30, Math.max(1, rep ? n : n + 1)); }
   function locked(k){ const p = PREV[k]; return !!p && done(p) < 30; }
   function applyLocks(){
-    document.querySelectorAll('#grpL button[onclick^="openChallengeModal"]').forEach(b => {
-      const m = /'(l\d+_title)'/.exec(b.getAttribute('onclick') || ''); if(!m) return;
-      if(locked(m[1])) { b.textContent = '🔒 Сначала предыдущий уровень'; b.classList.add('btn-outline'); } else if(/^🔒 Сначала/.test(b.textContent)) { b.textContent = 'Начать челлендж'; b.classList.remove('btn-outline'); }
+    const m = langMode(), vis = [];
+    document.querySelectorAll('#grpL .card').forEach(card => {
+      const b = card.querySelector('button[onclick^="openChallengeModal"]'); if(!b) return;
+      const mm = /'(l\d+_title)'/.exec(b.getAttribute('onclick') || ''); if(!mm) return; const k = mm[1];
+      const hidden = locked(k) || (done(k) >= 30 && !!NEXT[k]);
+      card.style.display = hidden ? 'none' : '';
+      if(hidden) return; vis.push(k);
+      const tx = lvTxt(k, m) || lvTxt(k, 'ru'), n = lvNo(k), fin = !NEXT[k] && done(k) >= 30;
+      const hp = card.querySelector('.lc-lvh'); if(hp) hp.textContent = fin ? tx[3] : tx[n - 1];
+      if(fin) { b.textContent = tx[4]; b.disabled = true; b.classList.add('btn-outline'); b.style.opacity = '.7'; }
+      else if(b.disabled || /^🏆|^🔒/.test(b.textContent)) { b.disabled = false; b.style.opacity = ''; b.classList.remove('btn-outline'); b.textContent = m === 'uz' ? 'Boshlash' : (m === 'en' ? 'Start challenge' : 'Начать челлендж'); }
     });
+    const cnt = document.querySelector('#grpL .grp-count'); if(cnt) cnt.textContent = '(' + vis.length + ')';
   }
   function esc(s){ return String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c])); }
   window.lcLangStep = function(dlt){ if(!currentChallenge || !LANG[currentChallenge]) return; const c = cur(currentChallenge); view = Math.max(1, Math.min(c, (view || c) + dlt)); renderLang(); };
@@ -5717,16 +5732,40 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
       + '<div style="margin:6px 0 8px;color:var(--text-secondary);font-size:.88rem;display:flex;justify-content:space-between;align-items:center;gap:8px"><span>' + t.topic + ': <b>' + esc(th) + '</b></span><label style="display:flex;align-items:center;gap:6px;white-space:nowrap;cursor:pointer"><input type="checkbox" id="lcSlow" ' + (slow ? 'checked' : '') + ' onchange="lcSlowSet(this.checked)" style="accent-color:#fbbf24">🐢 ' + t.slow + '</label></div>'
       + '<div style="font-weight:700;margin:6px 0 2px">' + t.words + '</div>' + d.w.map(row).join('')
       + '<div style="font-weight:700;margin:12px 0 2px">' + t.phrases + '</div>' + d.p.map(row).join('')
-      + '<div style="margin-top:8px;color:var(--text-secondary);font-size:.8rem">' + t.hint + '</div></div>';
+      + '<div style="margin-top:8px;color:var(--text-secondary);font-size:.8rem">' + t.hint + '</div>' + (NEXT[k] ? '<div style="margin-top:6px;color:var(--gold-color);font-size:.8rem">' + (lvTxt(k, m) || lvTxt(k, 'ru'))[lvNo(k) - 1] + '</div>' : '') + '</div>';
   }
   { const _o = openChallengeModal; openChallengeModal = function(k){
       if(CH[k] && locked(k)) { alert('Сначала пройдите предыдущий уровень (30 отчётов).'); return; }
       view = null; _o.apply(this, arguments); setTimeout(renderLang, 0); }; }
   { const _rl = refreshLocks; refreshLocks = function(){ _rl.apply(this, arguments); applyLocks(); }; }
   setInterval(applyLocks, 3000);
-  { const _tg = toggleLanguage; toggleLanguage = function(){ _tg.apply(this, arguments); setTimeout(renderLang, 50); }; }
-  { const _sl = window.setLang; if(typeof _sl === 'function') window.setLang = function(){ const r = _sl.apply(this, arguments); setTimeout(renderLang, 80); return r; }; }
-  refreshLocks();
+  { const _tg = toggleLanguage; toggleLanguage = function(){ _tg.apply(this, arguments); setTimeout(renderLang, 50); setTimeout(applyLocks, 120); }; }
+  { const _sl = window.setLang; if(typeof _sl === 'function') window.setLang = function(){ const r = _sl.apply(this, arguments); setTimeout(renderLang, 80); setTimeout(applyLocks, 120); return r; }; }
+  refreshLocks(); applyLocks();
+})();
+</script>
+<script id="lcLangAch">
+// ===================== Достижения раздела «Языки» =====================
+(function(){
+  const A = [["lg_first", "🗣️", "Первое слово", "Сдайте первый отчёт в языковом челлендже", "lrep", 1, 5], ["lg_w35", "📖", "Неделя слов", "7 языковых отчётов — 35 новых слов", "lrep", 7, 20], ["lg_w100", "📚", "100 слов", "20 языковых отчётов — 100 новых слов", "lrep", 20, 30], ["lg_w300", "🧠", "300 слов", "60 языковых отчётов — 300 новых слов", "lrep", 60, 60], ["lg_w500", "💎", "500 слов", "100 языковых отчётов — 500 новых слов", "lrep", 100, 100], ["lg_w1000", "🏛️", "Тысяча слов", "200 языковых отчётов — 1000 новых слов", "lrep", 200, 200], ["lg_barrier", "🧱", "Языковой барьер", "Пройдите уровень 1 любого языка", "llv1", 1, 50], ["lg_lv2", "🚪", "Вторая ступень", "Пройдите уровень 2 любого языка", "llv2", 1, 80], ["lg_lv3", "🎓", "Выпускник", "Пройдите уровень 3 любого языка", "llv3", 1, 150], ["lg_d2", "✌️", "Два уровня", "Пройдите 2 языковых уровня", "llvd", 2, 80], ["lg_d4", "🏅", "Четыре уровня", "Пройдите 4 языковых уровня", "llvd", 4, 150], ["lg_d8", "🥇", "Восемь уровней", "Пройдите 8 языковых уровней", "llvd", 8, 300], ["lg_d12", "🏆", "Мастер языков", "Пройдите все 12 языковых уровней", "llvd", 12, 500], ["lg_bi", "🔀", "Двуязычный", "Пройдите уровень 1 в двух разных языках", "llv1", 2, 100], ["lg_tri", "🌐", "Трёхъязычный", "Пройдите уровень 1 в трёх разных языках", "llv1", 3, 150], ["lg_poly", "🌍", "Полиглот", "Пройдите уровень 1 во всех четырёх языках", "llv1", 4, 300], ["lg_f2", "👑", "Два языка в кармане", "Пройдите все 3 уровня в двух языках", "lfull", 2, 400], ["lg_f4", "🌟", "Король полиглотов", "Пройдите все 3 уровня во всех четырёх языках", "lfull", 4, 800], ["lg_s2", "🔎", "Любопытный", "Начните учить два разных языка", "lstart", 2, 15], ["lg_s4", "🍽️", "Языковой гурман", "Попробуйте все четыре языка", "lstart", 4, 40], ["lg_en7", "🇬🇧", "English: неделя", "7 отчётов по английскому", "lg:0", 7, 20], ["lg_ru7", "🇷🇺", "Русский: неделя", "7 отчётов по русскому", "lg:1", 7, 20], ["lg_uz7", "🇺🇿", "O'zbek: неделя", "7 отчётов по узбекскому", "lg:2", 7, 20], ["lg_zh7", "🇨🇳", "中文: неделя", "7 отчётов по китайскому", "lg:3", 7, 20], ["lg_en90", "🎩", "Мастер английского", "90 отчётов по английскому (все 3 уровня)", "lg:0", 90, 150], ["lg_ru90", "🪆", "Мастер русского", "90 отчётов по русскому (все 3 уровня)", "lg:1", 90, 150], ["lg_uz90", "🕌", "O'zbek ustasi", "90 отчётов по узбекскому (все 3 уровня)", "lg:2", 90, 150], ["lg_zh90", "🐉", "Мастер китайского", "90 отчётов по китайскому (все 3 уровня)", "lg:3", 90, 150]];
+  const UZA = {"Первое слово": "Birinchi so'z", "Сдайте первый отчёт в языковом челлендже": "Til challenjida birinchi hisobotni topshiring", "Неделя слов": "So'zlar haftasi", "7 языковых отчётов — 35 новых слов": "7 ta til hisoboti — 35 ta yangi so'z", "100 слов": "100 ta so'z", "20 языковых отчётов — 100 новых слов": "20 ta til hisoboti — 100 ta yangi so'z", "300 слов": "300 ta so'z", "60 языковых отчётов — 300 новых слов": "60 ta til hisoboti — 300 ta yangi so'z", "500 слов": "500 ta so'z", "100 языковых отчётов — 500 новых слов": "100 ta til hisoboti — 500 ta yangi so'z", "Тысяча слов": "Ming so'z", "200 языковых отчётов — 1000 новых слов": "200 ta til hisoboti — 1000 ta yangi so'z", "Языковой барьер": "Til to'sig'i", "Пройдите уровень 1 любого языка": "Istalgan tilning 1-darajasini tugating", "Вторая ступень": "Ikkinchi zina", "Пройдите уровень 2 любого языка": "Istalgan tilning 2-darajasini tugating", "Выпускник": "Bitiruvchi", "Пройдите уровень 3 любого языка": "Istalgan tilning 3-darajasini tugating", "Два уровня": "Ikki daraja", "Пройдите 2 языковых уровня": "2 ta til darajasini tugating", "Четыре уровня": "To'rt daraja", "Пройдите 4 языковых уровня": "4 ta til darajasini tugating", "Восемь уровней": "Sakkiz daraja", "Пройдите 8 языковых уровней": "8 ta til darajasini tugating", "Мастер языков": "Tillar ustasi", "Пройдите все 12 языковых уровней": "Barcha 12 ta til darajasini tugating", "Двуязычный": "Ikki tilli", "Пройдите уровень 1 в двух разных языках": "Ikki xil tilda 1-darajani tugating", "Трёхъязычный": "Uch tilli", "Пройдите уровень 1 в трёх разных языках": "Uch xil tilda 1-darajani tugating", "Полиглот": "Poliglot", "Пройдите уровень 1 во всех четырёх языках": "To'rtala tilda 1-darajani tugating", "Два языка в кармане": "Cho'ntakdagi ikki til", "Пройдите все 3 уровня в двух языках": "Ikki tilda barcha 3 darajani tugating", "Король полиглотов": "Poliglotlar shohi", "Пройдите все 3 уровня во всех четырёх языках": "To'rtala tilda barcha 3 darajani tugating", "Любопытный": "Qiziquvchan", "Начните учить два разных языка": "Ikki xil tilni o'rganishni boshlang", "Языковой гурман": "Til gurmani", "Попробуйте все четыре языка": "To'rtala tilni sinab ko'ring", "English: неделя": "English: bir hafta", "7 отчётов по английскому": "Ingliz tilidan 7 ta hisobot", "Русский: неделя": "Rus tili: bir hafta", "7 отчётов по русскому": "Rus tilidan 7 ta hisobot", "O'zbek: неделя": "O'zbek tili: bir hafta", "7 отчётов по узбекскому": "O'zbek tilidan 7 ta hisobot", "中文: неделя": "Xitoy tili: bir hafta", "7 отчётов по китайскому": "Xitoy tilidan 7 ta hisobot", "Мастер английского": "Ingliz tili ustasi", "90 отчётов по английскому (все 3 уровня)": "Ingliz tilidan 90 ta hisobot (3 daraja)", "Мастер русского": "Rus tili ustasi", "90 отчётов по русскому (все 3 уровня)": "Rus tilidan 90 ta hisobot (3 daraja)", "O'zbek ustasi": "O'zbek tili ustasi", "90 отчётов по узбекскому (все 3 уровня)": "O'zbek tilidan 90 ta hisobot (3 daraja)", "Мастер китайского": "Xitoy tili ustasi", "90 отчётов по китайскому (все 3 уровня)": "Xitoy tilidan 90 ta hisobot (3 daraja)", "Знаток группы L": "L guruh bilimdoni"}, ENA = {"Первое слово": "First Word", "Сдайте первый отчёт в языковом челлендже": "Submit your first language report", "Неделя слов": "Week of Words", "7 языковых отчётов — 35 новых слов": "7 language reports — 35 new words", "100 слов": "100 Words", "20 языковых отчётов — 100 новых слов": "20 language reports — 100 new words", "300 слов": "300 Words", "60 языковых отчётов — 300 новых слов": "60 language reports — 300 new words", "500 слов": "500 Words", "100 языковых отчётов — 500 новых слов": "100 language reports — 500 new words", "Тысяча слов": "A Thousand Words", "200 языковых отчётов — 1000 новых слов": "200 language reports — 1000 new words", "Языковой барьер": "Language Barrier", "Пройдите уровень 1 любого языка": "Complete level 1 of any language", "Вторая ступень": "Second Step", "Пройдите уровень 2 любого языка": "Complete level 2 of any language", "Выпускник": "Graduate", "Пройдите уровень 3 любого языка": "Complete level 3 of any language", "Два уровня": "Two Levels", "Пройдите 2 языковых уровня": "Complete 2 language levels", "Четыре уровня": "Four Levels", "Пройдите 4 языковых уровня": "Complete 4 language levels", "Восемь уровней": "Eight Levels", "Пройдите 8 языковых уровней": "Complete 8 language levels", "Мастер языков": "Language Master", "Пройдите все 12 языковых уровней": "Complete all 12 language levels", "Двуязычный": "Bilingual", "Пройдите уровень 1 в двух разных языках": "Finish level 1 in two different languages", "Трёхъязычный": "Trilingual", "Пройдите уровень 1 в трёх разных языках": "Finish level 1 in three different languages", "Полиглот": "Polyglot", "Пройдите уровень 1 во всех четырёх языках": "Finish level 1 in all four languages", "Два языка в кармане": "Two Languages in Your Pocket", "Пройдите все 3 уровня в двух языках": "Finish all 3 levels in two languages", "Король полиглотов": "King of Polyglots", "Пройдите все 3 уровня во всех четырёх языках": "Finish all 3 levels in all four languages", "Любопытный": "Curious", "Начните учить два разных языка": "Start learning two different languages", "Языковой гурман": "Language Foodie", "Попробуйте все четыре языка": "Try all four languages", "English: неделя": "English: One Week", "7 отчётов по английскому": "7 reports in English", "Русский: неделя": "Russian: One Week", "7 отчётов по русскому": "7 reports in Russian", "O'zbek: неделя": "Uzbek: One Week", "7 отчётов по узбекскому": "7 reports in Uzbek", "中文: неделя": "Chinese: One Week", "7 отчётов по китайскому": "7 reports in Chinese", "Мастер английского": "English Master", "90 отчётов по английскому (все 3 уровня)": "90 English reports (all 3 levels)", "Мастер русского": "Russian Master", "90 отчётов по русскому (все 3 уровня)": "90 Russian reports (all 3 levels)", "O'zbek ustasi": "Uzbek Master", "90 отчётов по узбекскому (все 3 уровня)": "90 Uzbek reports (all 3 levels)", "Мастер китайского": "Chinese Master", "90 отчётов по китайскому (все 3 уровня)": "90 Chinese reports (all 3 levels)"};
+  UZA['30 отчётов в группе L'] = '30 ta hisobot L guruhda'; ENA['Знаток группы L'] = 'Group L expert'; ENA['30 отчётов в группе L'] = '30 reports in group L';
+  Object.assign(UZ_EXACT, UZA); try { Object.assign(window.EN_EXACT || {}, ENA); } catch(e) {}
+  const LK = i => ['l' + (i + 1) + '_title', 'l' + (i + 5) + '_title', 'l' + (i + 9) + '_title'];
+  const rb = k => (stats && stats.rep_by && stats.rep_by[k]) || 0;
+  const ALLK = [].concat(LK(0), LK(1), LK(2), LK(3));
+  const lvN = (a, b) => ALLK.filter(k => { const n = parseInt(k.slice(1), 10); return n >= a && n <= b && rb(k) >= 30; }).length;
+  { const _m = metric; metric = function(m){
+      switch(m) {
+        case 'lrep': return ALLK.reduce((s, k) => s + rb(k), 0);
+        case 'llv1': return lvN(1, 4); case 'llv2': return lvN(5, 8); case 'llv3': return lvN(9, 12); case 'llvd': return lvN(1, 12);
+        case 'lfull': return [0, 1, 2, 3].filter(i => LK(i).every(k => rb(k) >= 30)).length;
+        case 'lstart': return [0, 1, 2, 3].filter(i => LK(i).some(k => rb(k) > 0)).length;
+        default: return m.startsWith('lg:') ? LK(+m.slice(3)).reduce((s, k) => s + rb(k), 0) : _m(m);
+      } }; }
+  A.forEach(a => BADGES.push({ id: a[0], ico: a[1], t: a[2], d: a[3], m: a[4], n: a[5], r: a[6] }));
+  BADGES.push({ id: 'g_L', ico: '🎖️', t: 'Знаток группы L', d: '30 отчётов в группе L', m: 'lrep', n: 30, r: 40 });
+  renderBadges(false);
 })();
 </script>
 <script id="lcFirstSnd">
