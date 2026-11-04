@@ -1796,7 +1796,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.17 · 04.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.18 · 04.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5697,6 +5697,11 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   function done(k){ let srv = 0; try { srv = (stats && stats.rep_by && stats.rep_by[k]) || 0; } catch(e) {} return Math.max(days(k).length, srv); }
   function cur(k){ mark(k); const n = done(k); const rep = reportedToday.has(k); return Math.min(30, Math.max(1, rep ? n : n + 1)); }
   function locked(k){ const p = PREV[k]; return !!p && done(p) < 30; }
+  const proOnly = k => (typeof userPlan !== 'undefined' && userPlan === 'free') && lvNo(k) >= 2;
+  { const _gt = groupTaken; groupTaken = k => /^l\d+_title$/.test(k) ? lvNo(k) >= 2 : _gt(k); }
+  Object.assign(ERRMAP, { lang_pro: 'Уровни 2 и 3 доступны в PRO. Оформите PRO, чтобы продолжить учить язык без паузы.' });
+  Object.assign(UZ_EXACT, { 'Уровни 2 и 3 доступны в PRO. Оформите PRO, чтобы продолжить учить язык без паузы.': "2 va 3-darajalar PRO'da mavjud. Tilni to'xtamasdan o'rganish uchun PRO'ni yoqing." });
+  const PROMSG = { ru: '🎉 Отлично, уровень 1 уже пройден! Уровни 2 и 3 доступны в PRO. Оформите PRO и продолжайте учить язык без паузы — всё уже готово и ждёт вас.', uz: "🎉 Ajoyib, 1-daraja tugallandi! 2 va 3-darajalar PRO'da mavjud. PRO'ni yoqing va tilni to'xtamasdan o'rganishda davom eting — hammasi tayyor.", en: '🎉 Great job, level 1 is done! Levels 2 and 3 are available in PRO. Get PRO and keep learning without a pause — everything is ready and waiting.' };
   function applyLocks(){
     const m = langMode(), vis = [];
     document.querySelectorAll('#grpL .card').forEach(card => {
@@ -5707,6 +5712,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
       if(hidden) return; vis.push(k);
       const tx = lvTxt(k, m) || lvTxt(k, 'ru'), n = lvNo(k), fin = !NEXT[k] && done(k) >= 30;
       const hp = card.querySelector('.lc-lvh'); if(hp) hp.textContent = fin ? tx[3] : tx[n - 1];
+      if(!fin && proOnly(k)) { b.textContent = m === 'uz' ? "🔒 PRO'da davom eting" : (m === 'en' ? '🔒 Continue in PRO' : '🔒 Продолжить в PRO'); b.classList.add('btn-outline'); return; }
       if(fin) { b.textContent = tx[4]; b.disabled = true; b.classList.add('btn-outline'); b.style.opacity = '.7'; }
       else if(b.disabled || /^🏆|^🔒/.test(b.textContent)) { b.disabled = false; b.style.opacity = ''; b.classList.remove('btn-outline'); b.textContent = m === 'uz' ? 'Boshlash' : (m === 'en' ? 'Start challenge' : 'Начать челлендж'); }
     });
@@ -5736,6 +5742,8 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   }
   { const _o = openChallengeModal; openChallengeModal = function(k){
       if(CH[k] && locked(k)) { alert('Сначала пройдите предыдущий уровень (30 отчётов).'); return; }
+      if(CH[k] && proOnly(k)) { alert(PROMSG[langMode()] || PROMSG.ru); try { switchTab('plans'); } catch(e) {} return; }
+      if(CH[k] && typeof userPlan !== 'undefined' && userPlan === 'free' && !activeChallenges.has(k)) { activeChallenges.add(k); try { saveState(); refreshLocks(); } catch(e) {} }
       view = null; _o.apply(this, arguments); setTimeout(renderLang, 0); }; }
   { const _rl = refreshLocks; refreshLocks = function(){ _rl.apply(this, arguments); applyLocks(); }; }
   setInterval(applyLocks, 3000);
