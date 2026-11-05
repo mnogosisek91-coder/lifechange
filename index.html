@@ -422,7 +422,18 @@
         .act-box input { flex: 1; min-width: 200px; padding: 10px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; text-transform: uppercase; }
     
         .sv { width: 100%; padding: 10px; margin-bottom: 8px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: #fff; }
-        .vp video { width: 100%; border-radius: 10px; background: #000; display: block; }
+        .vp video { width: 100%; border-radius: 10px; background: #000; display: block; max-height: 34vh; max-height: 34dvh; object-fit: contain; }
+        #dailyBonusModal .modal-content, #partnerVideoModal .modal-content { padding: 1.1rem 1.1rem calc(1rem + env(safe-area-inset-bottom, 0px)); max-width: 440px; }
+        #dailyBonusModal h3, #partnerVideoModal h3 { font-size: 1.15rem; margin-bottom: 4px !important; }
+        #dailyBonusModal .btn.btn-outline { margin-top: 8px !important; padding: 10px 14px; }
+        @media (orientation: landscape) and (max-height: 520px) {
+          #dailyBonusModal .modal-content { max-width: 640px; display: grid; grid-template-columns: 1.25fr 1fr; grid-template-rows: auto auto 1fr; gap: 4px 16px; align-items: start; align-content: start; padding: .6rem 1rem .6rem; }
+          #dailyBonusModal .modal-content > h3 { grid-column: 2; grid-row: 1; margin-top: 0; }
+          #dailyBonusModal .modal-content > #dailyBonusText { grid-column: 2; grid-row: 2; margin-bottom: 4px !important; font-size: .82rem !important; }
+          #dailyBonusModal .modal-content > #dailyPlayer { grid-column: 1; grid-row: 1 / span 3; }
+          #dailyBonusModal .modal-content > .btn { grid-column: 2; grid-row: 3; align-self: start; }
+          #dailyBonusModal .vp video { max-height: 34vh; max-height: 34dvh; } #dailyBonusModal .vp-note { display: none; }
+        }
         .vp-bar { height: 5px; background: #2b3270; border-radius: 3px; margin: 8px 0; overflow: hidden; }
         .vp-fill { height: 100%; width: 0; background: #f6dc9a; }
         .vp-row { display: flex; align-items: center; gap: 12px; }
@@ -1829,7 +1840,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.25 · 05.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.26 · 05.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
