@@ -143,7 +143,7 @@
 
         /* КАЛЕНДАРЬ ЕЖЕДНЕВНЫХ НАГРАД (DAILY REWARDS) */
         .daily-rewards-container {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+            display: grid; grid-template-columns: repeat(7, minmax(0,1fr));
             gap: 10px; margin: 1.5rem 0;
         }
         .reward-card {
@@ -157,6 +157,14 @@
         .reward-icon { font-size: 1.8rem; margin: 6px 0; }
         .reward-val { font-size: 0.85rem; font-weight: 800; color: var(--gold-color); }
 
+        @media (max-width:640px){
+            .daily-rewards-container{gap:4px}
+            .reward-card{padding:7px 2px;border-radius:8px}
+            .reward-day{font-size:.55rem;letter-spacing:-.2px}
+            .reward-icon{font-size:1.1rem;margin:4px 0}
+            .reward-icon .ic{width:1.1rem;height:1.1rem}
+            .reward-val{font-size:.65rem}
+        }
         /* ФИТНЕС ТРЕКЕР ВИДЖЕТ */
         .tracker-badge {
             display: flex; align-items: center; justify-content: space-between;
@@ -1840,7 +1848,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.26 · 05.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.27 · 05.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
