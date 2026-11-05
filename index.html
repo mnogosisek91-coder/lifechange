@@ -1848,7 +1848,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.28 · 05.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.29 · 05.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -2210,7 +2210,7 @@
             const unread = list.filter(n => !readNotifs.has(n.id)).length, dot = document.getElementById('bellDot');
             dot.textContent = unread; dot.style.display = unread ? 'block' : 'none';
             const panel = document.getElementById('notifPanel');
-            panel.innerHTML = '<div class="notif-head"><span>🔔 Уведомления</span><button class="notif-close" onclick="closeNotifs(event)" aria-label="Закрыть">✕</button></div>' + (list.length ? list.map(n => `<div class="notif-item ${readNotifs.has(n.id) ? '' : 'new'}"><b>${esc(currentLang === 'uz' && n.title_uz ? n.title_uz : n.title)}</b><p>${esc((currentLang === 'uz' && n.text_uz ? n.text_uz : n.text) || '')}</p>${/^https:\/\//.test(n.link || '') ? `<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc((currentLang === 'uz' && n.linkText_uz ? n.linkText_uz : n.linkText) || 'Подробнее')}</a>` : ''}${/^[a-z]+$/.test(n.tab || '') ? `<a href="#" onclick="closeNotifs(event); switchTab('${n.tab}'); return false">${currentLang === 'uz' ? "O'qish" : 'Читать'}</a>` : ''}<small>${esc(n.date || '')}</small></div>`).join('') : '<div class="notif-item"><p>Пока уведомлений нет.</p></div>');
+            { const __h = '<div class="notif-head"><span>🔔 Уведомления</span><button class="notif-close" onclick="closeNotifs(event)" aria-label="Закрыть">✕</button></div>' + (list.length ? list.map(n => `<div class="notif-item ${readNotifs.has(n.id) ? '' : 'new'}"><b>${esc(currentLang === 'uz' && n.title_uz ? n.title_uz : n.title)}</b><p>${esc((currentLang === 'uz' && n.text_uz ? n.text_uz : n.text) || '')}</p>${/^https:\/\//.test(n.link || '') ? `<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc((currentLang === 'uz' && n.linkText_uz ? n.linkText_uz : n.linkText) || 'Подробнее')}</a>` : ''}${/^[a-z]+$/.test(n.tab || '') ? `<a href="#" onclick="closeNotifs(event); switchTab('${n.tab}'); return false">${currentLang === 'uz' ? "O'qish" : 'Читать'}</a>` : ''}<small>${esc(n.date || '')}</small></div>`).join('') : '<div class="notif-item"><p>Пока уведомлений нет.</p></div>'); if(panel.dataset.h !== __h) { if(markRead && panel.dataset.h && panel.classList.contains('open')) { panel.querySelectorAll('.notif-item.new').forEach(e => e.classList.remove('new')); const t = document.createElement('div'); t.innerHTML = __h; panel.dataset.h = __h; } else { panel.innerHTML = __h; panel.dataset.h = __h; } } }
         }
         function toggleNotifs(e) {
             e.stopPropagation();
@@ -5265,7 +5265,9 @@ body.rehab-norandom .rnd{display:none!important}
       if(ok) { clearInterval(iv); go(); } else if(n > 40) clearInterval(iv);
     }, 250);
   }
-  if(document.readyState === 'complete') setTimeout(start, 0); else window.addEventListener('load', function(){ setTimeout(start, 0); });
+  var done = false; function once(){ if(done) return; done = true; start(); }
+  if(PUBLIC.indexOf(saved) >= 0 && typeof switchTab === 'function' && document.getElementById('tab-home')) once();
+  else if(document.readyState === 'complete') setTimeout(once, 0); else window.addEventListener('load', function(){ setTimeout(once, 0); });
 })();
 </script>
 <style>
