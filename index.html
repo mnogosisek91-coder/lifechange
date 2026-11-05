@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+<script>(function(){try{var t=sessionStorage.getItem('lc_tab');if(t&&t!=='home'&&!/[?&]tour=/.test(location.search)){var d=document.documentElement;d.classList.add('lc-boot');window.__lcBootOff=function(){d.classList.remove('lc-boot')};setTimeout(window.__lcBootOff,3500)}}catch(e){}})()</script>
+<style>html.lc-boot body{opacity:0}body{transition:opacity .15s}</style>
     <meta charset="UTF-8">
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2264%22 height=%2264%22 viewBox=%220 0 64 64%22%3E%3Cdefs%3E%3ClinearGradient id=%22abg%22 x1=%220%22 y1=%220%22 x2=%221%22 y2=%221%22%3E%3Cstop offset=%220%22 stop-color=%22%231b2150%22/%3E%3Cstop offset=%221%22 stop-color=%22%230b1020%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%2264%22 height=%2264%22 rx=%2214.08%22 fill=%22url%28%23abg%29%22/%3E%3Cg transform=%22translate%284.48%2C4.48%29 scale%280.45866666666666667%29%22%3E%3Cdefs%3E%0A%3ClinearGradient id=%22aring%22 x1=%220%22 y1=%221%22 x2=%221%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%236366f1%22/%3E%3Cstop offset=%221%22 stop-color=%22%23818cf8%22/%3E%3C/linearGradient%3E%0A%3ClinearGradient id=%22agold%22 x1=%220%22 y1=%221%22 x2=%220%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%23d9a63c%22/%3E%3Cstop offset=%221%22 stop-color=%22%23fff1c1%22/%3E%3C/linearGradient%3E%0A%3ClinearGradient id=%22abar%22 x1=%220%22 y1=%221%22 x2=%220%22 y2=%220%22%3E%3Cstop offset=%220%22 stop-color=%22%236366f1%22/%3E%3Cstop offset=%221%22 stop-color=%22%23a5b4fc%22/%3E%3C/linearGradient%3E%0A%3C/defs%3E%0A%3Cpath d=%22M93.64 28.63 A46 46 0 1 1 67.20 14.57%22 fill=%22none%22 stroke=%22url%28%23aring%29%22 stroke-width=%227%22 stroke-linecap=%22round%22/%3E%0A%3Crect x=%2237%22 y=%2262%22 width=%2213%22 height=%2224%22 rx=%226.5%22 fill=%22url%28%23abar%29%22 opacity=%220.75%22/%3E%0A%3Crect x=%2256%22 y=%2242%22 width=%2213%22 height=%2244%22 rx=%226.5%22 fill=%22url%28%23abar%29%22/%3E%0A%3Crect x=%2275%22 y=%2212%22 width=%2213%22 height=%2274%22 rx=%226.5%22 fill=%22url%28%23agold%29%22/%3E%0A%3Ccircle cx=%2281.5%22 cy=%2210%22 r=%220%22 fill=%22none%22/%3E%3C/g%3E%3C/svg%3E">
     <meta property="og:type" content="website">
@@ -1848,7 +1850,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.29 · 05.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.30 · 05.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5248,26 +5250,25 @@ body.rehab-norandom .rnd{display:none!important}
 // ===================== Обновление страницы: остаёмся на той же вкладке =====================
 (function(){
   let saved = null; try { saved = sessionStorage.getItem('lc_tab'); } catch(e) {}
-  if(!saved || saved === 'home' || /[?&]tour=/.test(location.search)) return;
+  function off(){ try { window.__lcBootOff && window.__lcBootOff(); } catch(e) {} }
+  if(!saved || saved === 'home' || /[?&]tour=/.test(location.search)) { off(); return; }
   const PUBLIC = ['challenges','community','feed','leaderboard','rewards','shop','wheel','partners','psychology','plans','letter','expander','about'];
   const PRIVATE = ['profile','admin','psycab','curator'];
-  if(PUBLIC.indexOf(saved) < 0 && PRIVATE.indexOf(saved) < 0) return;
+  if(PUBLIC.indexOf(saved) < 0 && PRIVATE.indexOf(saved) < 0) { off(); return; }
   function go(){
     window.__lcRestoring = true;
     try { if(saved === 'curator' && typeof curatorOpen === 'function') curatorOpen(); else switchTab(saved); } catch(e) {}
-    finally { window.__lcRestoring = false; }
+    finally { window.__lcRestoring = false; off(); }
   }
   function start(){
     if(PUBLIC.indexOf(saved) >= 0) return go();
     let n = 0; const iv = setInterval(function(){
       n++;
       const ok = typeof sbUid !== 'undefined' && sbUid && (saved === 'profile' || (typeof isAdmin !== 'undefined' && (isAdmin || saved === 'curator' || saved === 'psycab')));
-      if(ok) { clearInterval(iv); go(); } else if(n > 40) clearInterval(iv);
+      if(ok) { clearInterval(iv); go(); } else if(n > 40) { clearInterval(iv); off(); }
     }, 250);
   }
-  var done = false; function once(){ if(done) return; done = true; start(); }
-  if(PUBLIC.indexOf(saved) >= 0 && typeof switchTab === 'function' && document.getElementById('tab-home')) once();
-  else if(document.readyState === 'complete') setTimeout(once, 0); else window.addEventListener('load', function(){ setTimeout(once, 0); });
+  if(document.readyState === 'complete') setTimeout(start, 0); else window.addEventListener('load', function(){ setTimeout(start, 0); });
 })();
 </script>
 <style>
