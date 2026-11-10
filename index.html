@@ -6819,16 +6819,16 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
 .ch-b{max-width:84%;padding:9px 12px;border-radius:14px;font-size:.92rem;line-height:1.45;white-space:pre-wrap;word-break:break-word;border:1px solid var(--border-color)}
 .ch-b small{display:block;opacity:.6;font-size:.68rem;margin-top:3px}
 .ch-b .ch-n{display:block;font-size:.7rem;font-weight:700;opacity:.8;margin-bottom:2px}
-.ch-u{align-self:flex-end;background:rgba(99,102,241,.35);border-color:rgba(129,140,248,.6)}
-.ch-a{align-self:flex-start;background:rgba(251,191,36,.12);border-color:var(--gold-color)}
-.ch-bot{align-self:flex-start;background:rgba(255,255,255,.06)}
+.ch-u{align-self:flex-end;background:linear-gradient(135deg,#3b2a9c,#241766);border-color:#f6dc9a;color:#fff8e1;box-shadow:0 2px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12)}
+.ch-a{align-self:flex-start;background:linear-gradient(135deg,rgba(251,191,36,.20),rgba(251,191,36,.07));border-color:var(--gold-color);box-shadow:0 2px 10px rgba(0,0,0,.3)}
+.ch-bot{align-self:flex-start;background:rgba(255,255,255,.07);border-color:rgba(246,220,154,.25)}
 .ch-s{align-self:center;font-size:.78rem;opacity:.7;text-align:center}
 .ch-chips{display:flex;flex-wrap:wrap;gap:6px}
 .ch-chip{border:1px solid var(--border-color);background:rgba(255,255,255,.05);color:inherit;border-radius:999px;padding:6px 12px;font-size:.82rem;cursor:pointer}
 .ch-chip.op{border-color:var(--gold-color);color:#fde68a}
 .ch-row{display:flex;gap:8px;align-items:flex-end}
 #scInput{flex:1;resize:none;min-height:42px;max-height:110px;padding:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:10px;color:#fff;outline:none;font:inherit}
-#scSend{width:auto;padding:10px 16px;margin:0}
+#scSend{width:auto;padding:11px 18px;margin:0;background:linear-gradient(135deg,#fae296,#c69228);color:#2a1d00;font-weight:800;border:1px solid #f6dc9a;box-shadow:0 3px 12px rgba(198,146,40,.35)}#scSend:active{transform:translateY(1px)}#scInput:focus{border-color:#f6dc9a;box-shadow:0 0 0 2px rgba(246,220,154,.2)}#supChatModal .modal-content{border:1px solid rgba(246,220,154,.45);box-shadow:0 10px 40px rgba(0,0,0,.55),0 0 24px rgba(198,146,40,.15)}
 .ch-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#ef4444;color:#fff;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #0b1020}
 .adm-th{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer}
 .adm-th.new{border-color:var(--gold-color);background:rgba(251,191,36,.08)}
@@ -6871,6 +6871,8 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
     box.innerHTML = items.map(m => `<div class="ch-b ${m.cls}">${m.name ? '<span class="ch-n">' + esc(m.name) + '</span>' : ''}${esc(m.text)}${m.time ? '<small>' + esc(m.time) + '</small>' : ''}</div>`).join('');
     if(near || !inited) box.scrollTop = box.scrollHeight; inited = true;
     const ch = document.getElementById('scChips');
+    const last = srv.length ? srv[srv.length - 1] : null, live = !!last && !(last.sender === 'bot' && last.kind === 'closed');
+    ch.style.display = live ? 'none' : '';
     ch.innerHTML = t.topics.map((x, i) => `<button class="ch-chip" data-i="${i}">${esc(x[0])}</button>`).join('') + `<button class="ch-chip op" data-op="1">👤 ${esc(t.op)}</button>`;
     ch.querySelectorAll('.ch-chip').forEach(b => b.onclick = () => b.dataset.op ? callOp() : pickTopic(+b.dataset.i));
   }
@@ -6886,6 +6888,7 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
     if(busy) return; busy = true;
     try {
       await rpc('chat_send', { p_text: text });
+      loc = []; topic = '';
       if(clear) document.getElementById('scInput').value = '';
       try { Promise.resolve(sb.functions.invoke('chat-notify', { body: {} })).catch(() => {}); } catch(e) {}
       await poll();
