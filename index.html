@@ -1771,7 +1771,7 @@
             <button class="btn btn-outline nvi-comm2" onclick="closeModal('moreModal'); switchTab('community')">Сообщество</button>
             <button class="btn btn-outline nvi-plans" onclick="closeModal('moreModal'); switchTab('plans')">Тарифы</button>
             <button class="btn btn-outline nvi-letter" onclick="closeModal('moreModal'); switchTab('letter')">Письмо себе</button>
-            <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" style="display:none" onclick="closeModal('moreModal'); switchTab('clinics')">Врачи-партнёры</button>
+            <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" onclick="closeModal('moreModal'); switchTab('clinics')">Врачи-партнёры</button>
             <button class="btn btn-outline nvi-about" onclick="closeModal('moreModal'); switchTab('about')">О нас</button>
             <button class="btn btn-outline nvi-chan" onclick="closeModal('moreModal'); joinChannel()">Наш канал</button>
             <button class="btn btn-gold nvi-inst" onclick="installApp()">Установить приложение</button>
@@ -1818,7 +1818,7 @@
         <p style="font-size:1.3rem; font-weight:800; color:#f87171; margin-bottom:0.5rem;">📞 Скорая помощь: 103</p>
         <p style="color: var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:1.2rem;">Позвоните близкому человеку и скажите, что вам нужна поддержка. Если вы одни, обратитесь в ближайшую больницу.</p>
         <button class="btn btn-gold" onclick="closeModal('crisisModal'); switchTab('psychology')">Записаться к психологу</button>
-        <button class="btn btn-outline" id="sosClinicsLink" style="display:none;margin-top:8px" onclick="closeModal('crisisModal'); switchTab('clinics')">Нужен очный врач? Клиники-партнёры</button>
+        <button class="btn btn-outline" id="sosClinicsLink" style="margin-top:8px" onclick="closeModal('crisisModal'); switchTab('clinics')">Нужен очный врач? Клиники-партнёры</button>
     </div></div>
     <!-- ИКОНКА ТЕХПОДДЕРЖКИ -->
     <div class="support-widget-btn" onclick="openChat()" title="Служба поддержки">💬</div>
@@ -7066,6 +7066,10 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 #tab-clinics .clin-map{background:transparent;color:#fff;border:1px solid var(--border-color)}
 #tab-clinics .clin-note,#tab-clinics .clin-empty{font-size:.74rem;color:var(--text-secondary);line-height:1.5;margin:4px 4px 90px}
 #tab-clinics .clin-empty{font-size:.9rem;text-align:center;margin:30px 8px}
+#tab-clinics .clin-soon{position:relative;border-style:dashed;opacity:.92}
+#tab-clinics .clin-badge{position:absolute;top:10px;right:12px;font-size:.7rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#111;background:#fbbf24;padding:3px 9px;border-radius:99px}
+#tab-clinics .clin-ph{font-size:.62rem;letter-spacing:1px;border-style:dashed;color:var(--text-secondary);background:rgba(255,255,255,.04)}
+#tab-clinics .clin-soon .clin-head{padding-right:64px}
 #clAdmList .cl-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap}
 #clAdmList .cl-row img{width:36px;height:36px;border-radius:50%;object-fit:cover}
 </style>
@@ -7077,14 +7081,17 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 
   async function load(){
     try { LIST = (await rpc('clinics_list')) || []; } catch(e) { LIST = []; }
-    const has = LIST.length > 0;
-    ['sosClinicsLink','moreClinicsBtn'].forEach(id => { const b = $(id); if(b) b.style.display = has ? '' : 'none'; });
-    paint();
+        paint();
   }
   function paint(){
     const box = $('clinicList'); if(!box) return;
     if(!LIST.length){
-      box.innerHTML = '<p class="clin-empty">Скоро здесь появятся клиники-партнёры.' + (typeof isAdmin !== 'undefined' && isAdmin ? '<br><br>Добавь первую в админке: «Клиники-партнёры».' : '') + '</p>';
+      const ph = '<div class="clin-card clin-soon"><span class="clin-badge">Скоро</span><div class="clin-head"><div class="clin-logo clin-ph">LOGO</div>' +
+        '<div style="min-width:0"><div class="clin-name">Здесь будет клиника-партнёр</div><div class="clin-addr">Адрес и телефон появятся здесь</div></div></div>' +
+        '<div class="clin-tags"><span>Терапевт</span><span>Невролог</span><span>Диагностика</span></div>' +
+        '<div class="clin-disc"><b>Скидка для пользователей LifeChange</b><button disabled style="opacity:.55">Показать код</button></div>' +
+        '<div class="clin-btns"><button class="clin-call" disabled style="opacity:.55">Позвонить</button><button class="clin-map" disabled style="opacity:.55">Как добраться</button></div></div>';
+      box.innerHTML = ph + ph + '<p class="clin-empty" style="margin:10px 8px 0">Скоро здесь появятся клиники-партнёры.' + (typeof isAdmin !== 'undefined' && isAdmin ? '<br><br>Добавь первую в админке: «Клиники-партнёры».' : '') + '</p>';
       return;
     }
     box.innerHTML = LIST.map(c => {
@@ -7178,8 +7185,8 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 
   // переводы интерфейса
   try {
-    Object.assign(UZ_EXACT, {"Врачи-партнёры":"Hamkor shifokorlar","Нужен очный врач? Клиники-партнёры":"Shifokor kerakmi? Hamkor klinikalar","Показать код":"Kodni ko'rsatish","Позвонить":"Qo'ng'iroq qilish","Как добраться":"Qanday borish","Скоро здесь появятся клиники-партнёры.":"Tez orada bu yerda hamkor klinikalar paydo bo'ladi.","Скопировать код":"Kodni nusxalash","Ваш код":"Sizning kodingiz","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"LifeChange hamkor xususiy klinikalari. Shifokor ko'rigi kerak bo'lganda.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange hamkorlari. Bu aloqa ma'lumotlari, tibbiy tavsiya emas. Hayotga xavf bo'lsa, 103 ga qo'ng'iroq qiling.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Bu kodni qabulxonada ayting yoki ekranni ko'rsating. Kod faqat sizniki."});
-    Object.assign(EN_EXACT, {"Врачи-партнёры":"Partner doctors","Нужен очный врач? Клиники-партнёры":"Need an in-person doctor? Partner clinics","Показать код":"Show code","Позвонить":"Call","Как добраться":"Directions","Скоро здесь появятся клиники-партнёры.":"Partner clinics are coming soon.","Скопировать код":"Copy code","Ваш код":"Your code","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"Private clinics partnered with LifeChange. For when you need an in-person doctor.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange partners. These are contacts, not medical advice. In a life-threatening emergency call 103.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Tell this code at the reception or show your screen. The code is personal."});
+    Object.assign(UZ_EXACT, {"Врачи-партнёры":"Hamkor shifokorlar","Нужен очный врач? Клиники-партнёры":"Shifokor kerakmi? Hamkor klinikalar","Показать код":"Kodni ko'rsatish","Позвонить":"Qo'ng'iroq qilish","Как добраться":"Qanday borish","Скоро":"Tez orada","Здесь будет клиника-партнёр":"Bu yerda hamkor klinika bo'ladi","Адрес и телефон появятся здесь":"Manzil va telefon shu yerda paydo bo'ladi","Скидка для пользователей LifeChange":"LifeChange foydalanuvchilari uchun chegirma","Скоро здесь появятся клиники-партнёры.":"Tez orada bu yerda hamkor klinikalar paydo bo'ladi.","Скопировать код":"Kodni nusxalash","Ваш код":"Sizning kodingiz","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"LifeChange hamkor xususiy klinikalari. Shifokor ko'rigi kerak bo'lganda.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange hamkorlari. Bu aloqa ma'lumotlari, tibbiy tavsiya emas. Hayotga xavf bo'lsa, 103 ga qo'ng'iroq qiling.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Bu kodni qabulxonada ayting yoki ekranni ko'rsating. Kod faqat sizniki."});
+    Object.assign(EN_EXACT, {"Врачи-партнёры":"Partner doctors","Нужен очный врач? Клиники-партнёры":"Need an in-person doctor? Partner clinics","Показать код":"Show code","Позвонить":"Call","Как добраться":"Directions","Скоро":"Soon","Здесь будет клиника-партнёр":"Partner clinic will be here","Адрес и телефон появятся здесь":"Address and phone will appear here","Скидка для пользователей LifeChange":"Discount for LifeChange users","Скоро здесь появятся клиники-партнёры.":"Partner clinics are coming soon.","Скопировать код":"Copy code","Ваш код":"Your code","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"Private clinics partnered with LifeChange. For when you need an in-person doctor.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange partners. These are contacts, not medical advice. In a life-threatening emergency call 103.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Tell this code at the reception or show your screen. The code is personal."});
   } catch(e) {}
 })();
 </script>
