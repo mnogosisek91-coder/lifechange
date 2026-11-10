@@ -1413,6 +1413,12 @@
         </div>
     </div>
 
+    <div id="tab-clinics" class="tab-content"><div class="page-banner" style="text-align:center">
+        <h2 style="margin:0 0 6px">Врачи-партнёры</h2>
+        <p style="margin:0;color:var(--text-secondary);font-size:.92rem;line-height:1.5">Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.</p></div>
+        <div id="clinicList"></div>
+        <p class="clin-note">Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.</p>
+    </div>
     <div id="tab-letter" class="tab-content"><div class="page-banner" style="text-align:center;padding:1.2rem 1rem;">
         <h2 style="margin-bottom:10px;">✉️ Письмо себе</h2>
         <details style="max-width:640px;margin:0 auto;text-align:left;border:1.5px solid #fbbf24;border-radius:12px;background:linear-gradient(135deg,rgba(251,191,36,.14),rgba(244,114,182,.12));padding:10px 14px;box-shadow:0 0 16px rgba(251,191,36,.28);">
@@ -1540,6 +1546,24 @@
         <div class="pcard"><h4>🎉 Начислить искры (розыгрыши)</h4>
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Искр" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
           <p class="note">Победителю придёт уведомление в колокольчик. Для розыгрышей в Telegram-канале.</p></div>
+        <div class="pcard"><details id="admClinicBox"><summary style="cursor:pointer;font-weight:700;font-size:1.05rem">Клиники-партнёры</summary>
+          <p class="note" style="margin:8px 0">Список для раздела «Врачи-партнёры». Показываются только включённые. Цифры за 30 дней: сколько людей позвонили, открыли карту и показали код.</p>
+          <div id="clAdmList"></div>
+          <h4 style="margin:14px 0 6px" id="clFormTitle">Добавить клинику</h4>
+          <input type="hidden" id="clId">
+          <div class="rem-row"><input id="clName" placeholder="Название" style="flex:1;min-width:180px"><input id="clSort" type="number" placeholder="Порядок" style="width:90px"></div>
+          <div class="rem-row"><input id="clAddr" placeholder="Адрес (Ташкент, улица, дом)" style="flex:1;min-width:200px"><input id="clPhone" placeholder="Телефон" style="width:160px"></div>
+          <div class="rem-row"><input id="clMap" placeholder="Ссылка на карту (https://…), можно пусто" style="flex:1;min-width:200px"></div>
+          <div class="rem-row"><input id="clTags" placeholder="Направления через запятую: Терапевт, Невролог" style="flex:1;min-width:200px"></div>
+          <div class="rem-row"><input id="clDisc" placeholder="Скидка, например: Скидка 10% по коду" style="flex:1;min-width:200px"></div>
+          <div class="rem-row"><input id="clTerms" placeholder="Условия скидки: на что действует, до какой даты" style="flex:1;min-width:200px"></div>
+          <div class="rem-row"><label style="display:flex;gap:6px;align-items:center"><input type="file" id="clLogo" accept="image/*"> логотип</label><img id="clLogoPrev" style="width:44px;height:44px;border-radius:50%;object-fit:cover;display:none"><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="clActive" checked> показывать</label></div>
+          <div class="rem-row"><button class="btn btn-gold" style="width:auto" onclick="clAdmSave()">Сохранить</button><button class="btn btn-outline" style="width:auto" onclick="clAdmReset()">Очистить форму</button></div>
+          <p class="note" id="clAdmMsg" style="font-weight:700"></p>
+          <h4 style="margin:14px 0 6px">Проверить код пользователя</h4>
+          <div class="rem-row"><input id="clCodeIn" placeholder="LC-XXXXXX" style="width:160px;text-transform:uppercase"><button class="btn btn-outline" style="width:auto" onclick="clAdmLookup()">Проверить</button></div>
+          <p class="note" id="clCodeRes" style="font-weight:700"></p>
+        </details></div>
         <div class="pcard"><details id="admChatBox"><summary style="cursor:pointer;font-weight:700;font-size:1.05rem">💬 Чат поддержки <span id="admChatBadge" class="adm-dot" style="display:none;margin-left:6px"></span></summary>
           <p class="note" style="margin:8px 0">Сообщения пользователей приходят сюда и в Telegram. Ответ появится у человека сразу. <button class="btn btn-outline" style="width:auto;padding:4px 10px;font-size:.78rem;margin-left:6px" onclick="admChatTest()">Проверить Telegram</button> <span id="admChatTestRes" style="display:block;margin-top:6px;font-weight:700"></span></p>
           <div id="admChatList" style="margin-top:8px"></div>
@@ -1747,6 +1771,7 @@
             <button class="btn btn-outline nvi-comm2" onclick="closeModal('moreModal'); switchTab('community')">Сообщество</button>
             <button class="btn btn-outline nvi-plans" onclick="closeModal('moreModal'); switchTab('plans')">Тарифы</button>
             <button class="btn btn-outline nvi-letter" onclick="closeModal('moreModal'); switchTab('letter')">Письмо себе</button>
+            <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" style="display:none" onclick="closeModal('moreModal'); switchTab('clinics')">Врачи-партнёры</button>
             <button class="btn btn-outline nvi-about" onclick="closeModal('moreModal'); switchTab('about')">О нас</button>
             <button class="btn btn-outline nvi-chan" onclick="closeModal('moreModal'); joinChannel()">Наш канал</button>
             <button class="btn btn-gold nvi-inst" onclick="installApp()">Установить приложение</button>
@@ -1777,6 +1802,15 @@
         <p style="color: var(--text-secondary); font-size:0.78rem; margin-top:10px; line-height:1.5;">Нажмите синюю кнопку Telegram выше и подтвердите вход. Потом нажмите «Получить 500 искр» ещё раз, и мы проверим подписку.</p>
     </div></div>
     <div class="support-widget-btn" style="left:25px; right:auto; width:auto; border-radius:30px; padding:0 18px; font-size:0.95rem; font-weight:700; background:linear-gradient(135deg,#ef4444,#dc2626); box-shadow:0 10px 25px rgba(239,68,68,0.45);" onclick="openModal('crisisModal')">🆘 Мне плохо</div>
+    <div class="modal" id="clinicCodeModal"><div class="modal-content" style="max-width:380px;text-align:center">
+        <span class="close-modal" onclick="closeModal('clinicCodeModal')">&times;</span>
+        <h3 style="margin-bottom:6px" id="ccClinic">Ваш код</h3>
+        <p style="color:var(--text-secondary);font-size:.88rem;margin:0 0 12px" id="ccDisc"></p>
+        <div id="ccCode" style="font-size:2rem;font-weight:800;letter-spacing:3px;color:#fbbf24;border:2px dashed #d4a017;border-radius:14px;padding:16px 8px;background:rgba(245,158,11,.1)">LC-000000</div>
+        <p style="color:var(--text-secondary);font-size:.84rem;line-height:1.5;margin:12px 0" id="ccHow">Назовите этот код на ресепшене или покажите экран. Код ваш личный.</p>
+        <p style="color:var(--text-secondary);font-size:.78rem;line-height:1.5;margin:0 0 12px" id="ccTerms"></p>
+        <button class="btn btn-gold" onclick="clinicCopyCode()">Скопировать код</button>
+    </div></div>
     <div class="modal" id="crisisModal"><div class="modal-content">
         <span class="close-modal" onclick="closeModal('crisisModal')">&times;</span>
         <h3 style="margin-bottom:0.8rem;">Вы не одни</h3>
@@ -1784,6 +1818,7 @@
         <p style="font-size:1.3rem; font-weight:800; color:#f87171; margin-bottom:0.5rem;">📞 Скорая помощь: 103</p>
         <p style="color: var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:1.2rem;">Позвоните близкому человеку и скажите, что вам нужна поддержка. Если вы одни, обратитесь в ближайшую больницу.</p>
         <button class="btn btn-gold" onclick="closeModal('crisisModal'); switchTab('psychology')">Записаться к психологу</button>
+        <button class="btn btn-outline" id="sosClinicsLink" style="display:none;margin-top:8px" onclick="closeModal('crisisModal'); switchTab('clinics')">Нужен очный врач? Клиники-партнёры</button>
     </div></div>
     <!-- ИКОНКА ТЕХПОДДЕРЖКИ -->
     <div class="support-widget-btn" onclick="openChat()" title="Служба поддержки">💬</div>
@@ -7013,5 +7048,141 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
 Object.assign(UZ_EXACT, {"Изменить цель…": "Maqsadni o'zgartirish…", "🔑 Сменить пароль": "🔑 Parolni almashtirish", "Повторите новый пароль": "Yangi parolni takrorlang", "Пароли не совпадают.": "Parollar mos kelmadi.", "Пароль изменён.": "Parol o'zgartirildi."});
 Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑 Сменить пароль": "🔑 Change password", "Повторите новый пароль": "Repeat new password", "Пароли не совпадают.": "Passwords don't match.", "Пароль изменён.": "Password changed."});
 </script>
+<style id="lcClinCss">
+#tab-clinics .clin-card{padding:14px;border:1px solid var(--border-color);border-radius:16px;background:rgba(20,22,48,.82);margin-bottom:12px}
+#tab-clinics .clin-head{display:flex;gap:12px;align-items:center}
+#tab-clinics .clin-logo{width:52px;height:52px;border-radius:50%;flex-shrink:0;border:1px solid rgba(255,255,255,.2);object-fit:cover;background:linear-gradient(145deg,#312e81,#1e1b4b);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fbbf24}
+#tab-clinics .clin-name{font-size:1rem;font-weight:700;color:#fff;overflow-wrap:anywhere}
+#tab-clinics .clin-addr{font-size:.8rem;color:var(--text-secondary);margin-top:2px;overflow-wrap:anywhere}
+#tab-clinics .clin-tags{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+#tab-clinics .clin-tags span{font-size:.72rem;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:var(--text-secondary)}
+#tab-clinics .clin-disc{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(245,158,11,.12);border:1px dashed #d4a017;margin-bottom:10px}
+#tab-clinics .clin-disc b{color:#fbbf24;font-size:.84rem}
+#tab-clinics .clin-disc button{background:#fbbf24;color:#111;border:0;font-size:.8rem;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
+#tab-clinics .clin-terms{font-size:.72rem;color:var(--text-secondary);line-height:1.4;margin:-4px 0 10px}
+#tab-clinics .clin-btns{display:flex;gap:8px}
+#tab-clinics .clin-btns button{flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer}
+#tab-clinics .clin-call{background:#f59e0b;color:#111;border:0}
+#tab-clinics .clin-map{background:transparent;color:#fff;border:1px solid var(--border-color)}
+#tab-clinics .clin-note,#tab-clinics .clin-empty{font-size:.74rem;color:var(--text-secondary);line-height:1.5;margin:4px 4px 90px}
+#tab-clinics .clin-empty{font-size:.9rem;text-align:center;margin:30px 8px}
+#clAdmList .cl-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap}
+#clAdmList .cl-row img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+</style>
+<script id="lcClinics">
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  let LIST = [], CODE = '', CUR = null;
+
+  async function load(){
+    try { LIST = (await rpc('clinics_list')) || []; } catch(e) { LIST = []; }
+    const has = LIST.length > 0;
+    ['sosClinicsLink','moreClinicsBtn'].forEach(id => { const b = $(id); if(b) b.style.display = has ? '' : 'none'; });
+    paint();
+  }
+  function paint(){
+    const box = $('clinicList'); if(!box) return;
+    if(!LIST.length){
+      box.innerHTML = '<p class="clin-empty">Скоро здесь появятся клиники-партнёры.' + (typeof isAdmin !== 'undefined' && isAdmin ? '<br><br>Добавь первую в админке: «Клиники-партнёры».' : '') + '</p>';
+      return;
+    }
+    box.innerHTML = LIST.map(c => {
+      const tags = String(c.tags || '').split(',').map(x => x.trim()).filter(Boolean).map(x => '<span>' + esc(x) + '</span>').join('');
+      const logo = c.logo ? '<img class="clin-logo" src="' + esc(c.logo) + '" alt="">' : '<div class="clin-logo">' + esc((c.name || '?').charAt(0).toUpperCase()) + '</div>';
+      return '<div class="clin-card" data-id="' + c.id + '"><div class="clin-head">' + logo +
+        '<div style="min-width:0"><div class="clin-name">' + esc(c.name) + '</div>' + (c.address ? '<div class="clin-addr">' + esc(c.address) + '</div>' : '') + '</div></div>' +
+        (tags ? '<div class="clin-tags">' + tags + '</div>' : '<div style="height:10px"></div>') +
+        (c.discount ? '<div class="clin-disc"><b>' + esc(c.discount) + '</b><button onclick="clinicShowCode(' + c.id + ')">Показать код</button></div>' + (c.terms ? '<div class="clin-terms">' + esc(c.terms) + '</div>' : '') : '') +
+        '<div class="clin-btns">' + (c.phone ? '<button class="clin-call" onclick="clinicAct(' + c.id + ',\'call\')">Позвонить</button>' : '') +
+        '<button class="clin-map" onclick="clinicAct(' + c.id + ',\'map\')">Как добраться</button></div></div>';
+    }).join('');
+  }
+  function track(id, kind){ if(typeof user !== 'undefined' && user) rpc('clinic_event', { p_clinic: id, p_kind: kind }).catch(() => {}); }
+  window.clinicAct = function(id, kind){
+    const c = LIST.find(x => x.id === id); if(!c) return;
+    track(id, kind);
+    if(kind === 'call'){ location.href = 'tel:' + String(c.phone).replace(/[^\d+]/g, ''); return; }
+    const url = c.map_url || ('https://yandex.uz/maps/?text=' + encodeURIComponent((c.name + ' ' + (c.address || '')).trim()));
+    window.open(url, '_blank', 'noopener');
+  };
+  window.clinicShowCode = async function(id){
+    if(!requireAuth()) return;
+    const c = LIST.find(x => x.id === id); if(!c) return;
+    try { CODE = await rpc('my_clinic_code'); } catch(e) { toast('Не удалось получить код. Попробуйте позже.'); return; }
+    if(!CODE) return;
+    $('ccClinic').textContent = c.name; $('ccDisc').textContent = c.discount || '';
+    $('ccCode').textContent = CODE; $('ccTerms').textContent = c.terms || '';
+    openModal('clinicCodeModal'); track(id, 'code');
+  };
+  window.clinicCopyCode = function(){
+    try { navigator.clipboard.writeText(CODE).then(() => toast('Код скопирован'), () => toast('Выделите код и скопируйте')); }
+    catch(e) { toast('Выделите код и скопируйте'); }
+  };
+
+  // показать страницу → обновить список
+  { const _st = switchTab; switchTab = function(t){ _st(t); if(t === 'clinics') load(); }; }
+  setTimeout(load, 1200);
+
+  // ---------- админка ----------
+  let ADM = [], logoData = '';
+  function img(c){ return c.logo ? '<img src="' + esc(c.logo) + '">' : '<span style="width:36px;height:36px;border-radius:50%;background:#1e1b4b;display:inline-flex;align-items:center;justify-content:center;color:#fbbf24;font-weight:800">' + esc((c.name || '?').charAt(0)) + '</span>'; }
+  async function admLoad(){
+    const box = $('clAdmList'); if(!box) return;
+    try { ADM = (await rpc('admin_clinics')) || []; } catch(e) { box.innerHTML = '<p class="note">Нет доступа или не запущен SQL supabase_update_clinics.sql.</p>'; return; }
+    box.innerHTML = ADM.length ? ADM.map(c => '<div class="cl-row">' + img(c) + '<div style="flex:1;min-width:150px"><b>' + esc(c.name) + '</b>' + (c.active ? '' : ' <i>(скрыта)</i>') +
+      '<div class="note" style="margin:2px 0 0">30 дн.: звонков ' + c.calls + ', карта ' + c.maps + ', коды ' + c.codes + ', людей ' + c.people + '</div></div>' +
+      '<button class="btn btn-outline" style="width:auto;padding:4px 10px;font-size:.8rem" onclick="clAdmEdit(' + c.id + ')">Изменить</button>' +
+      '<button class="btn btn-outline" style="width:auto;padding:4px 10px;font-size:.8rem" onclick="clAdmDel(' + c.id + ')">Удалить</button></div>').join('') : '<p class="note">Клиник пока нет.</p>';
+  }
+  const F = ['clId','clName','clSort','clAddr','clPhone','clMap','clTags','clDisc','clTerms'];
+  window.clAdmReset = function(){ F.forEach(i => $(i).value = ''); $('clActive').checked = true; $('clLogo').value = ''; logoData = ''; $('clLogoPrev').style.display = 'none'; $('clFormTitle').textContent = 'Добавить клинику'; };
+  window.clAdmEdit = function(id){
+    const c = ADM.find(x => x.id === id); if(!c) return;
+    $('clId').value = c.id; $('clName').value = c.name; $('clSort').value = c.sort; $('clAddr').value = c.address; $('clPhone').value = c.phone;
+    $('clMap').value = c.map_url; $('clTags').value = c.tags; $('clDisc').value = c.discount; $('clTerms').value = c.terms; $('clActive').checked = !!c.active;
+    logoData = ''; $('clLogo').value = ''; const lp = $('clLogoPrev'); if(c.logo){ lp.src = c.logo; lp.style.display = ''; } else lp.style.display = 'none';
+    $('clFormTitle').textContent = 'Изменить: ' + c.name; $('clName').scrollIntoView({ block: 'center' });
+  };
+  window.clAdmDel = async function(id){
+    if(!confirm('Удалить клинику и её статистику?')) return;
+    try { await rpc('admin_clinic_delete', { p_id: id }); admLoad(); load(); } catch(e) { $('clAdmMsg').textContent = 'Ошибка: ' + (e.message || e); }
+  };
+  window.clAdmSave = async function(){
+    const m = $('clAdmMsg'); m.textContent = '';
+    const body = { id: $('clId').value, name: $('clName').value, sort: $('clSort').value, address: $('clAddr').value, phone: $('clPhone').value, map_url: $('clMap').value,
+      tags: $('clTags').value, discount: $('clDisc').value, terms: $('clTerms').value, active: $('clActive').checked, logo: logoData };
+    if(!body.name.trim()){ m.textContent = 'Укажи название.'; return; }
+    try { await rpc('admin_clinic_save', { p: body }); m.textContent = 'Сохранено.'; clAdmReset(); admLoad(); load(); }
+    catch(e) { const t = String(e.message || e); m.textContent = /bad_map_url/.test(t) ? 'Ссылка на карту должна начинаться с https://' : /logo/.test(t) ? 'Логотип не подошёл, попробуй другой файл.' : 'Ошибка: ' + t; }
+  };
+  window.clAdmLookup = async function(){
+    const r = $('clCodeRes'); r.textContent = '';
+    try {
+      const d = await rpc('admin_clinic_code_lookup', { p_code: $('clCodeIn').value });
+      r.textContent = d ? ('Код принадлежит: ' + (d.name || 'без имени') + (d.tg_username ? ' @' + d.tg_username : '') + (d.last_code_at ? '. Код показывали: ' + new Date(d.last_code_at).toLocaleString('ru-RU') : '')) : 'Такого кода нет.';
+    } catch(e) { r.textContent = 'Ошибка: ' + (e.message || e); }
+  };
+  document.addEventListener('change', ev => {
+    if(!ev.target || ev.target.id !== 'clLogo' || !ev.target.files[0]) return;
+    const rd = new FileReader();
+    rd.onload = () => { const im = new Image(); im.onload = () => {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 160; const g = cv.getContext('2d');
+      const sz = Math.min(im.width, im.height); g.drawImage(im, (im.width - sz) / 2, (im.height - sz) / 2, sz, sz, 0, 0, 160, 160);
+      logoData = cv.toDataURL('image/webp', .88); if(!/^data:image\/webp/.test(logoData)) logoData = cv.toDataURL('image/png');
+      const lp = $('clLogoPrev'); lp.src = logoData; lp.style.display = '';
+    }; im.src = rd.result; };
+    rd.readAsDataURL(ev.target.files[0]);
+  });
+  { const _ra = renderAdmin; renderAdmin = async function(){ await _ra(); admLoad(); }; }
+
+  // переводы интерфейса
+  try {
+    Object.assign(UZ_EXACT, {"Врачи-партнёры":"Hamkor shifokorlar","Нужен очный врач? Клиники-партнёры":"Shifokor kerakmi? Hamkor klinikalar","Показать код":"Kodni ko'rsatish","Позвонить":"Qo'ng'iroq qilish","Как добраться":"Qanday borish","Скоро здесь появятся клиники-партнёры.":"Tez orada bu yerda hamkor klinikalar paydo bo'ladi.","Скопировать код":"Kodni nusxalash","Ваш код":"Sizning kodingiz","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"LifeChange hamkor xususiy klinikalari. Shifokor ko'rigi kerak bo'lganda.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange hamkorlari. Bu aloqa ma'lumotlari, tibbiy tavsiya emas. Hayotga xavf bo'lsa, 103 ga qo'ng'iroq qiling.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Bu kodni qabulxonada ayting yoki ekranni ko'rsating. Kod faqat sizniki."});
+    Object.assign(EN_EXACT, {"Врачи-партнёры":"Partner doctors","Нужен очный врач? Клиники-партнёры":"Need an in-person doctor? Partner clinics","Показать код":"Show code","Позвонить":"Call","Как добраться":"Directions","Скоро здесь появятся клиники-партнёры.":"Partner clinics are coming soon.","Скопировать код":"Copy code","Ваш код":"Your code","Частные клиники, с которыми дружит LifeChange. Когда нужен очный врач.":"Private clinics partnered with LifeChange. For when you need an in-person doctor.","Партнёры LifeChange. Это контакты, а не медицинская рекомендация. При угрозе жизни звоните 103.":"LifeChange partners. These are contacts, not medical advice. In a life-threatening emergency call 103.","Назовите этот код на ресепшене или покажите экран. Код ваш личный.":"Tell this code at the reception or show your screen. The code is personal."});
+  } catch(e) {}
+})();
+</script>
+<style id="lcNavCss3">.nvi-clin{--u:url(data:image/webp;base64,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)}</style>
 </body>
 </html>
