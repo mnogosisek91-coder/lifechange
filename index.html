@@ -1541,7 +1541,7 @@
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Искр" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
           <p class="note">Победителю придёт уведомление в колокольчик. Для розыгрышей в Telegram-канале.</p></div>
         <div class="pcard"><details id="admChatBox"><summary style="cursor:pointer;font-weight:700;font-size:1.05rem">💬 Чат поддержки <span id="admChatBadge" class="adm-dot" style="display:none;margin-left:6px"></span></summary>
-          <p class="note" style="margin:8px 0">Сообщения пользователей приходят сюда и в Telegram. Ответ появится у человека сразу. <button class="btn btn-outline" style="width:auto;padding:4px 10px;font-size:.78rem;margin-left:6px" onclick="admChatTest()">Проверить Telegram</button></p>
+          <p class="note" style="margin:8px 0">Сообщения пользователей приходят сюда и в Telegram. Ответ появится у человека сразу. <button class="btn btn-outline" style="width:auto;padding:4px 10px;font-size:.78rem;margin-left:6px" onclick="admChatTest()">Проверить Telegram</button> <span id="admChatTestRes" style="display:block;margin-top:6px;font-weight:700"></span></p>
           <div id="admChatList" style="margin-top:8px"></div>
           <div id="admChatConv" hidden>
             <div style="display:flex;gap:8px;align-items:center;margin:8px 0"><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="admChatBack()">← К списку</button><b id="admChatWho" style="flex:1;min-width:0"></b><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="admChatClose()">Закрыть диалог</button></div>
@@ -6898,7 +6898,6 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
       await rpc('chat_send', { p_text: text });
       loc = []; topic = '';
       if(clear) { const i2 = document.getElementById('scInput'); i2.value = ''; grow(i2); }
-      try { Promise.resolve(sb.functions.invoke('chat-notify', { body: {} })).catch(() => {}); } catch(e) {}
       await poll();
     } catch(e) { alert(errMsg(e)); }
     busy = false;
@@ -6933,6 +6932,7 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
       paintBadge(Number(await rpc('chat_unread')) || 0);
     } catch(e) {}
   }
+  css();
   bgTimer = setInterval(bgPoll, 45000); setTimeout(bgPoll, 4000);
 
   // ---------------- админка ----------------
@@ -6982,12 +6982,20 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
     aBusy = false;
   };
   window.admChatTest = async function() {
+    const out = document.getElementById('admChatTestRes'), show = (t, ok) => { if(out) { out.textContent = t; out.style.color = ok ? '#34d399' : '#f87171'; } };
+    show('Проверяю...', true);
     try {
-      const { data, error } = await sb.functions.invoke('chat-notify', { body: { test: true } });
-      if(error) { let m = error.message || String(error); try { const j = await error.context.json(); m = j.error || m; } catch(e) {} return alert('Не получилось: ' + m); }
-      if(data && data.error) return alert('Не получилось: ' + data.error);
-      alert(data.sent > 0 ? 'Готово: тестовое сообщение отправлено (' + data.sent + '). Проверь Telegram.' : 'Получателей: ' + data.recipients + ', отправлено: 0.' + (data.errors && data.errors.length ? ' Ошибка Telegram: ' + data.errors.join('; ') : ' Добавь секрет ADMIN_TG_CHAT_ID в Edge Functions → Secrets.'));
-    } catch(e) { alert('Не получилось: ' + (e.message || e)); }
+      const id = await rpc('admin_chat_test');
+      if(id == null) return show('Не найдены секреты в Vault: нужны telegram_bot_token и admin_tg_chat_id.', false);
+      for(let i = 0; i < 6; i++) {
+        await new Promise(r => setTimeout(r, 1500));
+        const r = await rpc('admin_chat_test_result', { p_id: id });
+        if(!r) continue;
+        if(r.status === 200) return show('Готово: тест отправлен. Проверь Telegram.', true);
+        return show('Telegram ответил ошибкой' + (r.status ? ' ' + r.status : '') + ': ' + (r.error || r.body || 'без описания'), false);
+      }
+      show('Запрос отправлен, но ответа пока нет. Нажми кнопку ещё раз через минуту.', false);
+    } catch(e) { show('Не получилось: ' + (errMsg ? errMsg(e) : (e.message || e)), false); }
   };
   window.admChatClose = async function() {
     if(!aUser) return;
