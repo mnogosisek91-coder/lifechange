@@ -1817,8 +1817,8 @@
         <p style="color: var(--text-secondary); font-size:0.92rem; line-height:1.6; margin-bottom:1rem;">Если вам очень тяжело, есть мысли причинить себе вред или состояние резко ухудшилось, не оставайтесь с этим в одиночку.</p>
         <p style="font-size:1.3rem; font-weight:800; color:#f87171; margin-bottom:0.5rem;">📞 Скорая помощь: 103</p>
         <p style="color: var(--text-secondary); font-size:0.9rem; line-height:1.6; margin-bottom:1.2rem;">Позвоните близкому человеку и скажите, что вам нужна поддержка. Если вы одни, обратитесь в ближайшую больницу.</p>
-        <button class="btn btn-gold" onclick="closeModal('crisisModal'); switchTab('psychology')">Записаться к психологу</button>
-        <button class="btn btn-outline" id="sosClinicsLink" style="margin-top:8px" onclick="closeModal('crisisModal'); switchTab('clinics')">Нужен очный врач? Клиники-партнёры</button>
+        <button class="btn btn-gold lc-gold3d" onclick="closeModal('crisisModal'); switchTab('psychology')">Записаться к психологу</button>
+        <button class="btn btn-outline nvi-clin lc-indigo3d" id="sosClinicsLink" style="margin-top:10px" onclick="closeModal('crisisModal'); switchTab('clinics')">Нужен очный врач? Клиники-партнёры</button>
     </div></div>
     <!-- ИКОНКА ТЕХПОДДЕРЖКИ -->
     <div class="support-widget-btn" onclick="openChat()" title="Служба поддержки">💬</div>
@@ -7058,18 +7058,21 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 #tab-clinics .clin-tags span{font-size:.72rem;padding:3px 8px;border-radius:20px;border:1px solid rgba(255,255,255,.18);color:var(--text-secondary)}
 #tab-clinics .clin-disc{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:10px;background:rgba(245,158,11,.12);border:1px dashed #d4a017;margin-bottom:10px}
 #tab-clinics .clin-disc b{color:#fbbf24;font-size:.84rem}
-#tab-clinics .clin-disc button{background:#fbbf24;color:#111;border:0;font-size:.8rem;font-weight:800;padding:6px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
+#tab-clinics .clin-disc button{font-size:.8rem;padding:6px 10px;border-radius:8px;cursor:pointer;white-space:nowrap}
 #tab-clinics .clin-terms{font-size:.72rem;color:var(--text-secondary);line-height:1.4;margin:-4px 0 10px}
 #tab-clinics .clin-btns{display:flex;gap:8px}
 #tab-clinics .clin-btns button{flex:1;padding:10px;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer}
-#tab-clinics .clin-call{background:#f59e0b;color:#111;border:0}
-#tab-clinics .clin-map{background:transparent;color:#fff;border:1px solid var(--border-color)}
 #tab-clinics .clin-note,#tab-clinics .clin-empty{font-size:.74rem;color:var(--text-secondary);line-height:1.5;margin:4px 4px 90px}
 #tab-clinics .clin-empty{font-size:.9rem;text-align:center;margin:30px 8px}
 #tab-clinics .clin-soon{position:relative;border-style:dashed;opacity:.92}
 #tab-clinics .clin-badge{position:absolute;top:10px;right:12px;font-size:.7rem;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:#111;background:#fbbf24;padding:3px 9px;border-radius:99px}
 #tab-clinics .clin-ph{font-size:.62rem;letter-spacing:1px;border-style:dashed;color:var(--text-secondary);background:rgba(255,255,255,.04)}
 #tab-clinics .clin-soon .clin-head{padding-right:64px}
+.lc-gold3d{background:linear-gradient(180deg,#fff1b8 0%,#fbbf24 42%,#d97706 100%)!important;color:#2a1500!important;border:1px solid #fde68a!important;font-weight:800;text-shadow:0 1px 0 rgba(255,255,255,.35);box-shadow:0 0 16px rgba(251,191,36,.38),inset 0 1px 0 rgba(255,255,255,.65),inset 0 -2px 4px rgba(120,53,15,.35)}
+.lc-indigo3d{background:linear-gradient(180deg,#3b3592 0%,#1e1b4b 100%)!important;color:#fef3c7!important;border:1.5px solid #d4a017!important;font-weight:700;box-shadow:0 0 12px rgba(212,160,23,.25),inset 0 1px 0 rgba(255,255,255,.18)}
+.lc-indigo3d.nvi-clin{justify-content:center!important;text-align:center!important}
+#tab-clinics .clin-call,#tab-clinics .clin-disc button{background:linear-gradient(180deg,#fff1b8 0%,#fbbf24 42%,#d97706 100%);color:#2a1500;border:1px solid #fde68a;font-weight:800;box-shadow:0 0 12px rgba(251,191,36,.3),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -2px 3px rgba(120,53,15,.3)}
+#tab-clinics .clin-map{background:linear-gradient(180deg,#3b3592 0%,#1e1b4b 100%);color:#fef3c7;border:1.5px solid #d4a017;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
 #clAdmList .cl-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap}
 #clAdmList .cl-row img{width:36px;height:36px;border-radius:50%;object-fit:cover}
 </style>
@@ -7091,7 +7094,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
         '<div class="clin-tags"><span>Терапевт</span><span>Невролог</span><span>Диагностика</span></div>' +
         '<div class="clin-disc"><b>Скидка для пользователей LifeChange</b><button disabled style="opacity:.55">Показать код</button></div>' +
         '<div class="clin-btns"><button class="clin-call" disabled style="opacity:.55">Позвонить</button><button class="clin-map" disabled style="opacity:.55">Как добраться</button></div></div>';
-      box.innerHTML = ph + ph + '<p class="clin-empty" style="margin:10px 8px 0">Скоро здесь появятся клиники-партнёры.' + (typeof isAdmin !== 'undefined' && isAdmin ? '<br><br>Добавь первую в админке: «Клиники-партнёры».' : '') + '</p>';
+      box.innerHTML = ph + ph + ph + '<p class="clin-empty" style="margin:10px 8px 0">Скоро здесь появятся клиники-партнёры.' + '</p>';
       return;
     }
     box.innerHTML = LIST.map(c => {
