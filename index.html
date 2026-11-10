@@ -1534,7 +1534,15 @@
         <div class="pcard"><h4>🎉 Начислить искры (розыгрыши)</h4>
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Искр" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
           <p class="note">Победителю придёт уведомление в колокольчик. Для розыгрышей в Telegram-канале.</p></div>
-        <div class="pcard"><h4>📨 Обращения в поддержку</h4><div id="adminSupport"></div></div>
+        <div class="pcard"><details id="admChatBox"><summary style="cursor:pointer;font-weight:700;font-size:1.05rem">💬 Чат поддержки <span id="admChatBadge" class="adm-dot" style="display:none;margin-left:6px"></span></summary>
+          <p class="note" style="margin:8px 0">Сообщения пользователей приходят сюда и в Telegram. Ответ появится у человека сразу.</p>
+          <div id="admChatList" style="margin-top:8px"></div>
+          <div id="admChatConv" hidden>
+            <div style="display:flex;gap:8px;align-items:center;margin:8px 0"><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="admChatBack()">← К списку</button><b id="admChatWho" style="flex:1;min-width:0"></b><button class="btn btn-outline" style="width:auto;padding:6px 12px" onclick="admChatClose()">Закрыть диалог</button></div>
+            <div id="admChatMsgs" style="display:flex;flex-direction:column;gap:8px;max-height:50vh;min-height:160px;overflow-y:auto;padding:4px 2px"></div>
+            <div style="display:flex;gap:8px;align-items:flex-end;margin-top:8px"><textarea id="admChatInput" rows="2" maxlength="1000" placeholder="Ответ пользователю..." style="flex:1;padding:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:10px;color:#fff;outline:none;font:inherit;resize:none" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();admChatSend()}"></textarea><button class="btn btn-gold" style="width:auto;padding:10px 16px" onclick="admChatSend()">Отправить</button></div>
+          </div></details></div>
+        <div class="pcard"><details><summary style="cursor:pointer;font-weight:700;font-size:1.05rem">📨 Старые обращения (форма)</summary><div id="adminSupport" style="margin-top:10px"></div></details></div>
         <div class="pcard"><h4>🎁 Заказы наград</h4><div id="adminOrders"></div></div>
         <div class="pcard"><h4>📸 Последние отчёты</h4><div id="adminReports"></div></div>
     </div></div>
@@ -1770,7 +1778,7 @@
         <button class="btn btn-gold" onclick="closeModal('crisisModal'); switchTab('psychology')">Записаться к психологу</button>
     </div></div>
     <!-- ИКОНКА ТЕХПОДДЕРЖКИ -->
-    <div class="support-widget-btn" onclick="openModal('supportModal')" title="Служба поддержки">💬</div>
+    <div class="support-widget-btn" onclick="openChat()" title="Служба поддержки">💬</div>
 
     <!-- МОДАЛЬНЫЕ ОКНА -->
     <div class="modal" id="payModal">
@@ -4127,7 +4135,7 @@ async function loadPartnerStats() {
     out.innerHTML = `<div style="display:flex;gap:18px;flex-wrap:wrap;margin:8px 0">${tile(f(s.views_total), 'Просмотров')}${tile(f(s.viewers), 'Уникальных зрителей')}${tile(f(s.active_users), 'Активных (с отчётом)')}${tile(per, 'Просмотров на активного')}${tile(f(Math.round(s.views_total / 1000 * cpm)) + ' сум', 'Оценка рекламы по CPM')}</div>
     <div style="overflow-x:auto"><table class="pst-table" style="width:100%;font-size:0.82rem;border-collapse:collapse"><tr style="color:var(--text-secondary);text-align:left"><th>Ролик</th><th>Просмотры</th><th>Уникальных</th><th>При входе</th><th>В разделе</th></tr>${s.by_video.length ? s.by_video.map(v => `<tr><td>${esc(PST_NAMES[v.video_id] || v.video_id)}</td><td>${f(v.views)}</td><td>${f(v.viewers)}</td><td>${f(v.daily_views)}</td><td>${f(v.section_views)}</td></tr>`).join('') : '<tr><td colspan="5" class="note">Пока нет досмотренных партнёрских роликов.</td></tr>'}</table></div>
     <div style="display:flex;align-items:flex-end;gap:2px;height:60px;margin:12px 0 4px">${s.by_day.map(d => `<div title="${d.day}: ${d.views}" style="flex:1;min-width:3px;background:#f6dc9a;height:${Math.max(4, d.views / max * 100)}%"></div>`).join('')}</div><p class="note" style="margin:0">Просмотры по дням, с ${esc(s.from)}</p>
-    <p style="margin-top:10px;font-weight:700">Награды партнёров, оформленные пользователями</p>${s.rewards.length ? s.rewards.map(r => `<div class="note" style="margin:2px 0">${esc(PST_ITEMS[r.item] || r.item)}: ${f(r.orders)} заказов, выдано ${f(r.done)}</div>`).join('') : '<p class="note">Пока нет заказов партнёрских наград.</p>'}`;
+    <p style="margin-top:10px;font-weight:700">Партнёрские награды: сводка для отчёта партнёру</p><p class="note" style="margin:2px 0 6px">Здесь только цифры по каждой награде. Выдавать награды и смотреть, кто заказал, нужно в блоке «Заказы наград».</p>${s.rewards.length ? s.rewards.map(r => `<div class="note" style="margin:2px 0">${esc(PST_ITEMS[r.item] || r.item)}: ${f(r.orders)} заказов, выдано ${f(r.done)}</div>`).join('') : '<p class="note">Пока нет заказов партнёрских наград.</p>'}`;
   } catch(e) { alert(errMsg(e)); }
 }
 async function exportPartnerCsv() {
@@ -6756,6 +6764,218 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
   });
   const old = document.querySelector("#tab-challenges [onclick*=\"'c29_title'\"]"); if(old) { const card = old.closest('.card'); if(card) card.remove(); }
   groups.forEach(d => { const grid = d.querySelector('.grid'), cnt = d.querySelector('.grp-count'); if(grid && cnt) cnt.textContent = '(' + grid.children.length + ')'; });
+})();
+</script>
+<script id="lcChat">
+// ===================== v4.78: онлайн-чат поддержки (бот-скрипт + оператор) =====================
+(function() {
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const lang = () => (typeof langMode === 'function' ? langMode() : 'ru');
+  const S = {
+    ru: { title: 'Поддержка LifeChange', online: 'Оператор на связи: ответим в течение 5–10 минут', hello: 'Привет! Я помощник LifeChange. Выберите тему или напишите свой вопрос, оператор ответит в течение 5–10 минут.',
+      ph: 'Напишите сообщение...', send: 'Отправить', op: 'Позвать оператора', opMsg: 'Здравствуйте! Нужна помощь оператора.', topicWord: 'Тема',
+      wait: 'Передал оператору. Ответим в течение 5–10 минут, обычно быстрее.', closed: 'Диалог закрыт. Если остались вопросы, просто напишите.', opName: 'Оператор', botName: 'Помощник', tg: 'Написать в Telegram', other: 'Напишите вопрос ниже, и оператор ответит.',
+      more: 'Не помогло? Нажмите «Позвать оператора».',
+      topics: [
+        ['Как получить искры?', 'Искры начисляются за отчёт по челленджу: 20 на бесплатном плане и 40 на PRO. Для отчёта нужно выполнить все 3 задания дня и приложить фото или видео. Ещё есть ежедневный бонус и колесо удачи.'],
+        ['Мой отчёт не засчитался', 'Проверьте: 1) выполнены все 3 задания дня; 2) приложено фото или видео; 3) по этому челленджу сегодня ещё нет отчёта (один отчёт в сутки); 4) файл не повторяет прежний отчёт. День заканчивается в полночь по Ташкенту.'],
+        ['Заказ из магазина не пришёл', 'Заказы выдаёт оператор вручную. Нажмите «Позвать оператора» и напишите, что именно вы заказали и когда, мы проверим.'],
+        ['Тарифы и PRO', 'На бесплатном плане можно взять один челлендж в каждой группе, PRO открывает все. Описание и цены смотрите во вкладке «Тарифы». С вопросом по оплате или активации обратитесь к оператору.'],
+        ['Консультация психолога', 'Информация о консультациях и ценах есть во вкладке «Психолог». Если хотите записаться или остались вопросы, позовите оператора.'],
+        ['Другой вопрос', null] ] },
+    uz: { title: 'LifeChange yordam xizmati', online: 'Operator aloqada: 5–10 daqiqa ichida javob beramiz', hello: "Salom! Men LifeChange yordamchisiman. Mavzuni tanlang yoki savolingizni yozing, operator 5–10 daqiqa ichida javob beradi.",
+      ph: 'Xabar yozing...', send: 'Yuborish', op: 'Operatorni chaqirish', opMsg: 'Assalomu alaykum! Operator yordami kerak.', topicWord: 'Mavzu',
+      wait: "Operatorga yubordim. 5–10 daqiqa ichida javob beramiz, odatda tezroq.", closed: "Suhbat yopildi. Savollaringiz qolgan bo'lsa, shunchaki yozing.", opName: 'Operator', botName: 'Yordamchi', tg: 'Telegramda yozish', other: "Savolingizni quyida yozing, operator javob beradi.",
+      more: "Yordam bermadimi? «Operatorni chaqirish» tugmasini bosing.",
+      topics: [
+        ['Uchqunlarni qanday olaman?', "Uchqunlar chellenj bo'yicha hisobot uchun beriladi: bepul tarifda 20, PRO'da 40. Hisobot uchun kunning 3 ta topshirig'ini bajarib, surat yoki video ilova qilish kerak. Yana kundalik bonus va omad g'ildiragi bor."],
+        ['Hisobotim hisoblanmadi', "Tekshiring: 1) kunning 3 ta topshirig'i bajarilgan; 2) surat yoki video ilova qilingan; 3) bu chellenj bo'yicha bugun hisobot yo'q (kuniga bitta hisobot); 4) fayl avvalgi hisobotni takrorlamaydi. Kun Toshkent vaqti bilan yarim tunda tugaydi."],
+        ["Do'kondan buyurtma kelmadi", "Buyurtmalarni operator qo'lda beradi. «Operatorni chaqirish» tugmasini bosing va nima va qachon buyurtma qilganingizni yozing, tekshiramiz."],
+        ['Tariflar va PRO', "Bepul tarifda har bir guruhdan bitta chellenj olish mumkin, PRO hammasini ochadi. Tavsif va narxlar «Tariflar» bo'limida. To'lov yoki faollashtirish bo'yicha savolni operatorga bering."],
+        ['Psixolog konsultatsiyasi', "Konsultatsiyalar va narxlar haqida ma'lumot «Psixolog» bo'limida. Yozilmoqchi bo'lsangiz yoki savollar qolgan bo'lsa, operatorni chaqiring."],
+        ['Boshqa savol', null] ] },
+    en: { title: 'LifeChange Support', online: 'An operator is online: we reply within 5–10 minutes', hello: 'Hi! I am the LifeChange helper. Pick a topic or write your question, and an operator will reply within 5–10 minutes.',
+      ph: 'Type a message...', send: 'Send', op: 'Call an operator', opMsg: 'Hello! I need help from an operator.', topicWord: 'Topic',
+      wait: 'Passed to an operator. We will reply within 5–10 minutes, usually sooner.', closed: 'This chat is closed. If you have more questions, just write.', opName: 'Operator', botName: 'Helper', tg: 'Message us on Telegram', other: 'Write your question below and an operator will answer.',
+      more: 'Did not help? Tap "Call an operator".',
+      topics: [
+        ['How do I earn sparks?', 'Sparks are awarded for a challenge report: 20 on the free plan and 40 on PRO. For a report, complete all 3 tasks of the day and attach a photo or video. There is also a daily bonus and the lucky wheel.'],
+        ['My report was not accepted', 'Check: 1) all 3 tasks of the day are done; 2) a photo or video is attached; 3) you have not reported this challenge today (one report per day); 4) the file is not a repeat of an earlier report. The day ends at midnight Tashkent time.'],
+        ['My shop order has not arrived', 'Orders are handed out by an operator manually. Tap "Call an operator" and tell us what you ordered and when, and we will check.'],
+        ['Plans and PRO', 'On the free plan you can take one challenge in each group, PRO unlocks all of them. See the description and prices on the Plans tab. For payment or activation questions, ask an operator.'],
+        ['Psychologist consultation', 'Details and prices of consultations are on the Psychologist tab. If you want to book or have questions, call an operator.'],
+        ['Something else', null] ] }
+  };
+  const T = () => S[lang()] || S.ru;
+  let srv = [], loc = [], lastId = 0, timer = null, bgTimer = null, busy = false, topic = '', inited = false;
+
+  function css() {
+    if(document.getElementById('lcChatCss')) return;
+    const st = document.createElement('style'); st.id = 'lcChatCss';
+    st.textContent = `#supChatModal .modal-content{max-width:480px;width:94%;display:flex;flex-direction:column;max-height:88vh;padding:16px;gap:10px}
+#supChatModal .ch-head{display:flex;align-items:center;gap:10px}#supChatModal .ch-head h3{margin:0;font-size:1.1rem;flex:1}
+#supChatModal .ch-sub{font-size:.8rem;color:#86efac;margin:-4px 0 0}
+#scMsgs{flex:1;min-height:200px;max-height:46vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px;overscroll-behavior:contain}
+.ch-b{max-width:84%;padding:9px 12px;border-radius:14px;font-size:.92rem;line-height:1.45;white-space:pre-wrap;word-break:break-word;border:1px solid var(--border-color)}
+.ch-b small{display:block;opacity:.6;font-size:.68rem;margin-top:3px}
+.ch-b .ch-n{display:block;font-size:.7rem;font-weight:700;opacity:.8;margin-bottom:2px}
+.ch-u{align-self:flex-end;background:rgba(99,102,241,.35);border-color:rgba(129,140,248,.6)}
+.ch-a{align-self:flex-start;background:rgba(251,191,36,.12);border-color:var(--gold-color)}
+.ch-bot{align-self:flex-start;background:rgba(255,255,255,.06)}
+.ch-s{align-self:center;font-size:.78rem;opacity:.7;text-align:center}
+.ch-chips{display:flex;flex-wrap:wrap;gap:6px}
+.ch-chip{border:1px solid var(--border-color);background:rgba(255,255,255,.05);color:inherit;border-radius:999px;padding:6px 12px;font-size:.82rem;cursor:pointer}
+.ch-chip.op{border-color:var(--gold-color);color:#fde68a}
+.ch-row{display:flex;gap:8px;align-items:flex-end}
+#scInput{flex:1;resize:none;min-height:42px;max-height:110px;padding:10px;background:var(--bg-color);border:1px solid var(--border-color);border-radius:10px;color:#fff;outline:none;font:inherit}
+#scSend{width:auto;padding:10px 16px;margin:0}
+.ch-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;border-radius:9px;background:#ef4444;color:#fff;font-size:.68rem;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #0b1020}
+.adm-th{display:flex;gap:10px;align-items:center;justify-content:space-between;border:1px solid var(--border-color);border-radius:10px;padding:10px 12px;margin-bottom:6px;cursor:pointer}
+.adm-th.new{border-color:var(--gold-color);background:rgba(251,191,36,.08)}
+.adm-th small{opacity:.7;display:block;margin-top:2px}
+.adm-dot{background:#ef4444;color:#fff;border-radius:999px;min-width:20px;padding:1px 7px;font-size:.75rem;font-weight:800;text-align:center}`;
+    document.head.appendChild(st);
+  }
+  function build() {
+    if(document.getElementById('supChatModal')) return;
+    css();
+    document.body.insertAdjacentHTML('beforeend', `<div class="modal" id="supChatModal"><div class="modal-content">
+      <div class="ch-head"><h3 id="chTitle"></h3><span class="close-modal" style="position:static" onclick="closeModal('supChatModal')">&times;</span></div>
+      <p class="ch-sub" id="chSub"></p>
+      <div id="scMsgs"></div>
+      <div class="ch-chips" id="scChips"></div>
+      <div class="ch-row"><textarea id="scInput" rows="1" maxlength="1000"></textarea><button class="btn" id="scSend"></button></div>
+      <a href="https://t.me/LifeChangeSuLen" target="_blank" rel="noopener" id="chTg" style="font-size:.8rem;opacity:.75;text-align:center;color:var(--text-secondary);text-decoration:underline"></a>
+    </div></div>`);
+    document.getElementById('scSend').onclick = () => sendTyped();
+    const inp = document.getElementById('scInput');
+    inp.addEventListener('keydown', e => { if(e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendTyped(); } });
+    document.getElementById('supChatModal').addEventListener('click', e => { if(e.target.id === 'supChatModal') closeModal('supChatModal'); });
+  }
+  const hhmm = t => { try { return new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); } catch(e) { return ''; } };
+  function render() {
+    const t = T(), box = document.getElementById('scMsgs'); if(!box) return;
+    document.getElementById('chTitle').textContent = '🎧 ' + t.title; document.getElementById('chSub').textContent = '🟢 ' + t.online;
+    const inp = document.getElementById('scInput'); inp.placeholder = t.ph; document.getElementById('scSend').textContent = t.send; document.getElementById('chTg').textContent = t.tg;
+    const items = [{ ts: 0, cls: 'ch-bot', name: t.botName, text: t.hello }];
+    srv.forEach(m => {
+      const ts = Date.parse(m.at) || 0;
+      if(m.sender === 'user') items.push({ ts, cls: 'ch-u', text: m.body, time: hhmm(m.at) });
+      else if(m.sender === 'admin') items.push({ ts, cls: 'ch-a', name: t.opName, text: m.body, time: hhmm(m.at) });
+      else if(m.kind === 'closed') items.push({ ts, cls: 'ch-s', text: t.closed });
+      else items.push({ ts, cls: 'ch-bot', name: t.botName, text: t.wait });
+    });
+    loc.forEach(m => items.push(m));
+    items.sort((a, b) => a.ts - b.ts);
+    const near = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+    box.innerHTML = items.map(m => `<div class="ch-b ${m.cls}">${m.name ? '<span class="ch-n">' + esc(m.name) + '</span>' : ''}${esc(m.text)}${m.time ? '<small>' + esc(m.time) + '</small>' : ''}</div>`).join('');
+    if(near || !inited) box.scrollTop = box.scrollHeight; inited = true;
+    const ch = document.getElementById('scChips');
+    ch.innerHTML = t.topics.map((x, i) => `<button class="ch-chip" data-i="${i}">${esc(x[0])}</button>`).join('') + `<button class="ch-chip op" data-op="1">👤 ${esc(t.op)}</button>`;
+    ch.querySelectorAll('.ch-chip').forEach(b => b.onclick = () => b.dataset.op ? callOp() : pickTopic(+b.dataset.i));
+  }
+  function pickTopic(i) {
+    const t = T(), x = t.topics[i]; topic = x[0]; const now = Date.now();
+    loc.push({ ts: now, cls: 'ch-u', text: x[0] }, { ts: now + 1, cls: 'ch-bot', name: t.botName, text: x[1] || t.other }, ...(x[1] ? [{ ts: now + 2, cls: 'ch-bot', name: t.botName, text: t.more }] : []));
+    render(); const b = document.getElementById('scMsgs'); b.scrollTop = b.scrollHeight;
+    if(!x[1]) document.getElementById('scInput').focus();
+  }
+  function callOp() { const t = T(); send((topic ? t.topicWord + ': ' + topic + '. ' : '') + t.opMsg); }
+  function sendTyped() { const inp = document.getElementById('scInput'), v = inp.value.trim(); if(!v) return; send(v, true); }
+  async function send(text, clear) {
+    if(busy) return; busy = true;
+    try {
+      await rpc('chat_send', { p_text: text });
+      if(clear) document.getElementById('scInput').value = '';
+      try { Promise.resolve(sb.functions.invoke('chat-notify', { body: {} })).catch(() => {}); } catch(e) {}
+      await poll();
+    } catch(e) { alert(errMsg(e)); }
+    busy = false;
+  }
+  async function poll() {
+    try {
+      const r = await rpc('chat_poll', { p_after: lastId, p_mark: true });
+      const ms = (r && r.msgs) || [];
+      if(ms.length) { ms.forEach(m => { if(m.id > lastId) { srv.push(m); lastId = m.id; } }); render(); const b = document.getElementById('scMsgs'); if(b) b.scrollTop = b.scrollHeight; }
+      paintBadge(0);
+    } catch(e) {}
+  }
+  function stop() { if(timer) { clearInterval(timer); timer = null; } }
+  window.openChat = function() {
+    if(!requireAuth()) return;
+    build(); srv = []; loc = []; lastId = 0; topic = ''; inited = false;
+    openModal('supChatModal'); render(); poll();
+    stop(); timer = setInterval(() => { const m = document.getElementById('supChatModal'); if(m && m.style.display === 'flex' && document.visibilityState === 'visible') poll(); else if(!m || m.style.display !== 'flex') stop(); }, 3000);
+  };
+  { const _cm = closeModal; closeModal = function(id) { _cm(id); if(id === 'supChatModal') stop(); }; }
+  function paintBadge(n) {
+    const btn = document.querySelector('.support-widget-btn[onclick*="openChat"]'); if(!btn) return;
+    let b = btn.querySelector('.ch-badge');
+    if(!n) { if(b) b.remove(); return; }
+    if(!b) { b = document.createElement('span'); b.className = 'ch-badge'; btn.appendChild(b); }
+    b.textContent = n > 9 ? '9+' : n;
+  }
+  async function bgPoll() {
+    try {
+      const m = document.getElementById('supChatModal');
+      if(!user || document.visibilityState !== 'visible' || (m && m.style.display === 'flex')) return;
+      paintBadge(Number(await rpc('chat_unread')) || 0);
+    } catch(e) {}
+  }
+  bgTimer = setInterval(bgPoll, 45000); setTimeout(bgPoll, 4000);
+
+  // ---------------- админка ----------------
+  let aUser = null, aLast = 0, aMsgs = [], aTimer = null, aBusy = false;
+  const fmt = t => { try { return new Date(t).toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); } catch(e) { return ''; } };
+  async function admList() {
+    const box = document.getElementById('admChatList'); if(!box) return;
+    try {
+      const r = await rpc('admin_chat_threads'), th = r.threads || [];
+      const bd = document.getElementById('admChatBadge'); if(bd) { bd.textContent = r.unread > 0 ? r.unread : ''; bd.style.display = r.unread > 0 ? '' : 'none'; }
+      box.innerHTML = th.length ? th.map(x => `<div class="adm-th ${x.admin_unread > 0 ? 'new' : ''}" onclick="admChatOpen('${esc(x.user_id)}')"><div style="min-width:0"><b>${esc(x.name || 'Пользователь')} ${esc(x.tg_username ? '@' + x.tg_username : (x.email || ''))}</b><small>${x.last_sender === 'admin' ? 'Вы: ' : ''}${esc(x.last_text || '')}</small><small>${esc(fmt(x.updated_at))} · ${x.status === 'closed' ? 'закрыт' : x.status === 'answered' ? 'отвечено' : 'ждёт ответа'}</small></div>${x.admin_unread > 0 ? '<span class="adm-dot">' + x.admin_unread + '</span>' : ''}</div>`).join('') : '<p class="note">Пока никто не писал в чат.</p>';
+    } catch(e) { box.innerHTML = '<p class="note">Не удалось загрузить чат.</p>'; }
+  }
+  function admRender() {
+    const box = document.getElementById('admChatMsgs'); if(!box) return;
+    const near = box.scrollHeight - box.scrollTop - box.clientHeight < 80;
+    box.innerHTML = aMsgs.map(m => {
+      if(m.sender === 'user') return `<div class="ch-b ch-bot" style="align-self:flex-start"><span class="ch-n">Пользователь</span>${esc(m.body)}<small>${esc(fmt(m.at))}</small></div>`;
+      if(m.sender === 'admin') return `<div class="ch-b ch-u" style="align-self:flex-end"><span class="ch-n">Вы</span>${esc(m.body)}<small>${esc(fmt(m.at))}</small></div>`;
+      return `<div class="ch-b ch-s">${m.kind === 'closed' ? 'Диалог закрыт' : 'Бот отправил «оператор ответит через 5–10 минут»'}</div>`;
+    }).join('');
+    if(near) box.scrollTop = box.scrollHeight;
+  }
+  async function admPoll(first) {
+    if(!aUser) return;
+    try {
+      const r = await rpc('admin_chat_open', { p_user: aUser, p_after: aLast });
+      if(first) { const h = document.getElementById('admChatWho'); if(h) h.textContent = (r.name || 'Пользователь') + ' ' + (r.tg_username ? '@' + r.tg_username : (r.email || '')); }
+      (r.msgs || []).forEach(m => { if(m.id > aLast) { aMsgs.push(m); aLast = m.id; } });
+      admRender(); if(first) { const b = document.getElementById('admChatMsgs'); if(b) b.scrollTop = b.scrollHeight; }
+    } catch(e) {}
+  }
+  window.admChatOpen = function(uid) {
+    aUser = uid; aLast = 0; aMsgs = [];
+    document.getElementById('admChatList').hidden = true; document.getElementById('admChatConv').hidden = false;
+    admPoll(true); if(aTimer) clearInterval(aTimer); aTimer = setInterval(() => { if(document.visibilityState === 'visible') admPoll(false); }, 3000);
+  };
+  window.admChatBack = function() {
+    aUser = null; if(aTimer) { clearInterval(aTimer); aTimer = null; }
+    document.getElementById('admChatConv').hidden = true; document.getElementById('admChatList').hidden = false; admList();
+  };
+  window.admChatSend = async function() {
+    if(aBusy || !aUser) return; const inp = document.getElementById('admChatInput'), v = inp.value.trim(); if(!v) return;
+    aBusy = true;
+    try { await rpc('admin_chat_send', { p_user: aUser, p_text: v }); inp.value = ''; await admPoll(false); const b = document.getElementById('admChatMsgs'); if(b) b.scrollTop = b.scrollHeight; }
+    catch(e) { alert(errMsg(e)); }
+    aBusy = false;
+  };
+  window.admChatClose = async function() {
+    if(!aUser) return;
+    try { await rpc('admin_chat_close', { p_user: aUser }); admChatBack(); } catch(e) { alert(errMsg(e)); }
+  };
+  { const _ra = renderAdmin; renderAdmin = async function() { await _ra(); await admList(); }; }
+  setInterval(() => { if(isAdmin && !aUser && document.visibilityState === 'visible') admList(); }, 30000);
 })();
 </script>
 </body>
