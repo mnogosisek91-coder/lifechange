@@ -1999,7 +1999,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.82 · 11.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.83 · 11.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -5158,7 +5158,7 @@ window.addEventListener('load', function(){ try { if (typeof sbUid !== 'undefine
     const d = root.querySelector('.lcc-desc'); if(c.desc) d.textContent = c.desc; else d.style.display = 'none';
     const rw = root.querySelector('.lcc-rew'); if(c.reward) { let v = 0; const end = +c.reward, st = Math.max(1, Math.round(end / 30)); rw.textContent = '+0 ⚡'; setTimeout(function tick(){ v = Math.min(end, v + st); rw.textContent = '+' + v + ' ⚡'; if(v < end && rw.isConnected) setTimeout(tick, 30); }, 700); } else rw.style.display = 'none';
     document.body.appendChild(root);
-    try { if(c.sound === 'grow') { lcSfx('grow'); } else if(typeof soundOn === 'undefined' || soundOn) { if(!window.__lccA) window.__lccA = new Audio(window.LC_WIN); window.__lccA.currentTime = 0; const pr = window.__lccA.play(); if(pr && pr.catch) pr.catch(() => {}); } } catch(e) {}
+    try { if(c.sound === 'grow') { lcSfx('grow'); } else { lcWin(); } } catch(e) {}
     bits();
     root.querySelector('.lcc-btn').onclick = () => { root.classList.add('out'); setTimeout(() => { root.remove(); busy = false; next(); }, 300); };
   }
@@ -6260,7 +6260,16 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   #topBar .tb-btn{background:#f59e0b;color:#111;font-weight:800;border-radius:8px;padding:3px 12px;font-size:.68rem}
   #topBar.tb-nowx .tb-letter{flex:1;width:auto}
   #topBar.tb-nowx{min-height:0}
-  @media (max-width:360px){#topBar .tb-f{display:none}}`;
+  #topBar .tb-wx{overflow:hidden}
+  #topBar .tb-r1{gap:6px}
+  #topBar .tb-r1>div{min-width:0}
+  #topBar .tb-ic{flex:none}
+  #topBar .tb-ic svg{width:40px;height:40px}
+  #topBar .tb-f{flex:none;font-size:.6rem;padding-left:2px}
+  #topBar .tb-f svg{width:16px;height:16px}
+  #topBar .tb-big{width:112px}
+  @media (max-width:380px){#topBar .tb-ic svg{width:34px;height:34px}#topBar .tb-f{font-size:.56rem}#topBar .tb-f svg{width:14px;height:14px}#topBar .tb-big{width:100px}}
+  @media (max-width:340px){#topBar .tb-f{display:none}}`;
   document.head.appendChild(css);
 
   const bar = document.createElement('div'); bar.id = 'topBar'; bar.setAttribute('data-notr', '');
@@ -6479,6 +6488,45 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
                 <div class="rem-row" style="justify-content:center"><button class="btn btn-gold" id="m3Again" style="width:auto" onclick="m3Again()">Ещё раз</button><button class="btn btn-outline" style="width:auto" onclick="closeMatch3();switchTab('tree')">К дереву</button></div></div></div>
         <p class="note" style="margin-top:10px">Собери нужное число искр за отведённые ходы. Четыре в ряд дают золотую искру, пять в ряд дают вспышку, угол из пяти даёт бомбу.</p>
     </div></div>
+<script id="lcAudio">
+/* Надёжный звук для iPhone/Safari: файлы декодируются один раз и играют через Web Audio, это работает и без касания в этот момент. */
+(function(){
+  var ctx = null, bufs = {}, pend = {}, unlocked = false;
+  function ensure(){ if(ctx) return ctx; try { var AC = window.AudioContext || window.webkitAudioContext; if(AC) ctx = new AC(); } catch(e) { ctx = null; } return ctx; }
+  function resume(){ var c = ensure(); if(!c) return null; try { if(c.state !== 'running' && c.resume) { var p = c.resume(); if(p && p.catch) p.catch(function(){}); } } catch(e) {} return c; }
+  function unlock(){
+    var c = resume(); if(!c) return;
+    try { var b = c.createBuffer(1, 1, 22050), s = c.createBufferSource(); s.buffer = b; s.connect(c.destination); s.start(0); unlocked = true; } catch(e) {}
+  }
+  ['touchstart', 'touchend', 'pointerdown', 'mousedown', 'click', 'keydown'].forEach(function(ev){ document.addEventListener(ev, unlock, {passive: true, capture: true}); });
+  document.addEventListener('visibilitychange', function(){ if(!document.hidden) resume(); });
+  function load(url){
+    if(!url || bufs[url] || pend[url]) return;
+    var c = ensure(); if(!c) return;
+    pend[url] = fetch(url).then(function(r){ if(!r.ok) throw 0; return r.arrayBuffer(); }).then(function(ab){
+      return new Promise(function(res, rej){ var p = c.decodeAudioData(ab, res, rej); if(p && p.then) p.then(res, rej); });
+    }).then(function(b){ bufs[url] = b; delete pend[url]; }).catch(function(){ delete pend[url]; });
+  }
+  function src(url, vol, loop){
+    var c = resume(), b = bufs[url]; if(!c || !b) { load(url); return null; }
+    var s = c.createBufferSource(), g = c.createGain(); s.buffer = b; s.loop = !!loop; g.gain.value = vol == null ? .9 : vol;
+    s.connect(g); g.connect(c.destination); s.start(0); return s;
+  }
+  window.lcAudio = {
+    preload: function(list){ (list || []).forEach(load); },
+    play: function(url, vol){ try { return !!src(url, vol, false); } catch(e) { return false; } },
+    loop: function(url, vol){ try { var s = src(url, vol, true); return s ? { stop: function(){ try { s.stop(); } catch(e) {} } } : null; } catch(e) { return null; } }
+  };
+  window.lcWin = function(){
+    try {
+      if(typeof soundOn !== 'undefined' && !soundOn) return;
+      if(window.lcAudio.play(window.LC_WIN, .9)) return;
+      if(!window.__lccA) window.__lccA = new Audio(window.LC_WIN); window.__lccA.currentTime = 0;
+      var pr = window.__lccA.play(); if(pr && pr.catch) pr.catch(function(){});
+    } catch(e) {}
+  };
+})();
+</script>
 <script id="lcSfx">
 window.LC_WIN='assets/audio/win.11664b23.mp3';
 (function(){
@@ -6486,6 +6534,8 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
   window.lcSfx=function(n){
     try{
       if(typeof soundOn!=='undefined'&&!soundOn)return;
+      if(!window.__sfxPre){window.__sfxPre=1;lcAudio.preload(Object.keys(SRC).map(function(k){return SRC[k]}).concat([window.LC_WIN]))}
+      if(lcAudio.play(SRC[n],VOL[n]||0.9))return;
       var b=base[n];if(!b){b=base[n]=new Audio(SRC[n]);b.preload='auto';b.volume=VOL[n]||0.9}
       var a=b.cloneNode(true);a.volume=b.volume;var pr=a.play();if(pr&&pr.catch)pr.catch(function(){});
     }catch(e){}
@@ -6761,7 +6811,7 @@ try{Object.assign(UZ_EXACT,{"Первый полив": "Birinchi sug'orish", "П
       $('m3Drops').textContent='+'+r.drops;
       $('m3DropsRow').style.display=r.drops>0?'':'none';
       if(win&&r.raw>0&&r.drops<=0)sub.textContent='Дневной лимит капель достигнут. Приходи завтра!';
-      if(win){try{confetti()}catch(e){}try{window.__lccA||(window.__lccA=new Audio(window.LC_WIN));if(typeof soundOn==='undefined'||soundOn){window.__lccA.currentTime=0;window.__lccA.play().catch(function(){})}}catch(e){}}else{try{lcSfx('lose')}catch(e){}}
+      if(win){try{confetti()}catch(e){}try{lcWin()}catch(e){}}else{try{lcSfx('lose')}catch(e){}}
       $('m3Again').style.display=r.plays_left>0?'':'none';
     }catch(e){
       $('m3DropsRow').style.display='none';
@@ -7100,6 +7150,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 #tab-clinics .clin-map{background:linear-gradient(180deg,#3b3592 0%,#1e1b4b 100%);color:#fef3c7;border:1.5px solid #d4a017;box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
 #clAdmList .cl-row{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-color);flex-wrap:wrap}
 #clAdmList .cl-row img{width:36px;height:36px;border-radius:50%;object-fit:cover}
+
 </style>
 <script id="lcClinics">
 (function(){
@@ -7243,6 +7294,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
     try {
       if(!n || !sfxOk()) return;
       const now = Date.now(); if(sfxLast[n] && now - sfxLast[n] < 70) return; sfxLast[n] = now;
+      if(window.lcAudio && lcAudio.play(SFXU[n], SFXV[n] || .8)) return;
       let b = sfxBase[n]; if(!b){ b = sfxBase[n] = new Audio(SFXU[n]); b.preload = 'auto'; }
       const a = b.cloneNode(true); a.volume = SFXV[n] || .8; const pr = a.play(); if(pr && pr.catch) pr.catch(() => {});
     } catch(e) {}
@@ -7250,12 +7302,16 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   function loopOn(n, on){
     try {
       let a = sfxLoop[n]; if(on && !sfxOk()) on = false;
-      if(on){ if(!a){ a = sfxLoop[n] = new Audio(SFXU[n]); a.loop = true; a.volume = SFXV[n] || .5; } if(a.paused){ const pr = a.play(); if(pr && pr.catch) pr.catch(() => {}); } }
-      else if(a && !a.paused){ a.pause(); a.currentTime = 0; }
+      if(on){
+        if(a && a.stop && !a.live) a = sfxLoop[n] = null;
+        if(!a){ const h = window.lcAudio && lcAudio.loop(SFXU[n], SFXV[n] || .5); if(h){ h.live = 1; sfxLoop[n] = h; return; } a = sfxLoop[n] = new Audio(SFXU[n]); a.loop = true; a.volume = SFXV[n] || .5; }
+        if(a.paused){ const pr = a.play(); if(pr && pr.catch) pr.catch(() => {}); }
+      }
+      else if(a){ if(a.live){ a.stop(); a.live = 0; sfxLoop[n] = null; } else if(!a.paused){ a.pause(); a.currentTime = 0; } }
     } catch(e) {}
   }
   function sfxStop(){ loopOn('rocketloop', false); loopOn('magnet', false); }
-  function sfxPreload(){ Object.keys(SFXU).forEach(k => { try { if(!sfxBase[k]){ const a = new Audio(SFXU[k]); a.preload = 'auto'; sfxBase[k] = a; } } catch(e) {} }); }
+  function sfxPreload(){ try { lcAudio.preload(Object.keys(SFXU).map(k => SFXU[k])); } catch(e) {} }
   let IMG = {}, ICI = {}, ready = false, loaded = 0, need = 0;
   let c, x, running = false, inited = false;
   const W = 380, H = 600, DAYCAP = 40, RUNCAP = 30;
