@@ -1999,7 +1999,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.81 · 11.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.82 · 11.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -7234,6 +7234,28 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   };
   const L = s => { if(window.UI_EN) return (TX[s]||[])[1] || s; if(typeof currentLang !== 'undefined' && currentLang === 'uz') return (TX[s]||[])[0] || s; return s; };
   const DATA = () => JSON.parse($('jmpData').textContent);
+  /* ---- звуки игры (файлы в assets/audio/jmp-*.mp3) ---- */
+  const SFXU = {"jump": "assets/audio/jmp-jump.eb5086ff.mp3", "spring": "assets/audio/jmp-spring.a3a2e636.mp3", "crumble": "assets/audio/jmp-crumble.065584b8.mp3", "ice": "assets/audio/jmp-ice.c77a42fa.mp3", "spark": "assets/audio/jmp-spark.9e806273.mp3", "spark2": "assets/audio/jmp-spark2.bc4394b2.mp3", "rocket": "assets/audio/jmp-rocket.1fa67e90.mp3", "rocketloop": "assets/audio/jmp-rocketloop.3890c023.mp3", "superjump": "assets/audio/jmp-superjump.2c7b1007.mp3", "slowon": "assets/audio/jmp-slowon.b561ca29.mp3", "slowoff": "assets/audio/jmp-slowoff.76fc9e68.mp3", "magnet": "assets/audio/jmp-magnet.d05ec508.mp3", "shieldon": "assets/audio/jmp-shieldon.0f0a2298.mp3", "shieldhit": "assets/audio/jmp-shieldhit.78b2d8aa.mp3", "stomp": "assets/audio/jmp-stomp.3890fe20.mp3", "damage": "assets/audio/jmp-damage.c8cdc101.mp3", "smash": "assets/audio/jmp-smash.ad2c52f3.mp3", "over": "assets/audio/jmp-over.cad31c44.mp3", "save": "assets/audio/jmp-save.21d4b679.mp3", "start": "assets/audio/jmp-start.d3dd8904.mp3"};
+  const SFXV = {"jump": 0.45, "spring": 0.7, "crumble": 0.6, "ice": 0.5, "spark": 0.6, "spark2": 0.65, "rocket": 0.8, "rocketloop": 0.5, "superjump": 0.8, "slowon": 0.7, "slowoff": 0.6, "magnet": 0.35, "shieldon": 0.7, "shieldhit": 0.75, "stomp": 0.7, "damage": 0.8, "smash": 0.8, "over": 0.8, "save": 0.75, "start": 0.6};
+  const sfxBase = {}, sfxLast = {}, sfxLoop = {};
+  function sfxOk(){ try { return !(typeof soundOn !== 'undefined' && !soundOn); } catch(e) { return true; } }
+  function snd(n){
+    try {
+      if(!n || !sfxOk()) return;
+      const now = Date.now(); if(sfxLast[n] && now - sfxLast[n] < 70) return; sfxLast[n] = now;
+      let b = sfxBase[n]; if(!b){ b = sfxBase[n] = new Audio(SFXU[n]); b.preload = 'auto'; }
+      const a = b.cloneNode(true); a.volume = SFXV[n] || .8; const pr = a.play(); if(pr && pr.catch) pr.catch(() => {});
+    } catch(e) {}
+  }
+  function loopOn(n, on){
+    try {
+      let a = sfxLoop[n]; if(on && !sfxOk()) on = false;
+      if(on){ if(!a){ a = sfxLoop[n] = new Audio(SFXU[n]); a.loop = true; a.volume = SFXV[n] || .5; } if(a.paused){ const pr = a.play(); if(pr && pr.catch) pr.catch(() => {}); } }
+      else if(a && !a.paused){ a.pause(); a.currentTime = 0; }
+    } catch(e) {}
+  }
+  function sfxStop(){ loopOn('rocketloop', false); loopOn('magnet', false); }
+  function sfxPreload(){ Object.keys(SFXU).forEach(k => { try { if(!sfxBase[k]){ const a = new Audio(SFXU[k]); a.preload = 'auto'; sfxBase[k] = a; } } catch(e) {} }); }
   let IMG = {}, ICI = {}, ready = false, loaded = 0, need = 0;
   let c, x, running = false, inited = false;
   const W = 380, H = 600, DAYCAP = 40, RUNCAP = 30;
@@ -7246,7 +7268,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   const STEP = 1500;
 
   function init(){
-    if(inited) return; inited = true;
+    if(inited) return; inited = true; sfxPreload();
     document.body.appendChild($('jmpFull'));
     const d = DATA();
     for(const [k,v] of Object.entries(Object.assign({}, d.src, Object.fromEntries(Object.entries(d.hero).map(([a,b]) => ['h_'+a, b]))))){ need++; const i = new Image(); i.onload = () => loaded++; i.src = v[0]; i.ar = v[2]/v[1]; IMG[k] = i; }
@@ -7286,11 +7308,11 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
     if(!guest){
       try { const r = await rpc('jumper_start'); runId = r.run; paidToday = r.paid; serverBest = r.best; LIM = Math.max(0, Math.min(RUNCAP, DAYCAP - r.paid)); } catch(e) { runId = null; }
     }
-    reset(); state = 'play'; starting = false;
+    reset(); state = 'play'; starting = false; snd('start');
   }
   async function over(){
     if(state !== 'play') return;
-    state = 'over'; shake = 10; overAt = Date.now() + 700; hero.sc = hero.sc || 0;
+    state = 'over'; sfxStop(); snd('over'); shake = 10; overAt = Date.now() + 700; hero.sc = hero.sc || 0;
     if(hero.sc > best){ best = hero.sc; try { localStorage.setItem('lc_jmp_best', best); } catch(e) {} }
     finRes = null;
     if(runId){
@@ -7317,18 +7339,19 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
       hero.py = hero.y;
       if(fx.rocket > 0){ fx.rocket--; hero.vy = -15; hero.y += hero.vy; spark(hero.x, hero.y+10, 3, 2.5, '#ff9a3a'); if(fx.rocket == 0) hero.vy = -8; }
       else { hero.vy += .42*tsv; hero.y += hero.vy*tsv; }
-      for(const k of ['slow','mag','x2']) if(fx[k] > 0) fx[k]--;
+      for(const k of ['slow','mag','x2']) if(fx[k] > 0){ fx[k]--; if(fx[k] == 0 && k == 'slow') snd('slowoff'); }
+      loopOn('rocketloop', fx.rocket > 0); loopOn('magnet', fx.mag > 0);
       if(hero.hurt > 0) hero.hurt--;
       if(fx.rocket <= 0 && hero.vy > 0) for(const p of plats){
         if(p.gone || p.fall || p.cr) continue;
         if(hero.x > p.x-8 && hero.x < p.x+p.w+8 && hero.y > p.y-6 && hero.py <= p.y+4){
           if(p.t == 3) p.cr = 7;
-          hero.ice = p.t == 4; hero.vy = p.t == 1 ? -17 : -12; hero.land = 10; shake = p.t == 1 ? 6 : 0;
+          snd(p.t == 1 ? 'spring' : p.t == 4 ? 'ice' : 'jump'); hero.ice = p.t == 4; hero.vy = p.t == 1 ? -17 : -12; hero.land = 10; shake = p.t == 1 ? 6 : 0;
           spark(hero.x, p.y, p.t == 1 ? 22 : 10, 3.5, p.t == 1 ? '#9ab0ff' : '#ffd86a'); if(p.t == 1) p.pulse = 12; break;
         }
       }
       for(const p of plats){
-        if(p.cr > 0){ p.cr--; if(p.cr == 0){ p.fall = 1; spark(p.x+p.w/2, p.y, 18, 3, '#cfe8ff'); shake = 4; } }
+        if(p.cr > 0){ p.cr--; if(p.cr == 0){ p.fall = 1; snd('crumble'); spark(p.x+p.w/2, p.y, 18, 3, '#cfe8ff'); shake = 4; } }
         if(p.dx){ p.x += p.dx*tsv; if(p.x < 4 || p.x+p.w > W-4) p.dx *= -1; }
         if(p.fall){ p.y += p.fall; p.fall += .6; }
       }
@@ -7337,13 +7360,14 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
         if(Math.hypot(u.x-hero.x, u.y-(hero.y-30)) < 34){
           pups.splice(i,1); const k = u.k.id; spark(u.x, u.y, 18, 4, u.k.c); floats.push({x:u.x, y:u.y, l:1.6, t:L(u.k.n)}); shake = 3;
           if(k == 'rocket') fx.rocket = 100; else if(k == 'jump'){ hero.vy = -24; hero.land = 0; } else if(k == 'slow') fx.slow = 420; else if(k == 'mag') fx.mag = 480; else if(k == 'x2') fx.x2 = 600; else fx.shield = 1;
+          snd(({rocket:'rocket', jump:'superjump', slow:'slowon', x2:'spark2', shield:'shieldon'})[k]);
         } else if(u.y > cam+H+40) pups.splice(i,1);
       }
       for(let i = sparks.length-1; i >= 0; i--){
         const s = sparks[i];
         if(fx.mag > 0){ const dx = hero.x-s.x, dy = hero.y-30-s.y, d = Math.hypot(dx,dy); if(d < 170){ s.x += dx/d*5; s.y += dy/d*5; } }
         if(Math.hypot(s.x-hero.x, s.y-(hero.y-30)) < 30 && runSp < LIM){
-          const inc = Math.min(fx.x2 > 0 ? 2 : 1, LIM-runSp); runSp += inc; sparks.splice(i,1); spark(s.x, s.y, 14, 3.5, '#ffe9a0');
+          const inc = Math.min(fx.x2 > 0 ? 2 : 1, LIM-runSp); runSp += inc; sparks.splice(i,1); snd(fx.x2 > 0 ? 'spark2' : 'spark'); spark(s.x, s.y, 14, 3.5, '#ffe9a0');
           floats.push({x:s.x, y:s.y, l:1, t: runSp >= LIM ? L('лимит ⚡') : '+'+inc+' ⚡'});
         } else if(s.y > cam+H+40) sparks.splice(i,1);
       }
@@ -7353,11 +7377,11 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
         const e = enemies[i]; e.x += e.vx*tsv; e.y += e.vy*tsv; e.r += .05*tsv;
         const d = Math.hypot(e.x-hero.x, e.y-(hero.y-30));
         if(d < 30 && !(hero.hurt > 0)){
-          if(fx.rocket > 0){ enemies.splice(i,1); spark(e.x, e.y, 20, 4, '#ff9a3a'); floats.push({x:e.x, y:e.y, l:1.2, t:L('Снёс!')}); continue; }
-          if(hero.vy > 1 && hero.y-30 < e.y){ enemies.splice(i,1); hero.vy = -13; spark(e.x, e.y, 22, 4, '#ff9a3a'); floats.push({x:e.x, y:e.y, l:1.2, t:L('Раздавил!')}); continue; }
+          if(fx.rocket > 0){ enemies.splice(i,1); spark(e.x, e.y, 20, 4, '#ff9a3a'); floats.push({x:e.x, y:e.y, l:1.2, t:L('Снёс!')}); snd('smash'); continue; }
+          if(hero.vy > 1 && hero.y-30 < e.y){ enemies.splice(i,1); hero.vy = -13; spark(e.x, e.y, 22, 4, '#ff9a3a'); floats.push({x:e.x, y:e.y, l:1.2, t:L('Раздавил!')}); snd('stomp'); continue; }
           enemies.splice(i,1); spark(e.x, e.y, 20, 4, '#ff6a3a'); shake = 8;
-          if(fx.shield){ fx.shield = 0; floats.push({x:hero.x, y:hero.y-40, l:1.4, t:L('Щит принял удар')}); }
-          else { const lost = Math.min(3, runSp); runSp -= lost; hero.vy = 6; hero.hurt = 50; floats.push({x:hero.x, y:hero.y-40, l:1.4, t: lost ? '-'+lost+' ⚡' : L('Ай!')}); }
+          if(fx.shield){ fx.shield = 0; snd('shieldhit'); floats.push({x:hero.x, y:hero.y-40, l:1.4, t:L('Щит принял удар')}); }
+          else { snd('damage'); const lost = Math.min(3, runSp); runSp -= lost; hero.vy = 6; hero.hurt = 50; floats.push({x:hero.x, y:hero.y-40, l:1.4, t: lost ? '-'+lost+' ⚡' : L('Ай!')}); }
           continue;
         }
         if(e.y > cam+H+60) enemies.splice(i,1);
@@ -7369,7 +7393,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
       hero.sc = Math.max(0, Math.round(-cam/10)); if(hero.sc > best) best = hero.sc;
       if(t % 2 == 0) spark(hero.x-hero.face*4, hero.y+10, 1, .8, '#ffcf5a');
       if(hero.y > cam+H+60){
-        if(fx.shield){ fx.shield = 0; hero.y = cam+H-40; hero.vy = -20; shake = 8; spark(hero.x, hero.y, 26, 4, '#8a7bff'); floats.push({x:hero.x, y:hero.y-40, l:1.5, t:L('Щит спас!')}); }
+        if(fx.shield){ fx.shield = 0; hero.y = cam+H-40; hero.vy = -20; shake = 8; spark(hero.x, hero.y, 26, 4, '#8a7bff'); floats.push({x:hero.x, y:hero.y-40, l:1.5, t:L('Щит спас!')}); snd('save'); }
         else over();
       }
     }
@@ -7506,7 +7530,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
     state = 'start'; reset(); if(!running){ running = true; requestAnimationFrame(step); }
   }
   function closeGame(){
-    if(state === 'play') over(); running = false;
+    if(state === 'play') over(); running = false; sfxStop();
     const f = $('jmpFull'); if(f) f.style.display = 'none'; document.documentElement.style.overflow = ''; document.body.style.overflow = '';
     refreshInfo(); loadTop();
   }
@@ -7544,5 +7568,15 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
 <script>try{Object.assign(UZ_EXACT,{"Искрамэн: вверх!":"Iskramen: yuqoriga!","Выше только звёзды":"Faqat yulduzlar baland","Играть":"O'ynash","Игра":"O'yin","Игра: Искрамэн":"O'yin: Iskramen","Держи левую или правую половину экрана (на компьютере стрелки ← →). Собирай искры, лови бонусы, не попадай под метеориты. За игру можно получить до 40 искр в день.":"Ekranning chap yoki o'ng yarmini bosib turing (kompyuterda ← → tugmalari). Uchqun yig'ing, bonuslarni ushlang, meteoritlardan qoching. O'yin uchun kuniga 40 tagacha uchqun olish mumkin.","Выше только звёзды. До 40 искр в день.":"Faqat yulduzlar baland. Kuniga 40 tagacha uchqun.","Играть":"O'ynash"});if(window.EN_EXACT)Object.assign(window.EN_EXACT,{"Искрамэн: вверх!":"Iskramen: Up!","Выше только звёзды":"Only the stars are higher","Играть":"Play","Игра":"Game","Игра: Искрамэн":"Game: Iskramen","Держи левую или правую половину экрана (на компьютере стрелки ← →). Собирай искры, лови бонусы, не попадай под метеориты. За игру можно получить до 40 искр в день.":"Hold the left or right half of the screen (arrow keys on desktop). Collect sparks, grab bonuses, dodge the meteorites. You can earn up to 40 sparks a day from the game.","Выше только звёзды. До 40 искр в день.":"Only the stars are higher. Up to 40 sparks a day."});}catch(e){}</script>
 
 <style id="lcNavCss3">.nvi-clin{--u:url(data:image/webp;base64,UklGRswQAABXRUJQVlA4WAoAAAAQAAAAbwAAbwAAQUxQSFQBAAABgBzberPm6dOG1AEUwdCIUwFQBlTDUANDA04rhp3jP3ThKH3Sc476nENETADu9QB6w2l1wsKeVNNhD4DHI52gNtgMLHTYHNQg7kECbOyR1JTLk5OS3NsA5AGC1pjUxGInJcctyD2CzpyaWPSknHcgdwjaxwwsfuBxGwLASXPBSAMjF01xgMeEgSYGTuDhscJIIyNX4KVW5WRFylVN0KfSTGUfbjdbknddN9LU2B1RLVGOZtbMlsyWZC5Paewp//3/7/8vkKfWnC6ZLclczqiWKGcja0bdSFNj1+1mtUPzrkOflrAPqVU5WZFyVROPFUYrIlfg4TFhsCFwAg84aS4YLYhcNMUBELSPGcoXeNyG4LagM6emsiXlvAPB3YLWmNRUrqTkuAXB/QJs7JHUlMuTk5Lc2wAED3WC2mAzsNBhc1CDODzSA+gNp9VJaU6q6bAHwONeVlA4IFIPAAAwOwCdASpwAHAAPjESh0KiIQtGA9oQAYJbADEV3uJX9j5pVcfun9d/SXLSmt7TP2f5Xf7T5o/4r1a/on/ne4B+un+q6n/mA/nX+d/Yv3hv8J/t/8B7p/oA+QX+Uf4PrIvQR/Xv0w/2x+ED9of2i9oP/yewB//8y80A/IT0B8bfmH2f3cHUm+TfaH8j/cv2//rf7M9C/xJ/jPUC/Gv5P/jfys/Mrl9gBfoH9j/yv5gf170zf7P0G+af0Yf8l+YXrUeF56N7Av89/rf+1/vv7af4D4yv9b+/flL7XPnz/l/4H/AfIT/L/6j/p/77+8f+K///1n+wf9uPY0/Z7/6hgiS1LlKge0mtr/vx74vt3CbRWIrAbEzbgLoRV9Olxy7DYfa9/s/L+KuBl3KgCcqKyj5t6nzxVTXX8SumQLCdUfb4fuSGSLdiXbM+OZS5fk6ceTVmtA0svxnAkdzeObAM4uKUDPuySqK9PwEVO/JcPODQjsojM8dCiiOS9fwoo8fEsxjy7mta9kxfpZkVDL/V7hPh/kb3tlSw1H7f5LPxe/NYH6j39SSadaRjIull5oXvEwa8FuvsirxD2YrrGx1DK/Q/WJEs9XInJJMQQjJRVpGHUdNCkYhZT/fsURvk2GE9k8ej6AD+/5LOlTdVGYsElVGoRQqon4MXqfRXK+QFFm5WD5Yuw48SE79OBuSL52O/Jc/5yrslnRL/RGUdvlZ6D5Q5Wz2gaBN5NNWfQmiS69Pwg9Z3lYhQejOsCVmg8YlL5zzA/1wxOvqU7E8UbkIxwd4i1CGRbC4Dkbvc1MpGOo3ICOYlT0mBowmpgbEmiyzf2fJN1k3+jVz5mB77cj943pixaSk56ULBZF/CxXPy3AjEOSg5yrFKDeCbUWvvObLn7H/DVBxCumwTwrshFpAM2pLY927BSt2yh0/XMNC182cuQWf4CfriJgIfnmKgsLTpIY7ZYshXPxzHXCjRgmds53HW6LMBEEvVbLRYYKXgdRFrwZXS0WPibFpioKIAaPIlLYLqKKhnMM8gySOa8NVjLim6HTdvdcjgYU/Hj0IS12jehls6W5kOdBLtYLUAVaBqb97dfZvxPvDrxEpNVjgiK3r3IfrT8QjUpz7J3gLZ7Sd3fxCBf3xoS3MBNbr+zI6XoxUp9xLAvGseIjnXu4QbSEcEvj5XFNYXWMvyfkql3O8BYvvNHaLhgVQ8gNlPkKpFeotQMYUjK460SbNW9IWipw97XJTwNI6IIVgbV9zVaB0LZnyCXIl9H1eL6ps9+0HxuxniZkRQ15heUGRlW3//4EJAta7Oj9z1toseEftFQc7Jxc8AJNR82nLX2z9go/HCfMs8OkeDqkLVGwKSGiPrnK8yVZGRLC5XuDr18JWT7Xx7fzRRTISmrLeWCHUSZh6ZfVOhN6EHrKg0atSuy9yL8c+w+D9RsFdaXATfMhyNpcjXTsqcpovWM7vnawOisBtmdeeRZb1PYSxPdCDPCyxT6aPPxxYFP7xSOHSoD3Ki1RC7/+Va+uVY91gmWqNU6YGvepQXMNvXb3/CC73+MMZ5+POIj1EGKCkCse+BoxtGYkSrfpUkayHSEV2am+E1zVI9DJAAnxvpoN7obw87zzMj9WyVLpnwoJ5Ifazd0EmsVdaFdvdRjv/IPz21nmRvJH4Hr4UrJKyOxqB290YIGPyyPNEEM4c8/Rz7dEJvhJOfhMhK8ItFN7vdng7DhTnUlfzeKpbLOibkQPHHOqhXffuIo5I0O0R4zBH/t5RluXQ2N020aCi/ZrQDZF3DFmCQnPIvNvqgM7tHiAiQJmx9WOy5+d4JDZmtGjenaYmH7CXsokkkjVIrdN6f9U8oa14dz8zpzXRt+UgFM2dWOSZTXtXBkrHZ5S9fhFFrk9ajTs3dEZ6zT+41wh35loqKTb1P00iyPWNQ1+udb//uXylE2w7qMtjC/p3ymbuETZAE/SORcd5Js+8CepbzUQdW6tiYO/6SeESFB5lJqIVLiz8ZPo30GXFAdpQv89SNz4Jh+HWZbViAKKPt/NZVosHQfZe8Gbg6UJsna1lYKBUTFVpp1RdN9/OvkNUtCTrwDXfBUm7p4JBj6CvfDLz5yAsEQMmCuvV3KiQ+WPzFFnGKlvk206REANxFxSH0Te/Hw0FKwk/VtPvHIMr83M2zzE3mZSsmV/zxD07r3O5GAkh4t0kSE8JvqfEB9++4A2JUb26A0LpFVUsbzC7pAhMIiM2dkybGTFFGPYqDWYG44Q4RqHstLkOuS/REtIDnypkKZI6L81B03IX5OdIXZBRf0s57an75fJO0Mc7cVv5apIPnUJm8BY/+hDV59auSjGlCqGCspLqWiVrGDoq+rFrZcsXNIlHnEa6RIzeLluT4rD6kEzpoEU4qmwSqRZj/p/d24w9gIVWyHjJicx3HD/2hqaYcdo2Pg33JpAeCS6vKwA0+v5qcH9NdNJGvWmx2CRxOisCG2wQaDDeb8Gqa1dXzJuX7fUxV9jdzGi8xSguNHOco8AEcIUeGj1Wdh24RMoMhT/Wrf6HgzijVMoAVem2GL2sGPIt50s+cd9I9rqMzWv6IuLaSxFOLOoWVvfny+9ygxcLqe5lQiP/OfGEoExkenLS0REVSYWMouOiUKfOAi0bY7MteZ9eBao2nDikmUFGL/py1P/elFreddfxXK23Q7SWNDvwY9vPDAPnyxCpXuRMGiOUkIaIwhJxEvxHD9x8O4q2x8WG2qq1NNngAHWivrpZPTAScGEaCzFx+2t4nkrVN/Mb8htBstKOCjLSI+GWsOKNsguxF/uBiUf3e5YgVtUlkZGhqk3R4em2CD3ilokc/hej6+n081pTH7WBpZY85cwY3qj7Xq9evu6tVKcjJ2+GtxMyuNRgqv/74ozkTjYLlQlkaatMI+L9z2w2ZUpXraarTHctTZCons/tI7EgwH5FzPd7qJjusCzXvmLn3Y09mHGirtS6+UOf5FiIpQQVQIqvQdy0+/eFqlCQNh/5gYi8E0krBAm34J7ms9drWJsUQRNLNgyXc1WtfsTvLULJvJPEiSg893LIcL26XH7tO6yN5YYU12+xtH6zVqoQrSwI/dgn1YJv7TAmLwLmcH9op3x+4quf4UdI3MJ0MTw35+mvdVRTZ2PxouUgv8c0Lzb6THxyJHSzzLpeh1EwQIk6B6RMClYX02GvrzzLo4NLUkz9rZ91m48l0jeMeTpZLF4pyzPCFIxaO6RQI/GLz3zQz8tbtUoa/sIXKvUk4pGOItjLdD6nfwUGETBIoUYK0x2t4i0Fz1sR2pbvOZiNGii0fqofPolBELfCR12kDIrSImV7vikgiyFRQUbNvmPLaopc3+4QldWnwpyoh6U6Wv0A8S3+RMAAlyIptBWX0Gu93XCFZHgneSU+lAl+9HZohuTL1yhWOaLs9KjzP9kf8Ow0m6mdOpqBjRa/wo/5VNCZaAhsymNr6JfRjCE6qM/HIh7IyaXd1OF5Zxk+/z1Dd8Q5Hf2pgWOj60mVgpJSx+/6RERBUT2bB9taf/C3eQLDX3UYG7af9PdTaosvpINlS3x0+ldInLi1rip8qC8+tVX4uPD8vK0u3ak8Gf1pII2aFQimBGYVzT3fDVJkjerIW3SrVwUQkPrTzI5Qxe8J2Bhkk3xFMWc/a6fbwJvS1Lhq8b44WbYVlvQVxQOeGyJx0o6AayZPnUJ4Ibn21moT0Zd2taYdWbo/SPKBrhHwIQ/H2y9kJa6JfoyaQGaSHvtBNTIfgOFryfA0NBnBJ3ZIArZB5wx3e8nevzvfkD8jsItnCViaek6M+cNx4ChT4StYZ2CrEmFSe98gaxmQmEiaPt6CKyRBUTnarv/wccJH0QVJGceKrZfzQqG1HegeWBF89lxiH9cLiY0yy4RMUIo9ev1hpXh70fAKw/YWSC7MNXrtgWvwtAl5ko2466e5ZQ2P5rYA0d883BBoBC4WOraGUf1gXNONJu6DCXbjfOP0dah1cO41y/9VQeF8JVWR1QjaySme8yweUTEVxzCcB7xJKatpkZ5LfOcn1WPNEO6MkgIYhvOOkf3VPq5CswkbEiBWiGJbatIJM4wbzTsvd5Kk9h8FLDj8vehVmSfqDDl23W5B5m4feuZY7UJG1YyyoIUYHDRcXIEbjG7tb71xQS78MF5K2XdinQ0C3b86hkp+QcvaXmPw+Z9xRVnl2/DLBS+9KrWFrUb3qdx6NSyuGlTdIEHpmqlYhzKldpuvve+pH72E2F2Pfgz5d/78aP24cWjfG+nG0y9UydbtYODrreaaDQMftstfaw1gVh0P1vROQAQQ0e/E1poopOdwDGcRsuJHQbnEBLWugeZ4A0QiGX2X685zk7COlLRSGXcR7LOArXWAyyxDK+bb1jjqG4dhhUYVbVwZEUM2kpTi3fhqoePV0lk6LZ25o+65Ucb4mqAHYbteyCkMpXxjuJPH4nEtGomDQ6Ho8PZxfNAK9gQrEXElKHNaZzgjOyOUky0VgXjJumSSJK2qmr6FtMoA1yvLmv9npuO9CnmvD5AmD4ysr/YBRTGy5Vx8oYXNMWcQDtssm+CsEF9+CJW00yLQqtpI939ZkXp2xKNieqcJ4ImPrdn6ZERfjH/fpzi32C89uwbLG5hbw87zMfgZWFvB5iQ7fBLRG0rIfoVN+ugiej4v/BEyEJuHVWfTZCh6tXv4Fczg0pkIQCUC2Fzl2allXXM/Rb7qhkUyqw0Vhm7h48i28hVn+J4+qdKFuTEfaC9T/BwWI5cf6ZvOnKf5DiS3cbVxX6jB4MVeHKt1lKoNTQkR6CP2yMeZwrOyLqcUiFM+j9l5Pb2g0cTx3w6rzwJz+ecu2b47g3kdIs0tvodKWE6o5t+CP+89+jpiL8EcMHvyjTLUE1R5d9LlubLyHdgKUU+ofle/NUzOR+PW+SnsrIwodRolYn+VWKakr9ntVqpMpdRUe8lCXAfxuU2MLVMcRJO4Kx8LpxeTlvC7i3QlDXEuPWrnZah5K1/V6gOL8782Bn2RWiDffGjCEoK+lvIcsH7nzxc8SM9Btt+4PN9lc+Yt6XmRDK9KHTILYd3VSZ9XHVxMBg1+beDyYXw6P1094sr25h/7RH1LJ35fo59bKUS1TQ2e4frwCbeDpq4+P4mpI1jqk+a2UoXqkZxu1syUzJwkbdMRwkFPbNCk3rHaUmfzLi8HZIsQqiYaYlVFG80RJbBxqIBayTSghce+3ZUgDRiELRlIV1BIPcbk7vVkAb9HYAAAA)}</style>
+<script id="lcDeepGame">
+/* Ссылка на игру: lifechange.uz/#game (или ?game=1) открывает «Искрамэн» */
+(function(){
+  function want(){ try { return /^#(game|iskramen|jumper)$/i.test(location.hash) || /[?&]game=1\b/.test(location.search); } catch(e) { return false; } }
+  function go(){ if(!want() || typeof switchTab !== 'function') return false; try { switchTab('jumper'); } catch(e) { return false; } return true; }
+  function run(){ if(!want()) return; let n = 0; const t = setInterval(function(){ n++; if(go() || n > 20) clearInterval(t); }, 300); setTimeout(go, 3500); }
+  if(document.readyState === 'complete') run(); else window.addEventListener('load', run, {once:true});
+  window.addEventListener('hashchange', go);
+})();
+</script>
 </body>
 </html>
