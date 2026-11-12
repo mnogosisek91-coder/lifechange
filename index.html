@@ -1690,6 +1690,10 @@
           <p class="note">Считаются только досмотренные ролики (не чаще раза в день на ролик и источник). Поле справа — цена за 1 000 просмотров в сумах для оценки стоимости рекламы.</p>
           <div id="pstOut"></div></div>
         <div class="pcard"><h4>⭐ Активные VIP-клиенты</h4><div id="adminVips"></div></div>
+        <div class="pcard"><h4>💎 Самоцветы: начислить после оплаты</h4>
+          <div class="rem-row"><input id="gemEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="gemAmount" type="number" placeholder="Самоцветов" style="width:120px"><input id="gemNote" placeholder="Сумма чека / заметка" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGems()">Начислить</button></div>
+          <p class="note">Проверь чек в Telegram и начисли по пакету: 100 за 15 000, 330 за 45 000, 750 за 89 000, 1 600 за 179 000 сум. Ошиблись: впиши минус, например -330. Клиенту придёт уведомление.</p>
+          <button class="btn btn-outline" style="width:auto;margin-top:6px" onclick="adminGemHistory()">Последние операции</button><div id="gemHist" class="note" style="margin-top:8px"></div></div>
         <div class="pcard"><h4>🎉 Начислить искры (розыгрыши)</h4>
           <div class="rem-row"><input id="giftEmail" placeholder="Email или @username" style="flex:1;min-width:160px"><input id="giftPoints" type="number" min="1" placeholder="Искр" style="width:110px"><input id="giftNote" placeholder="За что (необязательно)" style="flex:1;min-width:140px"><button class="btn btn-gold" style="width:auto" onclick="adminGift()">Начислить</button></div>
           <p class="note">Победителю придёт уведомление в колокольчик. Для розыгрышей в Telegram-канале.</p></div>
@@ -2008,8 +2012,9 @@
             <h2>Самоцветы <img class="ic" src="assets/pet/ic-gem.3cc672d8.webp" alt=""></h2>
             <p class="pt-note">Самоцветы нужны для красоты: одежда, фоны и полы для дракона. Призы, колесо и коробки за них не покупаются, а искры за деньги не продаются.</p>
             <p class="pt-note" id="petGemBal"></p>
-            <p class="pt-note"><b>Покупка самоцветов откроется совсем скоро.</b></p>
-            <button type="button" onclick="petCloseM('petGemM')">Понятно</button>
+            <div id="petPacks" style="display:flex;flex-direction:column;gap:8px"></div>
+            <p class="pt-note">Оплата переводом на карту LifeChange. Отправь чек в Telegram, и после проверки самоцветы придут на баланс, обычно в течение дня.</p>
+            <button type="button" onclick="petCloseM('petGemM')">Закрыть</button>
         </div></div>
         <div class="pt-toast" id="petToast"></div>
     </div>
@@ -2479,7 +2484,7 @@
         }
         function sendReceipt() {
             track('receipt_sent');
-            const text = `Здравствуйте! Оплатил(а) через LifeChange.\nУслуга: ${selectedPayTariff}\nСумма: ${selectedPayPrice.toLocaleString('ru-RU')} So'm\nЧек прикрепляю.${document.getElementById('payGift').style.display === 'block' ? '\nПодарок: эспандер, прошу связаться по получению.' : ''}`;
+            const text = `Здравствуйте! Оплатил(а) через LifeChange.\nУслуга: ${selectedPayTariff}\nСумма: ${selectedPayPrice.toLocaleString('ru-RU')} So'm${(typeof accountEmail !== 'undefined' && accountEmail) ? '\nАккаунт: ' + accountEmail : ''}\nЧек прикрепляю.${document.getElementById('payGift').style.display === 'block' ? '\nПодарок: эспандер, прошу связаться по получению.' : ''}`;
             window.open(`https://t.me/${TG_USERNAME}?text=${encodeURIComponent(text)}`, '_blank');
             if(!/^Психолог/.test(selectedPayTariff) && !surveyDone) { closeModal('payModal'); openModal('surveyModal'); }
         }
@@ -6863,6 +6868,21 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
   render(null);
 })();
 </script>
+<script id="lcGemsAdm">
+async function adminGems(){
+  const email=document.getElementById('gemEmail').value.trim(), n=parseInt(document.getElementById('gemAmount').value,10), note=document.getElementById('gemNote').value.trim();
+  if(!email||!n) return alert('Укажите email или @username и количество самоцветов.');
+  if(!confirm((n>0?'Начислить ':'Списать ')+Math.abs(n)+' самоцветов: '+email+'?')) return;
+  try{ const b=await rpc('admin_grant_gems',{p_email:email,p_gems:n,p_note:note}); alert('Готово. Баланс клиента: '+b+' самоцветов.'); document.getElementById('gemAmount').value=''; document.getElementById('gemNote').value=''; adminGemHistory(); }
+  catch(e){ alert(errMsg(e)); }
+}
+async function adminGemHistory(){
+  const o=document.getElementById('gemHist'); if(!o) return;
+  try{ const r=await rpc('admin_gem_history'); const K={payment:'оплата',correction:'исправление',buy:'покупка',admin:'тест'};
+    o.innerHTML=(r&&r.length)?r.map(x=>'<div>'+new Date(x.at).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' · '+(x.tg?'@'+x.tg:x.email).replace(/[<>&]/g,'')+' · '+(K[x.kind]||x.kind)+' <b>'+(x.amount>0?'+':'')+x.amount+'</b>'+(x.note?' · '+String(x.note).replace(/[<>&]/g,''):'')+'</div>').join(''):'Пока пусто.';
+  }catch(e){ o.textContent=errMsg(e); }
+}
+</script>
 <script id="lcPet">
 (function(){
   var B='assets/pet/';
@@ -6896,6 +6916,7 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
   function vis(st){if(!st)return 1;if(st.hatched)return Math.max(3,st.stage);return st.stage>=2?2:1}
   function imgOf(st){var v=vis(st);if(v===1)return B+PET.egg;if(v===2)return B+PET.egg2;return B+PET['s'+v][(st&&st.color&&PET.s3[st.color])?st.color:'violet']}
   var ERR={not_enough_gems:'Не хватает самоцветов.',bad_name:'Имя не подходит: 2–16 букв или цифр, без грубых слов и без смеси латиницы и кириллицы.',name_cooldown:'Имя можно менять раз в 30 дней.',stage_too_low:'Это откроется на следующем этапе дракона.',already_owned:'Эта вещь уже у тебя есть.',not_owned:'Сначала купи эту вещь.',not_for_sale:'Эта вещь не продаётся.',rate_limit:'Слишком много покупок подряд. Подожди минуту.',bonus_claimed:'Бонус за сегодня уже получен.',bonus_not_ready:'Сначала сдай отчёт сегодня.',already_hatched:'Дракон уже вылупился.',not_hatched:'Сначала вылупи дракона.',bad_color:'Выбери цвет из списка.',not_admin:'Только для админа.',bad_item:'Такой вещи нет.',bad_slot:'Такой вещи нет.'};
+  try{Object.assign(ERRMAP,{gems_negative:'Нельзя списать больше, чем есть на балансе.'})}catch(e){}
   function perr(e){var m=String((e&&(e.message||e.error_description))||e||'');for(var k in ERR)if(m.indexOf(k)>=0)return ERR[k];try{return errMsg(e)}catch(x){return 'Не получилось. Попробуй ещё раз.'}}
   function toast(m){var t=$('petToast');if(!t)return;t.textContent=m;t.classList.add('pt-on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('pt-on')},2400)}
   function openM(id){var m=$(id);if(m)m.classList.add('pt-on')}
@@ -7008,7 +7029,18 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
     return rpc('pet_get').then(function(r){apply(r)}).catch(function(){});
   };
   window.petShopTab=function(t){tab=t;document.querySelectorAll('#petTabs button').forEach(function(b){b.classList.toggle('pt-on',b.dataset.t===t)});renderShop()};
-  window.petGemsInfo=function(){$('petGemBal').innerHTML='Твой баланс: '+GEM+' <b>'+fmt(S?S.gems:0)+'</b>';openM('petGemM')};
+  var PACKS=[{g:100,s:15000},{g:330,s:45000,b:'+10% бонус'},{g:750,s:89000,b:'+25% бонус'},{g:1600,s:179000,b:'+33% · лучшая цена'}];
+  window.petGemsInfo=function(){
+    $('petGemBal').innerHTML='Твой баланс: '+GEM+' <b>'+fmt(S?S.gems:0)+'</b>';
+    var P=$('petPacks');P.innerHTML='';
+    PACKS.forEach(function(p){var b=document.createElement('button');b.type='button';b.className='pt-pack';b.innerHTML='<span>'+GEM+' '+fmt(p.g)+' самоцветов'+(p.b?'<br><small>'+p.b+'</small>':'')+'</span><span>'+fmt(p.s)+' сум</span>';b.onclick=function(){window.petBuyGems(p)};P.appendChild(b)});
+    openM('petGemM');
+  };
+  window.petBuyGems=function(p){
+    if(!isUser()){window.petCloseM('petGemM');try{requireAuth()}catch(e){}return}
+    window.petCloseM('petGemM');
+    try{openPayModal('Самоцветы: '+p.g+' шт.',p.s)}catch(e){toast('Не получилось открыть оплату')}
+  };
   function askBuy(it){
     if(!isUser()){try{requireAuth()}catch(e){}return}
     var m=META[it.key];
