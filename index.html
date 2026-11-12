@@ -799,6 +799,25 @@
 #tab-pet #petBonus button{padding:8px 12px;font-size:.86rem}
 
 </style>
+<style id="lcTreeSkinCss">
+.ts-card .ts-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}.ts-card .ts-top h4{margin:0}
+.ts-gm{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#3a1c6e,#2a1457);color:#f3d9ff;border:1.5px solid #c084fc;border-radius:20px;padding:4px 11px;font-weight:700;font-size:.85rem;cursor:pointer;width:auto}
+.ts-gm .ic{width:18px;height:18px}.ts-pl{background:#c084fc;color:#1e0a3c;border-radius:50%;width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;line-height:1}
+.ts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:10px}
+.ts-item{background:rgba(255,255,255,.04);border:1px solid var(--border-color);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0;text-align:left}
+.ts-item.ts-on{border-color:#f59e0b;box-shadow:0 0 0 1px #f59e0b inset,0 0 16px rgba(245,158,11,.18)}
+.ts-pv{height:110px;display:flex;align-items:flex-end;justify-content:center;border-radius:10px;background:radial-gradient(ellipse at 50% 70%,rgba(99,102,241,.25),rgba(15,23,42,.4))}
+.ts-pv img{max-height:100%;max-width:100%;width:auto;object-fit:contain}
+.ts-item b{font-size:.9rem}
+.ts-lk{font-size:.75rem;color:var(--text-secondary)}
+.ts-pr{display:inline-flex;align-items:center;gap:4px;background:linear-gradient(135deg,#3a1c6e,#2a1457);color:#f3d9ff;border:1.5px solid #c084fc;border-radius:20px;padding:2px 10px;font-size:.78rem;font-weight:700}
+.ts-pr .ic{width:16px;height:16px}
+.ts-item>button{margin-top:auto;font:inherit;cursor:pointer;border-radius:10px;padding:7px 8px;font-weight:700;font-size:.84rem;background:linear-gradient(135deg,#1f2550,#151a38);color:#fff;border:1.5px solid #5b5fd6;width:100%}
+.ts-item>button.ts-gold{background:linear-gradient(135deg,#2c2062,#211850);color:#fcd98a;border-color:#f5b82e}
+.ts-item>button:disabled{opacity:.5;cursor:default}
+#treeCard[data-skin="base"] .tr-petals i{background:linear-gradient(135deg,#fff8e6,#f3dfb0);box-shadow:0 0 6px rgba(255,236,190,.55)}
+
+</style>
 </head>
 <body>
 <style id="lcStreakCss">.streak-card{display:flex;align-items:center;gap:14px;border-color:rgba(251,146,60,.45);background:linear-gradient(135deg,rgba(30,27,60,.9),rgba(45,26,40,.85))}.streak-card .sk-ic .ic{width:58px;height:58px;margin:0;vertical-align:0;filter:drop-shadow(0 0 12px rgba(251,146,60,.5))}.sk-n{font-size:1.1rem;color:#ffd9a0;font-weight:700}.sk-n b{font-size:2.1rem;line-height:1;font-weight:800}.sk-sub{color:var(--text-secondary);font-size:.85rem;margin-top:2px}</style><style id="lcHdrCss2">.points-badge{background:linear-gradient(135deg,#2a1f5c,#1b1442)!important;border:1.5px solid #e9b949;color:#f6dc9a!important;box-shadow:0 0 10px rgba(233,185,73,.25)}
@@ -1801,6 +1820,10 @@
                     <button class="btn btn-outline" id="trReplant" style="display:none" onclick="treeReplant()">Посадить новое дерево</button>
                 </div>
                 <p class="note" id="trCycle" style="display:none"><span>Выращено деревьев:</span> <b id="trCycN">1</b></p>
+            </div>
+            <div class="pcard ts-card" id="treeSkins"><div class="ts-top"><h4>Скины дерева</h4><button type="button" class="ts-gm" onclick="treeSkinsGems()"><img class="ic" src="assets/pet/ic-gem.3cc672d8.webp" alt=""> <b id="tsGemsN">0</b> <span class="ts-pl">+</span></button></div>
+                <p class="note">Скин меняет вид дерева со взрослой стадии. Купленные скины остаются навсегда, их можно менять в любой момент.</p>
+                <div class="ts-grid" id="tsGrid"></div>
             </div>
             <div class="pcard"><h4>Как получить капли</h4>
                 <ul class="tr-list">
@@ -6786,7 +6809,9 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
   var IMG=["assets/tree/tree1.81c928e5.webp", "assets/tree/tree2.d9ffe513.webp", "assets/tree/tree3.3b21f8d3.webp", "assets/tree/tree4.b123f125.webp", "assets/tree/tree5.26957225.webp", "assets/tree/tree6.95bb824b.webp"];var IMW=[140, 123, 142, 179, 170, 184];
   var S=null, synced=false;
   function $(i){return document.getElementById(i)}
-  function src(n){return IMG[Math.max(0,Math.min(5,n-1))]}
+  var SKIN='base',SKI={base:{5:'assets/tree/tree5-base.2e318add.webp'},sakura:{},crystal:{4:'assets/tree/tree4-crystal.535b3274.webp',5:'assets/tree/tree5-crystal.acc069c3.webp',6:'assets/tree/tree6-crystal.2d96704b.webp'},star:{4:'assets/tree/tree4-star.9e88318a.webp',5:'assets/tree/tree5-star.decd7fd3.webp',6:'assets/tree/tree6-star.8f751380.webp'}};
+  function src(n){var i=Math.max(0,Math.min(5,n-1));var o=SKI[SKIN]&&SKI[SKIN][i+1];return o||IMG[i]}
+  window.treeSetSkin=function(k){SKIN=SKI[k]?k:'base';var c=document.getElementById('treeCard');if(c)c.setAttribute('data-skin',SKIN);try{if(S)render(S);else render(null)}catch(e){}};
   function wid(n){return IMW[Math.max(0,Math.min(5,n-1))]}
   function fmt(n){try{return typeof fmtN==='function'?fmtN(n):String(n)}catch(e){return String(n)}}
   function isUser(){try{return typeof user!=='undefined'&&!!user}catch(e){return false}}
@@ -6817,7 +6842,7 @@ window.LC_WIN='assets/audio/win.11664b23.mp3';
     if(st&&lastStage&&stage>lastStage)stageCel(stage);
     if(st)lastStage=stage;
     card.setAttribute('data-st',stage);
-    try{petals(stage===5)}catch(e){}
+    try{petals(stage===5&&(SKIN==="base"||SKIN==="sakura"))}catch(e){}
     card.classList.remove('w1','w2','w3');
     var wc=w>=6?'w3':w>=3?'w2':w>=1?'w1':'';if(wc){card.classList.add(wc)}if(wc==='w3')leaves();
     $('trThirst').style.display=(st&&w>=2&&stage<7)?'':'none';
@@ -7028,7 +7053,7 @@ async function adminGemHistory(){
   function apply(r,quiet){
     if(!r)return;var nv=vis(r);
     var grew=S&&lastVis&&nv>lastVis;
-    S=r;lastVis=nv;render();
+    S=r;lastVis=nv;try{window.lcGems=r.gems}catch(e){}render();
     if(grew&&!quiet){flash();burst();try{playSound('success')}catch(e){}
       try{lcCelebrate({kind:'badge',kicker:'Дракон вырос!',sound:'grow',ico:'<img src="'+imgOf(r)+'" alt="" style="width:130px;height:auto">',name:STN[nv-1],desc:nv===2?'Скорлупа треснула. Скоро вылупление!':'Твой дракон перешёл на новый этап!',reward:0})}catch(e){}}
   }
@@ -7043,7 +7068,7 @@ async function adminGemHistory(){
   window.petShopTab=function(t){tab=t;document.querySelectorAll('#petTabs button').forEach(function(b){b.classList.toggle('pt-on',b.dataset.t===t)});renderShop()};
   var PACKS=[{g:100,s:15000},{g:330,s:45000,b:'+10% бонус'},{g:750,s:89000,b:'+25% бонус'},{g:1600,s:179000,b:'+33% · лучшая цена'}];
   window.petGemsInfo=function(){
-    $('petGemBal').innerHTML='Твой баланс: '+GEM+' <b>'+fmt(S?S.gems:0)+'</b>';
+    var gb=S?S.gems:(window.lcGems||0);$('petGemBal').innerHTML='Твой баланс: '+GEM+' <b>'+fmt(gb)+'</b>';
     var P=$('petPacks');P.innerHTML='';
     PACKS.forEach(function(p){var b=document.createElement('button');b.type='button';b.className='pt-pack';b.innerHTML='<span>'+GEM+' '+fmt(p.g)+' самоцветов'+(p.b?'<br><small>'+p.b+'</small>':'')+'</span><span>'+fmt(p.s)+' сум</span>';b.onclick=function(){window.petBuyGems(p)};P.appendChild(b)});
     openM('petGemM');
@@ -8097,6 +8122,66 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   if(document.readyState === 'complete') run(); else window.addEventListener('load', run, {once:true});
   window.addEventListener('hashchange', go);
 })();
+</script>
+<script id="lcTreeSkins">
+(function(){
+  var T='assets/tree/';
+  var NAMES={base:'Цветущее',sakura:'Сакура',crystal:'Хрустальное',star:'Звёздное'};
+  var PREV={base:T+'tree5-base.2e318add.webp',sakura:T+'tree5.26957225.webp',crystal:T+'tree5-crystal.acc069c3.webp',star:T+'tree5-star.decd7fd3.webp'};
+  var GEM='<img class="ic" src="assets/pet/ic-gem.3cc672d8.webp" alt="">';
+  var D=null, synced=false;
+  function $(i){return document.getElementById(i)}
+  function isUser(){try{return typeof user!=='undefined'&&!!user}catch(e){return false}}
+  function fmt(n){try{return Number(n).toLocaleString('ru-RU')}catch(e){return String(n)}}
+  function toast(m){var t=$('petToast');if(!t){alert(m);return}t.textContent=m;t.classList.add('pt-on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('pt-on')},2400)}
+  var ERR={not_enough_gems:'Не хватает самоцветов.',already_owned:'Этот скин уже у тебя есть.',not_owned:'Сначала купи этот скин.',not_for_sale:'Этот скин не продаётся.',rate_limit:'Слишком много покупок подряд. Подожди минуту.'};
+  function perr(e){var m=String((e&&(e.message||e.error_description))||e||'');for(var k in ERR)if(m.indexOf(k)>=0)return ERR[k];try{return errMsg(e)}catch(x){return 'Не получилось. Попробуй ещё раз.'}}
+  function apply(r){
+    if(!r)return;D=r;try{window.lcGems=r.gems}catch(e){}
+    try{if(typeof treeSetSkin==='function')treeSetSkin(r.skin||'base')}catch(e){}
+    render();
+  }
+  function render(){
+    var box=$('tsGrid');if(!box)return;
+    $('tsGemsN').textContent=fmt(D?D.gems:(window.lcGems||0));
+    var cat=(D&&D.catalog)||['base','sakura','crystal','star'].map(function(k,i){return {key:k,price_gems:[null,400,700,1000][i],owned:k==='base',default:k==='base'}});
+    var cur=D?D.skin:'base';
+    box.innerHTML='';
+    cat.forEach(function(it){
+      if(!NAMES[it.key])return;
+      var on=cur===it.key,d=document.createElement('div');d.className='ts-item'+(on?' ts-on':'');
+      d.innerHTML='<div class="ts-pv"><img src="'+PREV[it.key]+'" alt="" loading="lazy"></div><b>'+NAMES[it.key]+'</b>';
+      var meta=document.createElement('div');meta.className='ts-meta';
+      var b=document.createElement('button');b.type='button';
+      if(!isUser()){meta.innerHTML=it.default?'<span class="ts-lk">Бесплатно</span>':'<span class="ts-pr">'+GEM+' '+fmt(it.price_gems)+'</span>';b.textContent='Войти';b.onclick=function(){try{requireAuth()}catch(e){}}}
+      else if(it.owned){meta.innerHTML='<span class="ts-lk">'+(it.default?'Бесплатно':'Куплено')+'</span>';if(on){b.textContent='Выбрано';b.disabled=true}else{b.textContent='Выбрать';b.onclick=function(){set(it.key)}}}
+      else{meta.innerHTML='<span class="ts-pr">'+GEM+' '+fmt(it.price_gems)+'</span>';b.textContent='Купить';b.className='ts-gold';b.onclick=function(){ask(it)}}
+      d.appendChild(meta);d.appendChild(b);box.appendChild(d);
+    });
+  }
+  function set(k){rpc('tree_skin_set',{p_item:k}).then(function(r){apply(r);toast('Скин выбран: '+NAMES[k])}).catch(function(e){toast(perr(e))})}
+  function ask(it){
+    if(!isUser()){try{requireAuth()}catch(e){}return}
+    var g=D?D.gems:0;
+    if(g<it.price_gems){toast('Не хватает самоцветов: нужно '+fmt(it.price_gems));try{window.lcGems=g;petGemsInfo()}catch(e){}return}
+    var m=$('petBuyM');
+    if(!m){if(confirm('Купить скин «'+NAMES[it.key]+'» за '+it.price_gems+' самоцветов?'))buy(it);return}
+    $('petBuyT').textContent='Купить скин «'+NAMES[it.key]+'»?';
+    $('petBuyPv').innerHTML='<img src="'+PREV[it.key]+'" alt="">';
+    $('petBuyN').innerHTML='Цена: '+GEM+' <b>'+fmt(it.price_gems)+'</b>. У тебя: '+fmt(g)+'.';
+    var go=$('petBuyGo');go.disabled=false;go.onclick=function(){go.disabled=true;buy(it,function(){try{petCloseM('petBuyM')}catch(e){}},function(){go.disabled=false})};
+    m.classList.add('pt-on');
+  }
+  function buy(it,ok,fail){
+    rpc('tree_skin_buy',{p_item:it.key}).then(function(r){apply(r);if(ok)ok();toast('Куплено: '+NAMES[it.key]);try{playSound('success')}catch(e){}}).catch(function(e){if(fail)fail();toast(perr(e))});
+  }
+  window.treeSkinsLoad=function(){if(!isUser()){D=null;render();return Promise.resolve()}return rpc('tree_skins').then(apply).catch(function(){})};
+  window.treeSkinsGems=function(){try{window.lcGems=D?D.gems:window.lcGems;petGemsInfo()}catch(e){}};
+  try{var _sw=switchTab;switchTab=function(t){var r=_sw.apply(this,arguments);if(t==='tree')window.treeSkinsLoad();return r}}catch(e){}
+  try{var _su=syncUI;syncUI=function(){var r=_su.apply(this,arguments);if(isUser()&&!synced){synced=true;window.treeSkinsLoad()}else if(!isUser()&&synced){synced=false;D=null;try{treeSetSkin('base')}catch(e){}render()}return r}}catch(e){}
+  render();
+})();
+
 </script>
 <script id="lcChatPop">
 (function(){
