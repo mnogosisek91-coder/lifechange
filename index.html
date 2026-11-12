@@ -6932,7 +6932,7 @@ async function adminGemHistory(){
   var META={
     wiz:{n:'Колпак звездочёта',f:'pet-item-wiz.6b74d656.webp',iar:1.1519},
     crown:{n:'Корона искр',f:'pet-item-crown.3f4358bc.webp',iar:1.7059},
-    sun:{n:'Тёмные очки',f:'pet-item-sun.7ea71e46.webp',iar:2.5441},
+    sun:{n:'Очки драконьего взора',f:'pet-item-dglass.bf8320a1.webp',iar:2.7778,wm:1.38,yc:0.6},
     medal:{n:'Медаль серии',f:'pet-item-medal.f00ff6eb.webp',iar:0.5989},
     marble:{n:'Мрамор',fl:'none',def:1},
     night:{n:'Ночной',fl:'hue-rotate(205deg) saturate(.9) brightness(.55)'},
@@ -6978,7 +6978,7 @@ async function adminGemHistory(){
     if(v>=3){['head','face','neck'].forEach(function(sl){var k=eq[sl],it=META[k];if(!k||!it||!it.f)return;var d=document.createElement('img');d.className='pt-it';d.src=B+it.f;d.alt='';
       var ed=a.ed,ar=a.ar,ia=it.iar,w,top,hg;
       if(sl==='head'){w=a.hs*ed*(k==='crown'?0.8:(v===3?1.1:1.25));hg=w*ar/ia;top=a.ey-a.hat*ed*ar-hg+hg*(k==='crown'?0.12:0.2)}
-      else if(sl==='face'){w=ed*(v===3?2.25:2.55);hg=w*ar/ia;top=a.ey-hg/2}
+      else if(sl==='face'){w=ed*(v===3?2.25:2.55)*(it.wm||1);hg=w*ar/ia;top=a.ey-hg*(it.yc||0.5)}
       else{w=ed*(k==='medal'?(v===3?1.3:1.6):(v===3?2.0:2.4));hg=w*ar/ia;top=a.ey+a.neck*ed*ar-(k==='medal'?hg*0.05:hg*0.3)}
       d.style.left=a.ex+'%';d.style.width=w+'%';d.style.top=top+'%';box.appendChild(d)})}
     // тексты
