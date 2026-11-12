@@ -786,6 +786,17 @@
 #petModals .pt-prev{overflow:hidden}
 .nvi-pet{--u:url(assets/pet/ic-egg.ed86cdf0.webp)}
 .pet-home-img{width:96px;height:96px;object-fit:contain;flex:none}
+@media (min-width:761px){header nav{gap:3px}header .nav-link{padding:8px 6px}header .nav-link[class*="nvi-"]{gap:5px}}
+#tab-pet .pt-bub{top:3%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94%;font-size:.78rem;padding:5px 10px}
+#petModals .pt-sw{gap:7px}#petModals .pt-sw button{width:34px;height:34px}
+#tab-pet .pt-grid:not(.pt-big) .pt-item>button{margin-top:auto}
+#tab-pet .pt-grid.pt-big .pt-item b{grid-column:1/-1;grid-row:2}
+#tab-pet .pt-grid.pt-big .pt-item>div:not(.pt-pv){grid-column:1;grid-row:3;align-self:center}
+#tab-pet .pt-grid.pt-big .pt-item>button{grid-column:2;grid-row:3;align-self:center}
+@media (max-width:440px){#tab-pet .pt-h{font-size:1.12rem;white-space:nowrap}#tab-pet .pt-hic{width:30px;height:30px}}
+#tab-pet #petRepBtn,#tab-pet #petChkBtn{flex:1 1 0;min-width:0;padding:8px 10px;font-size:.86rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+#tab-pet .pt-tabs button{padding:6px 4px;font-size:.86rem;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+#tab-pet #petBonus button{padding:8px 12px;font-size:.86rem}
 
 </style>
 </head>
@@ -1847,7 +1858,7 @@
                         <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Чек-ин: +2</span></li>
                         <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Серия 7+ дней: +1 в день, 30+ дней: +2 в день</span></li>
                     </ul>
-                    <p class="pt-note">Максимум 10 тепла в день. Дракон никогда не болеет и не откатывается назад: если долго не заходить, он только заскучает. Легендарным он становится за серию 100 дней.</p>
+                    <p class="pt-note">Максимум 10 тепла в день. Дракон никогда не болеет и не откатывается назад: если долго не заходить, он только заскучает. Легендарным он становится, когда наберётся 300 дней с отчётами (не обязательно подряд).</p>
                 </div>
                 <details class="pt-card" id="petAdm" style="display:none"><summary>Админ: проверка дракона</summary>
                     <p class="pt-note" style="margin:10px 0 6px">Этап:</p>
@@ -1937,8 +1948,9 @@
 <h4>4. Стоимость и оплата</h4><p>Цены указаны на сайте в сумах (So'm). Оплата — переводом на банковскую карту (реквизиты указаны в окне оплаты); услуга открывается после подтверждения платежа. Подписка действует на оплаченный период и не продлевается автоматически, если иное не указано при оплате. Пробный доступ предоставляется один раз.</p>
 <h4>5. Консультации</h4><p>Время консультации подтверждается после записи. Перенос или отмена возможны не позднее чем за 24 часа. При более поздней отмене или неявке оплата не возвращается. Если консультация не состоялась по вине Платформы или специалиста, она переносится, а по желанию пользователя оплата возвращается. Консультации оплачиваются переводом напрямую специалисту по реквизитам, указанным в окне оплаты.</p>
 <h4>6. Возврат средств</h4><p>Оплата за уже начавшийся период подписки не возвращается, кроме случаев технического сбоя по вине Платформы и случаев, предусмотренных законом. Заявление на возврат — в течение 10 календарных дней на lifechangee@mail.ru.</p>
-<h4>7. Отсутствие гарантий результата</h4><p>Платформа не гарантирует конкретного результата (снижения веса, отказа от курения и др.): он зависит от усилий самого пользователя. См. также раздел «Важная информация».</p>
-<h4>8. Изменение условий</h4><p>Новая редакция вступает в силу с момента публикации на сайте.</p></div><div class="legal-doc" id="legal-privacy"><h3>Политика конфиденциальности</h3>
+<h4>7. Самоцветы</h4><p>Самоцветы — внутренняя цифровая валюта Платформы. Они покупаются за деньги переводом на карту и тратятся только на внешний вид: одежду и скины питомца-дракона и другие украшения. За самоцветы нельзя получить призы магазина, крутить колесо или открывать коробки; на деньги и на искры они не обмениваются. Искры за деньги не продаются, их можно только заработать. Самоцветы зачисляются после проверки чека. Зачисленные самоцветы и купленные за них вещи не возвращаются, кроме случаев технического сбоя по вине Платформы.</p>
+<h4>8. Отсутствие гарантий результата</h4><p>Платформа не гарантирует конкретного результата (снижения веса, отказа от курения и др.): он зависит от усилий самого пользователя. См. также раздел «Важная информация».</p>
+<h4>9. Изменение условий</h4><p>Новая редакция вступает в силу с момента публикации на сайте.</p></div><div class="legal-doc" id="legal-privacy"><h3>Политика конфиденциальности</h3>
 <h4>1. Какие данные мы собираем</h4><ul><li>Имя или ник, email, телефон.</li><li>Цели и ответы анкеты.</li><li>Отчёты по челленджам (текст, фото, видео), искры, серии.</li><li>Данные трекеров (шаги, тренировки) — только если вы их подключили.</li>
 <li>Для статистики посещений используется Яндекс.Метрика: она собирает обезличенные данные о страницах, устройстве и источнике перехода.</li><li>Сведения, указанные при записи к психологу (запрос, контакты).</li></ul>
 <h4>2. Зачем</h4><p>Для работы аккаунта, начисления искр, оплаты, записи на консультации, поддержки и улучшения сервиса.</p>
@@ -1964,7 +1976,6 @@
         <button class="bn-btn nvi-home active" data-tab="home" onclick="switchTab('home')"><span class="bi"></span>Главная</button>
         <button class="bn-btn nvi-chal" data-tab="challenges" onclick="switchTab('challenges')"><span class="bi"></span>Челленджи</button>
         <button class="bn-btn nvi-rew" data-tab="rewards" onclick="switchTab('rewards')"><span class="bi"></span>Награды</button>
-        <button class="bn-btn nvi-tree" data-tab="tree" onclick="switchTab('tree')"><span class="bi"></span>Дерево</button>
         <button class="bn-btn nvi-psy" data-tab="psychology" onclick="switchTab('psychology')"><span class="bi"></span>Психолог</button>
         <button class="bn-btn nvi-more" data-tab="more" onclick="openModal('moreModal')"><span class="bi"></span>Ещё</button>
     </div>
@@ -1976,6 +1987,7 @@
             <button class="btn btn-outline nvi-comm2" onclick="closeModal('moreModal'); switchTab('community')">Сообщество</button>
             <button class="btn btn-outline nvi-plans" onclick="closeModal('moreModal'); switchTab('plans')">Тарифы</button>
             <button class="btn btn-outline nvi-letter" onclick="closeModal('moreModal'); switchTab('letter')">Письмо себе</button>
+            <button class="btn btn-outline nvi-tree" onclick="closeModal('moreModal'); switchTab('tree')">Моё дерево</button>
             <button class="btn btn-outline nvi-pet" onclick="closeModal('moreModal'); switchTab('pet')">Мой дракон</button>
             <button class="btn btn-outline nvi-game" onclick="closeModal('moreModal'); switchTab('jumper')">Игра: Искрамэн</button>
             <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" onclick="closeModal('moreModal'); switchTab('clinics')">Партнёры</button>
@@ -2010,10 +2022,10 @@
         </div></div>
         <div class="pt-modal" id="petGemM"><div class="pt-mbox">
             <h2>Самоцветы <img class="ic" src="assets/pet/ic-gem.3cc672d8.webp" alt=""></h2>
-            <p class="pt-note">Самоцветы нужны для красоты: одежда, фоны и полы для дракона. Призы, колесо и коробки за них не покупаются, а искры за деньги не продаются.</p>
+            <p class="pt-note">Самоцветы нужны для одежды и скинов твоего дракона.</p>
             <p class="pt-note" id="petGemBal"></p>
             <div id="petPacks" style="display:flex;flex-direction:column;gap:8px"></div>
-            <p class="pt-note">Оплата переводом на карту LifeChange. Отправь чек в Telegram, и после проверки самоцветы придут на баланс, обычно в течение дня.</p>
+            <p class="pt-note">Оплата переводом на карту LifeChange. Отправь чек в Telegram, и после проверки самоцветы придут на баланс, обычно в течение 10 минут.</p>
             <button type="button" onclick="petCloseM('petGemM')">Закрыть</button>
         </div></div>
         <div class="pt-toast" id="petToast"></div>
@@ -2438,7 +2450,7 @@
             document.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.v === rewardsMode));
             const navKey = tabId === 'expander' ? 'rewards' : tabId;
             document.querySelectorAll('.nav-link').forEach(el => { if (el.getAttribute('onclick').includes("'" + navKey + "'")) el.classList.add('active'); });
-            const bnKey = ['home', 'challenges', 'rewards', 'psychology', 'tree'].includes(navKey) ? navKey : 'more';
+            const bnKey = ['home', 'challenges', 'rewards', 'psychology'].includes(navKey) ? navKey : 'more';
             document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === bnKey));
             refreshLocks();
             window.scrollTo(0, 0);
@@ -6936,7 +6948,7 @@ async function adminGemHistory(){
     var fl=META[eq.floor]||META.marble, fi=$('petFloor');fi.src=B+PET.floor;fi.style.filter=fl.fl||'none';fi.style.opacity=v<3?0:1;
     var sleepy=st&&(st.mood==='sad'||st.mood==='sleepy');
     dw.className='pt-dwrap'+(v<3?' pt-egg':'')+(sleepy?' pt-sleepy':'');
-    if(v<3){dw.style.width='50%';dw.style.bottom='18%'}else{dw.style.width=a.w+'%';dw.style.bottom=(a.b+(v<5?5:7))+'%'}
+    if(v<3){dw.style.width='42%';dw.style.bottom='5%'}else{dw.style.width=a.w+'%';dw.style.bottom=(a.b+(v<5?5:7))+'%'}
     var box=$('petItems');box.innerHTML='';
     if(v>=3){['head','face','neck'].forEach(function(sl){var k=eq[sl],it=META[k];if(!k||!it||!it.f)return;var d=document.createElement('img');d.className='pt-it';d.src=B+it.f;d.alt='';
       var ed=a.ed,ar=a.ar,ia=it.iar,w,top,hg;
@@ -6954,7 +6966,7 @@ async function adminGemHistory(){
     if(!st){t='Яйцо ждёт тебя.'}
     else if(!hatched&&st.can_hatch){p=100;t='Скорлупа трескается. Пора вылупляться!'}
     else if(st.stage>=6){p=100;t='Максимальный этап. Легенда!'}
-    else if(st.stage>=5&&hatched){p=Math.min(100,Math.round(st.best_streak/st.legend_streak*100));t='Лучшая серия '+st.best_streak+' / '+st.legend_streak+' дней до этапа «Легендарный»'}
+    else if(st.stage>=5&&hatched){var ld=st.legend_days||300,rd=st.report_days||0;p=Math.min(100,Math.round(rd/ld*100));t='Дней с отчётами '+rd+' / '+ld+' до этапа «Легендарный»'}
     else if(st.stage_to){var lo=st.stage_from,hi=st.stage_to;p=Math.max(0,Math.min(100,Math.round((st.heat-lo)/(hi-lo)*100)));t='Тепло '+st.heat+' / '+hi+' до этапа «'+STN[Math.min(5,st.stage)]+'»'}
     $('petBarI').style.width=p+'%';$('petBarT').textContent=t;
     $('petToday').textContent=st?('Сегодня: +'+st.heat_today+' тепла из 10'):'';
@@ -8085,6 +8097,56 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   if(document.readyState === 'complete') run(); else window.addEventListener('load', run, {once:true});
   window.addEventListener('hashchange', go);
 })();
+</script>
+<script id="lcChatPop">
+(function(){
+  // Всплывающее сообщение, когда поддержка ответила, а чат закрыт
+  var KEY='lc_chat_pop_seen', busy=false;
+  function isUser(){try{return typeof user!=='undefined'&&!!user}catch(e){return false}}
+  function chatOpen(){var m=document.getElementById('supChatModal');return !!(m&&m.style.display==='flex')}
+  function seen(){try{return +sessionStorage.getItem(KEY)||0}catch(e){return 0}}
+  function setSeen(id){try{sessionStorage.setItem(KEY,String(id))}catch(e){}}
+  function btn(){return document.querySelector('.support-widget-btn[onclick*="openChat"]')}
+  function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  var st=document.createElement('style');st.id='lcChatPopCss';
+  st.textContent='.lc-chpop{position:fixed;z-index:200050;max-width:290px;width:calc(100vw - 32px);background:linear-gradient(135deg,#2c2062,#1b1446);border:1.5px solid #f5b82e;border-radius:14px;padding:11px 34px 11px 13px;color:#fff8e1;box-shadow:0 10px 30px rgba(0,0,0,.55);cursor:pointer;animation:lcChPop .35s ease-out}'+
+    '.lc-chpop b{display:block;color:#fcd98a;font-size:.86rem;margin-bottom:3px}.lc-chpop span{display:block;font-size:.84rem;line-height:1.4;opacity:.92;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}'+
+    '.lc-chpop i{position:absolute;top:6px;right:10px;font-style:normal;font-size:1.1rem;opacity:.7;cursor:pointer;padding:2px 4px}'+
+    '.lc-chpop:after{content:"";position:absolute;right:16px;bottom:-8px;border:8px solid transparent;border-bottom:0;border-top-color:#f5b82e}'+
+    '@keyframes lcChPop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}'+
+    '.support-widget-btn.lc-ring{animation:lcChRing 1.4s ease-in-out 3}@keyframes lcChRing{0%,100%{transform:none}20%{transform:rotate(-12deg) scale(1.08)}40%{transform:rotate(10deg) scale(1.08)}60%{transform:rotate(-6deg)}80%{transform:rotate(4deg)}}';
+  document.head.appendChild(st);
+  function hide(){var p=document.getElementById('lcChPop');if(p)p.remove()}
+  function badge(n){var b0=btn();if(!b0)return;var b=b0.querySelector('.ch-badge');if(!n){if(b)b.remove();return}if(!b){b=document.createElement('span');b.className='ch-badge';b0.appendChild(b)}b.textContent=n>9?'9+':n}
+  function place(p){var b0=btn();if(!b0){p.style.right='16px';p.style.bottom='130px';return}var r=b0.getBoundingClientRect();p.style.right=Math.max(12,innerWidth-r.right)+'px';p.style.bottom=(innerHeight-r.top+12)+'px'}
+  function show(m){
+    hide();var p=document.createElement('div');p.id='lcChPop';p.className='lc-chpop';p.setAttribute('role','alert');
+    p.innerHTML='<i aria-label="Закрыть">&times;</i><b>💬 Поддержка ответила</b><span>'+esc(String(m.body||'').slice(0,160))+'</span>';
+    p.onclick=function(e){if(e.target.tagName==='I'){hide();return}hide();try{openChat()}catch(x){}};
+    document.body.appendChild(p);place(p);
+    var b0=btn();if(b0){b0.classList.remove('lc-ring');void b0.offsetWidth;b0.classList.add('lc-ring')}
+    try{playSound('success')}catch(e){}
+  }
+  async function check(){
+    if(busy||!isUser()||document.visibilityState!=='visible')return;
+    if(chatOpen()){hide();return}
+    busy=true;
+    try{
+      var n=Number(await rpc('chat_unread'))||0;badge(n);
+      if(!n){hide();return}
+      var r=await rpc('chat_poll',{p_after:0,p_mark:false});
+      var ms=((r&&r.msgs)||[]).filter(function(x){return x.sender==='admin'});
+      if(!ms.length)return;var last=ms[ms.length-1];
+      if(last.id>seen()){setSeen(last.id);if(!chatOpen())show(last)}
+    }catch(e){}finally{busy=false}
+  }
+  try{var _oc=openChat;openChat=function(){hide();return _oc.apply(this,arguments)};window.openChat=openChat}catch(e){}
+  addEventListener('resize',function(){var p=document.getElementById('lcChPop');if(p)place(p)});
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(check,800)});
+  setInterval(check,20000);setTimeout(check,5000);
+  window.lcChatCheck=check;
+})();
+
 </script>
 </body>
 </html>
