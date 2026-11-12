@@ -786,7 +786,6 @@
 #petModals .pt-prev{overflow:hidden}
 .nvi-pet{--u:url(assets/pet/ic-egg.ed86cdf0.webp)}
 .pet-home-img{width:96px;height:96px;object-fit:contain;flex:none}
-@media (min-width:761px){header nav{gap:3px}header .nav-link{padding:8px 6px}header .nav-link[class*="nvi-"]{gap:5px}}
 #tab-pet .pt-bub{top:3%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:94%;font-size:.78rem;padding:5px 10px}
 #petModals .pt-sw{gap:7px}#petModals .pt-sw button{width:34px;height:34px}
 #tab-pet .pt-grid:not(.pt-big) .pt-item>button{margin-top:auto}
@@ -797,6 +796,13 @@
 #tab-pet #petRepBtn,#tab-pet #petChkBtn{flex:1 1 0;min-width:0;padding:8px 10px;font-size:.86rem;white-space:nowrap;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 #tab-pet .pt-tabs button{padding:6px 4px;font-size:.86rem;display:inline-flex;align-items:center;justify-content:center;gap:4px}
 #tab-pet #petBonus button{padding:8px 12px;font-size:.86rem}
+
+.nvi-more2{--u:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cg fill='%23fcd98a'%3E%3Crect x='3' y='5' width='18' height='2.6' rx='1.3'/%3E%3Crect x='3' y='10.7' width='18' height='2.6' rx='1.3'/%3E%3Crect x='3' y='16.4' width='18' height='2.6' rx='1.3'/%3E%3C/g%3E%3C/svg%3E")}
+#moreModal .modal-content{position:relative;overflow:hidden;background:radial-gradient(420px 260px at 85% 0%,rgba(139,92,246,.30),transparent 70%),radial-gradient(380px 260px at 0% 100%,rgba(245,184,46,.12),transparent 70%),linear-gradient(170deg,#1b1f52 0%,#131640 55%,#0d1030 100%);border:1px solid rgba(165,180,252,.28);box-shadow:0 20px 50px rgba(0,0,0,.6)}
+#moreModal .modal-content::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.7;background-image:radial-gradient(1.5px 1.5px at 12% 10%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 78% 18%,#fde68a 50%,transparent 55%),radial-gradient(1.5px 1.5px at 92% 52%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 6% 62%,#c7d2fe 50%,transparent 55%),radial-gradient(1.5px 1.5px at 55% 96%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 30% 40%,#fff 50%,transparent 55%)}
+#moreModal .modal-content>*:not(.close-modal){position:relative}#moreModal .close-modal{z-index:2}
+#moreModal .btn-outline{background:rgba(30,35,90,.55);border-color:rgba(165,180,252,.28)}
+#moreModal .btn-outline:hover{background:rgba(60,66,150,.6)}
 
 </style>
 <style id="lcTreeSkinCss">
@@ -906,15 +912,11 @@
         <nav>
             <div class="nav-link nvi-home active" onclick="switchTab('home')" data-i18n="nav_home">Главная</div>
             <div class="nav-link nvi-chal" onclick="switchTab('challenges')" data-i18n="nav_challenges">Челленджи</div>
-            <div class="nav-link nvi-comm" onclick="switchTab('community')" data-i18n="nav_community">👥 Сообщество</div>
             <div class="nav-link nvi-rew" onclick="switchTab('rewards')" data-i18n="nav_rewards">🎁 Награды</div>
-            <div class="nav-link nvi-tree" onclick="switchTab('tree')">Дерево</div>
-            <div class="nav-link nvi-pet" onclick="switchTab('pet')">Дракон</div>
-            <div class="nav-link nvi-game" onclick="switchTab('jumper')">Игра</div>
             <div class="nav-link nvi-clin" onclick="switchTab('clinics')">Партнёры</div>
             <div class="nav-link nvi-admin" id="navAdmin" style="display:none" onclick="switchTab('admin')">🛠 Админ</div>
             <div class="nav-link nvi-psy nav-psy" onclick="switchTab('psychology')" data-i18n="nav_psychology">🧠 Психолог</div>
-            <div class="nav-link nvi-plans" onclick="switchTab('plans')" data-i18n="nav_plans">Тарифы</div>
+            <div class="nav-link nvi-more2" id="navMore" onclick="openModal('moreModal')">Ещё</div>
             </nav>
         <div class="user-panel">
             <button class="bell-btn nvi-bell" id="bellBtn" onclick="toggleNotifs(event)" title="Уведомления"><span class="bell-dot" id="bellDot" style="display:none">0</span></button>
@@ -2009,11 +2011,11 @@
             <button class="btn btn-outline nvi-prof" onclick="closeModal('moreModal'); switchTab('profile')">Профиль</button>
             <button class="btn btn-outline nvi-comm2" onclick="closeModal('moreModal'); switchTab('community')">Сообщество</button>
             <button class="btn btn-outline nvi-plans" onclick="closeModal('moreModal'); switchTab('plans')">Тарифы</button>
+            <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" onclick="closeModal('moreModal'); switchTab('clinics')">Партнёры</button>
             <button class="btn btn-outline nvi-letter" onclick="closeModal('moreModal'); switchTab('letter')">Письмо себе</button>
             <button class="btn btn-outline nvi-tree" onclick="closeModal('moreModal'); switchTab('tree')">Моё дерево</button>
             <button class="btn btn-outline nvi-pet" onclick="closeModal('moreModal'); switchTab('pet')">Мой дракон</button>
             <button class="btn btn-outline nvi-game" onclick="closeModal('moreModal'); switchTab('jumper')">Игра: Искрамэн</button>
-            <button class="btn btn-outline nvi-clin" id="moreClinicsBtn" onclick="closeModal('moreModal'); switchTab('clinics')">Партнёры</button>
             <button class="btn btn-outline nvi-about" onclick="closeModal('moreModal'); switchTab('about')">О нас</button>
             <button class="btn btn-outline nvi-chan" onclick="closeModal('moreModal'); joinChannel()">Наш канал</button>
             <button class="btn btn-gold nvi-inst" onclick="installApp()">Установить приложение</button>
@@ -2473,6 +2475,7 @@
             document.querySelectorAll('.seg-btn').forEach(b => b.classList.toggle('active', b.dataset.v === rewardsMode));
             const navKey = tabId === 'expander' ? 'rewards' : tabId;
             document.querySelectorAll('.nav-link').forEach(el => { if (el.getAttribute('onclick').includes("'" + navKey + "'")) el.classList.add('active'); });
+            { const nm = document.getElementById('navMore'); if (nm && !document.querySelector('nav .nav-link.active')) nm.classList.add('active'); }
             const bnKey = ['home', 'challenges', 'rewards', 'psychology'].includes(navKey) ? navKey : 'more';
             document.querySelectorAll('.bn-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === bnKey));
             refreshLocks();
