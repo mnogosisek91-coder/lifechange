@@ -1673,6 +1673,11 @@
                 <p class="note">Максимум 14 капель в день. Если не поливать дерево несколько дней, листья бледнеют и опадают, но этап никогда не откатывается.</p>
             </div>
             <div class="pcard tr-game"><h4>Мини-игра «Собери искры»</h4>
+                <div class="m3-prev" role="button" tabindex="0" aria-label="Предпросмотр игры" onclick="openMatch3()" onkeydown="if(event.key==='Enter')openMatch3()">
+                    <div class="m3-top"><span class="m3-pill"><span>Ходов:</span> <b>15</b></span><span class="m3-pill"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg><b>0</b><span>/ 12</span></span></div>
+                    <div class="m3-bar"><i style="width:0"></i></div>
+                    <div class="m3-grid m3-static"><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c lc-hint"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="m3c lc-hint"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="m3c lc-hint"><svg class="ic" aria-hidden="true"><use href="#i-bolt"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-gift"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-key"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg></span><span class="m3c"><svg class="ic" aria-hidden="true"><use href="#i-trophy"/></svg></span></div>
+                </div>
                 <p class="note">Собирай три искры в ряд и получай капли для дерева. Игр в день: <b id="trPlays">8</b></p>
                 <button class="btn btn-gold tr-goldbtn" onclick="openMatch3()">Играть</button></div>
             </div>
@@ -1999,7 +2004,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.83 · 11.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.84 · 12.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -2888,6 +2893,14 @@ function paintLb() {
             ctx.fillText('LC', cx, cy + 1);
         }
         drawWheel();
+        /* iPhone стирает холст, когда приложение свёрнуто: при возврате перерисовываем колесо заново */
+        function repaintWheel() {
+            try { canvas.width = 640; canvas.height = 640; ctx.setTransform(2, 0, 0, 2, 0, 0); drawWheel(); } catch(e) {}
+        }
+        document.addEventListener('visibilitychange', function(){ if(!document.hidden) { repaintWheel(); setTimeout(repaintWheel, 350); } });
+        window.addEventListener('pageshow', function(){ repaintWheel(); setTimeout(repaintWheel, 350); });
+        window.addEventListener('focus', repaintWheel);
+        window.addEventListener('orientationchange', function(){ setTimeout(repaintWheel, 300); });
 
         function spinWheel() {
             if(!canSpin) return alert('Вы уже крутили колесо сегодня!');
@@ -6488,6 +6501,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
                 <div class="rem-row" style="justify-content:center"><button class="btn btn-gold" id="m3Again" style="width:auto" onclick="m3Again()">Ещё раз</button><button class="btn btn-outline" style="width:auto" onclick="closeMatch3();switchTab('tree')">К дереву</button></div></div></div>
         <p class="note" style="margin-top:10px">Собери нужное число искр за отведённые ходы. Четыре в ряд дают золотую искру, пять в ряд дают вспышку, угол из пяти даёт бомбу.</p>
     </div></div>
+<style id="lcM3Prev">.m3-prev{cursor:pointer;margin:6px 0 10px;max-width:340px;-webkit-tap-highlight-color:transparent}.m3-prev .m3-top{margin-bottom:6px}.m3-static{pointer-events:none;gap:3px;padding:6px;border-radius:14px}.m3-static .m3c{cursor:inherit;border-radius:8px}.m3-static .m3c.lc-hint{outline:2px solid #e9b949;background:#3b2f6b;animation:lcHint 1.6s ease-in-out infinite}@keyframes lcHint{0%,100%{box-shadow:0 0 0 rgba(233,185,73,0)}50%{box-shadow:0 0 10px rgba(233,185,73,.8)}}@media (prefers-reduced-motion:reduce){.m3-static .m3c.lc-hint{animation:none}}</style>
 <script id="lcAudio">
 /* Надёжный звук для iPhone/Safari: файлы декодируются один раз и играют через Web Audio, это работает и без касания в этот момент. */
 (function(){
