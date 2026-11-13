@@ -7690,7 +7690,10 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
   function css() {
     if(document.getElementById('lcChatCss')) return;
     const st = document.createElement('style'); st.id = 'lcChatCss';
-    st.textContent = `#supChatModal .modal-content{max-width:480px;width:94%;display:flex;flex-direction:column;max-height:88vh;padding:16px;gap:10px}
+    st.textContent = `#supChatModal .modal-content{max-width:480px;width:94%;display:flex;flex-direction:column;max-height:88vh;max-height:calc(var(--scvh,100dvh) - 16px);padding:16px;gap:10px}
+#supChatModal.kb{align-items:flex-end;padding-bottom:6px}
+#supChatModal.kb .modal-content{margin-bottom:0}
+#supChatModal.kb #scMsgs{max-height:none;min-height:80px}
 #supChatModal .ch-head{display:flex;align-items:center;gap:10px}#supChatModal .ch-head h3{margin:0;font-size:1.1rem;flex:1}
 #supChatModal .ch-sub{font-size:.8rem;color:#86efac;margin:-4px 0 0}
 #scMsgs{flex:1;min-height:200px;max-height:46vh;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:4px 2px;overscroll-behavior:contain}
@@ -7790,6 +7793,18 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
     stop(); timer = setInterval(() => { const m = document.getElementById('supChatModal'); if(m && m.style.display === 'flex' && document.visibilityState === 'visible') poll(); else if(!m || m.style.display !== 'flex') stop(); }, 3000);
   };
   { const _cm = closeModal; closeModal = function(id) { _cm(id); if(id === 'supChatModal') stop(); }; }
+  (function(){ const vv = window.visualViewport; if(!vv) return;
+    function fit(){ const m = document.getElementById('supChatModal'); if(!m) return;
+      if(m.style.display !== 'flex'){ m.style.top = m.style.height = ''; m.classList.remove('kb'); return; }
+      const kb = window.innerHeight - vv.height > 120;
+      m.style.top = vv.offsetTop + 'px'; m.style.height = vv.height + 'px';
+      m.style.setProperty('--scvh', vv.height + 'px'); m.classList.toggle('kb', kb);
+      const box = document.getElementById('scMsgs'); if(box && kb) box.scrollTop = box.scrollHeight; }
+    vv.addEventListener('resize', fit); vv.addEventListener('scroll', fit);
+    document.addEventListener('focusin', e => { if(e.target && e.target.id === 'scInput') setTimeout(fit, 250); });
+    document.addEventListener('focusout', () => setTimeout(fit, 250));
+  })();
+
   function paintBadge(n) {
     const btn = document.querySelector('.support-widget-btn[onclick*="openChat"]'); if(!btn) return;
     let b = btn.querySelector('.ch-badge');
