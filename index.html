@@ -808,6 +808,15 @@
 #tab-pet #petHatchBtn{flex:1 1 100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;font-size:1rem}
 #tab-pet #petRepBtn,#tab-pet #petChkBtn{flex:1 1 calc(50% - 4px)}
 
+:is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv img.pt-skp.pt-blur{filter:blur(7px) brightness(.5) saturate(.6);transform:scale(1.08)}
+:is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv:has(.pt-skp){overflow:hidden}
+#tab-pet .pt-skl .pt-pv{position:relative}
+#tab-pet .pt-skl .pt-pv::after{content:"?";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.4rem;font-weight:900;color:#fcd98a;opacity:.85;text-shadow:0 2px 12px #000}
+#tab-pet .pt-tabs{gap:4px}
+#tab-pet .pt-tabs button{flex:1 1 0;min-width:0;padding:7px 1px;font-size:.74rem;white-space:nowrap;gap:3px}
+#tab-pet .pt-tabs button .ic{width:14px;height:14px;flex:none}
+@media (max-width:350px){#tab-pet .pt-tabs button .ic{display:none}}
+
 </style>
 <style id="lcTreeSkinCss">
 .ts-card .ts-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}.ts-card .ts-top h4{margin:0}
@@ -2278,7 +2287,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.87 · 13.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.88 · 13.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -7062,15 +7071,17 @@ async function adminGemHistory(){
     list=list.filter(function(i){return !(META[i.key].def&&eq[i.slot]===i.key)});
     list.forEach(function(it){
       var m=META[it.key],d=document.createElement('div'),isEq=it.slot==='skin'?skinOf(S)===it.key:eq[it.slot]===it.key;
-      d.className='pt-item'+(isEq?' pt-eq':'');
+      var skLock=it.slot==='skin'&&!(S&&S.stage>=6);
+      d.className='pt-item'+(isEq&&!skLock?' pt-eq':'')+(skLock?' pt-skl':'');
       var pv;
-      if(m.sk)pv='<img class="pt-skp" src="'+B+SKT[it.key]+'" alt="" loading="lazy">';
+      if(m.sk)pv='<img class="pt-skp'+(skLock?' pt-blur':'')+'" src="'+B+SKT[it.key]+'" alt="" loading="lazy">';
       else if('bg' in m)pv=m.bg?'<img class="pt-bgp" src="'+B+m.bg+'" alt="" loading="lazy">':'<span class="pt-bgp pt-bgbasic"></span>';
       else if('fl' in m)pv='<img class="pt-flp" src="'+B+PET.floor+'" style="filter:'+m.fl+'" alt="" loading="lazy">';
       else pv='<img src="'+B+m.f+'" alt="" loading="lazy">';
-      d.innerHTML='<div class="pt-pv">'+pv+'</div><b>'+esc(m.n)+'</b>';
+      d.innerHTML='<div class="pt-pv">'+pv+'</div><b>'+esc(skLock&&it.key==='sk_gold'?'???':m.n)+'</b>';
       var meta=document.createElement('div'),b=document.createElement('button');b.type='button';
-      if(it.status==='login'){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' нужен вход</span>';b.textContent='Войти';b.onclick=function(){try{requireAuth()}catch(e){}}}
+      if(skLock){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' откроется на этапе 6</span>';b.textContent='Закрыто';b.disabled=true}
+      else if(it.status==='login'){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' нужен вход</span>';b.textContent='Войти';b.onclick=function(){try{requireAuth()}catch(e){}}}
       else if(it.slot==='skin'&&it.key==='sk_gold'&&S&&S.stage>=6){meta.innerHTML='<span class="pt-lk">Основной</span>';if(isEq){b.textContent='Выбран';b.disabled=true}else{b.textContent='Надеть';b.onclick=function(){act('pet_unequip',{p_slot:'skin'})}}}
       else if(it.status==='owned'){meta.innerHTML='<span class="pt-lk">Куплено</span>';
         if(isEq){b.textContent=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin')?'Выбран':'Снять';b.disabled=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin');b.onclick=function(){act('pet_unequip',{p_slot:it.slot})}}
