@@ -825,6 +825,7 @@
 :is(#tab-pet,#petModals) .pt-game-ov iframe{width:100%;height:100%;border:0;display:block;background:#0b1020}
 #tab-pet .pt-gamec{display:flex;align-items:center;justify-content:space-between;gap:12px}
 #tab-pet .pt-gamec>div{min-width:0}#tab-pet .pt-gamec .pt-h4{margin:0 0 4px}#tab-pet .pt-gamec button{flex:none}
+#tab-pet .pt-gamec{padding:12px 14px}#tab-pet .pt-gamec .pt-h4{font-size:.95rem;white-space:nowrap}#tab-pet .pt-gamec .pt-note{white-space:nowrap}#tab-pet .pt-gamec button{padding:9px 16px}
 
 </style>
 <style id="lcTreeSkinCss">
@@ -1915,7 +1916,7 @@
                     <div id="petBonus" style="margin-top:10px"></div>
                     <div class="pt-row" id="petRenRow" style="margin-top:8px;align-items:center;display:none"><button type="button" id="petRenBtn" style="padding:6px 10px;font-size:.8rem" onclick="petOpenRename()"><img class="ic" src="assets/pet/ic-pencil.7298fdb5.webp" alt=""> Сменить имя</button><span class="pt-note" id="petRenN"></span></div>
                 </div>
-                <div class="pt-card pt-gamec"><div><h4 class="pt-h4">Зелья для дракона</h4><p class="pt-note" id="petGameSub">Три этапа в день: +1 тепла за каждый</p></div><button class="pt-g pt-gold" id="petGameBtn" type="button" onclick="petGameOpen()">Играть</button></div>
+                <div class="pt-card pt-gamec"><div><h4 class="pt-h4">Зелья для дракона</h4><p class="pt-note" id="petGameSub">Сегодня: 0/3</p></div><button class="pt-g pt-gold" id="petGameBtn" type="button" onclick="petGameOpen()">Играть</button></div>
                 <div class="pt-card">
                     <div class="pt-tabs" id="petTabs"><button type="button" class="pt-on" data-t="cl" onclick="petShopTab('cl')"><img class="ic" src="assets/pet/ic-hoodie.945f2c21.webp" alt=""> Вещи</button><button type="button" data-t="bg" onclick="petShopTab('bg')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Фон</button><button type="button" data-t="sk" onclick="petShopTab('sk')"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg> Облик</button></div>
                     <div class="pt-grid" id="petShop"></div>
@@ -7279,7 +7280,7 @@ async function adminGemHistory(){
     if(!isUser())return;
     rpc('game_get').then(function(g){
       var n=(g.normal||[]).filter(Boolean).length,e=(g.expert||[]).filter(Boolean).length,s=$('petGameSub');
-      if(s)s.innerHTML=n>=3&&(g.gem||e<3)?'Сегодня награды получены: '+HI+' '+n+' из 3'+(g.gem?' и '+GEM+' +3':''):'Сегодня: '+HI+' '+n+' из 3'+(e?' · эксперт '+e+' из 3':'');
+      if(s)s.innerHTML='Сегодня: '+HI+' '+n+'/3'+(e?' · '+GEM+' '+e+'/3':'');
     }).catch(function(){});
   }
   function gameClose(){
