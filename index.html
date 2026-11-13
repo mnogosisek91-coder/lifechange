@@ -817,6 +817,15 @@
 #tab-pet .pt-tabs button .ic{width:14px;height:14px;flex:none}
 @media (max-width:350px){#tab-pet .pt-tabs button .ic{display:none}}
 
+#tab-pet .pt-heat{height:1.2em;width:auto;vertical-align:-.22em;margin:0 1px}
+
+/* мини-игра «Зелья для дракона» */
+:is(#tab-pet,#petModals) .pt-game-ov{position:fixed;inset:0;background:#0b1020;display:none;z-index:200200;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
+:is(#tab-pet,#petModals) .pt-game-ov.pt-on{display:block}
+:is(#tab-pet,#petModals) .pt-game-ov iframe{width:100%;height:100%;border:0;display:block;background:#0b1020}
+#tab-pet .pt-gamec{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#tab-pet .pt-gamec>div{min-width:0}#tab-pet .pt-gamec .pt-h4{margin:0 0 4px}#tab-pet .pt-gamec button{flex:none}
+
 </style>
 <style id="lcTreeSkinCss">
 .ts-card .ts-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}.ts-card .ts-top h4{margin:0}
@@ -1906,6 +1915,7 @@
                     <div id="petBonus" style="margin-top:10px"></div>
                     <div class="pt-row" id="petRenRow" style="margin-top:8px;align-items:center;display:none"><button type="button" id="petRenBtn" style="padding:6px 10px;font-size:.8rem" onclick="petOpenRename()"><img class="ic" src="assets/pet/ic-pencil.7298fdb5.webp" alt=""> Сменить имя</button><span class="pt-note" id="petRenN"></span></div>
                 </div>
+                <div class="pt-card pt-gamec"><div><h4 class="pt-h4">Зелья для дракона</h4><p class="pt-note" id="petGameSub">Три этапа в день: +1 тепла за каждый</p></div><button class="pt-g pt-gold" id="petGameBtn" type="button" onclick="petGameOpen()">Играть</button></div>
                 <div class="pt-card">
                     <div class="pt-tabs" id="petTabs"><button type="button" class="pt-on" data-t="cl" onclick="petShopTab('cl')"><img class="ic" src="assets/pet/ic-hoodie.945f2c21.webp" alt=""> Вещи</button><button type="button" data-t="bg" onclick="petShopTab('bg')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Фон</button><button type="button" data-t="sk" onclick="petShopTab('sk')"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg> Облик</button></div>
                     <div class="pt-grid" id="petShop"></div>
@@ -1916,8 +1926,9 @@
                         <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Сдать отчёт: +3 за первый, +1 за второй и третий</span></li>
                         <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Чек-ин: +2</span></li>
                         <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Серия 7+ дней: +1 в день, 30+ дней: +2 в день</span></li>
+                        <li><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>Мини-игра «Зелья для дракона»: +1 за каждый из трёх этапов</span></li>
                     </ul>
-                    <p class="pt-note">Максимум 10 тепла в день. Дракон никогда не болеет и не откатывается назад: если долго не заходить, он только заскучает. Легендарным он становится, когда наберётся 300 дней с отчётами (не обязательно подряд).</p>
+                    <p class="pt-note">Максимум 13 тепла в день (10 за дела и 3 за игру). Дракон никогда не болеет и не откатывается назад: если долго не заходить, он только заскучает. Легендарным он становится, когда наберётся 300 дней с отчётами (не обязательно подряд).</p>
                 </div>
                 <details class="pt-card" id="petAdm" style="display:none"><summary>Админ: проверка дракона</summary>
                     <p class="pt-note" style="margin:10px 0 6px">Этап:</p>
@@ -1925,6 +1936,7 @@
                     <div class="pt-row" style="margin-top:8px"><button type="button" onclick="petAdmin('gems',1000)">Самоцветы = 1000</button><button type="button" onclick="petAdmin('gems',0)">Самоцветы = 0</button><button type="button" onclick="petAdmin('streak',30)">Серия = 30</button></div>
                     <div class="pt-row" style="margin-top:8px"><button type="button" onclick="petAdmin('away',5)">Не был 5 дней</button><button type="button" onclick="petAdmin('away',0)">Вернулся</button><button type="button" onclick="petAdmin('unhatch',0)">Снова в яйцо</button></div>
                     <div class="pt-row" style="margin-top:8px"><button type="button" onclick="petAdmin('name_cd',0)">Можно сменить имя</button><button type="button" onclick="petAdmin('bonus_reset',0)">Бонус снова</button><button type="button" id="petDReset" onclick="petAdmin('reset',0)">Удалить дракона</button></div>
+                    <div class="pt-row" style="margin-top:8px"><button type="button" onclick="petGameReset()">Игра: сбросить сегодня</button></div>
                     <p class="pt-note" id="petAdmOut" style="margin-top:8px"></p>
                 </details>
             </div></div>
@@ -2056,6 +2068,7 @@
         </div>
     </div></div>
         <div id="petModals">
+        <div class="pt-game-ov" id="petGameOv"><iframe id="petGameFr" title="Зелья для дракона"></iframe></div>
         <div class="pt-modal" id="petHatchM"><div class="pt-mbox">
             <h2>Дракон вылупляется! <svg class="ic" aria-hidden="true"><use href="#i-party"/></svg></h2>
             <div class="pt-prev"><img id="petHPrev" alt=""></div>
@@ -2287,7 +2300,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.89 · 13.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.91 · 13.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -7054,7 +7067,8 @@ async function adminGemHistory(){
 <script id="lcPet">
 (function(){
   var B='assets/pet/';
-  var PET={"egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.26d32078.webp", "red": "pet-s5-red.ca20f4bf.webp", "orange": "pet-s5-orange.fa0e7d3b.webp", "gold": "pet-s5-gold.eba847b0.webp", "green": "pet-s5-green.127bad33.webp", "teal": "pet-s5-teal.79361266.webp", "blue": "pet-s5-blue.8b75fdb5.webp", "pink": "pet-s5-pink.ad0b2e14.webp"}, "s6": {"violet": "pet-s6-violet-v2.5ec4ab1d.webp", "red": "pet-s6-red-v2.0bfa8455.webp", "orange": "pet-s6-orange-v2.24f728ab.webp", "gold": "pet-s6-gold-v2.cdebf294.webp", "green": "pet-s6-green-v2.5520c036.webp", "teal": "pet-s6-teal-v2.9f1f7ecf.webp", "blue": "pet-s6-blue-v2.60f5f913.webp", "pink": "pet-s6-pink-v2.cffe9d17.webp"}};
+  var HI='<img class="pt-heat" src="assets/pet/pet-heat.caa69889.webp" alt="Тепло">';
+  var PET={"heat": "pet-heat.caa69889.webp", "egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.26d32078.webp", "red": "pet-s5-red.ca20f4bf.webp", "orange": "pet-s5-orange.fa0e7d3b.webp", "gold": "pet-s5-gold.eba847b0.webp", "green": "pet-s5-green.127bad33.webp", "teal": "pet-s5-teal.79361266.webp", "blue": "pet-s5-blue.8b75fdb5.webp", "pink": "pet-s5-pink.ad0b2e14.webp"}, "s6": {"violet": "pet-s6-violet-v2.5ec4ab1d.webp", "red": "pet-s6-red-v2.0bfa8455.webp", "orange": "pet-s6-orange-v2.24f728ab.webp", "gold": "pet-s6-gold-v2.cdebf294.webp", "green": "pet-s6-green-v2.5520c036.webp", "teal": "pet-s6-teal-v2.9f1f7ecf.webp", "blue": "pet-s6-blue-v2.60f5f913.webp", "pink": "pet-s6-pink-v2.cffe9d17.webp"}};
   var STN=['Яйцо','Яйцо с трещинами','Малыш','Подросток','Взрослый','Легендарный'];
   var COLORS={violet:['Фиолетовый','#5a55b8'],red:['Красный','#c8455a'],orange:['Оранжевый','#c9743a'],gold:['Золотой','#b59a35'],green:['Зелёный','#2f9a5f'],teal:['Бирюзовый','#2a9a9a'],blue:['Синий','#3f7ab8'],pink:['Розовый','#b04aa0']};
   var TRAITS={fighter:['dumbbell','Боец',['Сегодня вперёд!','Тренировка? Я готов!','Сила в привычках.']],sage:['books','Мудрец',['Расскажи, что прочитал.','Знание греет лучше огня.','Одна страница в день.']],guardian:['shield','Страж',['Я рядом, ты справишься.','Каждый день без срыва это победа.','Береги себя.']],dreamer:['moon','Созерцатель',['Вдох. Выдох. Всё хорошо.','Тише, прислушайся.','Ты уже молодец.']]};
@@ -7125,9 +7139,9 @@ async function adminGemHistory(){
     else if(!hatched&&st.can_hatch){p=100;t='Скорлупа трескается. Пора вылупляться!'}
     else if(st.stage>=6){p=100;t='Максимальный этап. Легенда!'}
     else if(st.stage>=5&&hatched){var ld=st.legend_days||300,rd=st.report_days||0;p=Math.min(100,Math.round(rd/ld*100));t='Дней с отчётами '+rd+' / '+ld+' до этапа «Легендарный»'}
-    else if(st.stage_to){var lo=st.stage_from,hi=st.stage_to;p=Math.max(0,Math.min(100,Math.round((st.heat-lo)/(hi-lo)*100)));t='Тепло '+st.heat+' / '+hi+' до этапа «'+STN[Math.min(5,st.stage)]+'»'}
-    $('petBarI').style.width=p+'%';$('petBarT').textContent=t;
-    $('petToday').textContent=st?('Сегодня: +'+st.heat_today+' тепла из 10'):'';
+    else if(st.stage_to){var lo=st.stage_from,hi=st.stage_to;p=Math.max(0,Math.min(100,Math.round((st.heat-lo)/(hi-lo)*100)));t=HI+' Тепло '+st.heat+' / '+hi+' до этапа «'+STN[Math.min(5,st.stage)]+'»'}
+    $('petBarI').style.width=p+'%';$('petBarT').innerHTML=t;
+    $('petToday').innerHTML=st?('Сегодня: '+HI+' +'+st.heat_today+' тепла из 13'):'';
     $('petHatchBtn').style.display=(st&&!hatched&&st.can_hatch)?'':'none';
     // бонус
     var bo=$('petBonus'),b=st&&st.bonus;
@@ -7201,6 +7215,7 @@ async function adminGemHistory(){
   }
   window.petLoad=function(){
     if(!isUser()){S=null;lastVis=0;render();return Promise.resolve()}
+    gameCard();
     return rpc('pet_get').then(function(r){apply(r)}).catch(function(){});
   };
   window.petShopTab=function(t){tab=t;document.querySelectorAll('#petTabs button').forEach(function(b){b.classList.toggle('pt-on',b.dataset.t===t)});renderShop()};
@@ -7260,6 +7275,33 @@ async function adminGemHistory(){
     if(cmd==='reset'&&!confirm('Удалить своего дракона целиком? Самоцветы и искры не вернутся.'))return;
     rpc('pet_admin_set',{p_cmd:cmd,p_n:n||0}).then(function(r){lastVis=0;apply(r,true);var o=$('petAdmOut');if(o)o.textContent='Этап '+r.stage+' · тепло '+r.heat+' · серия '+r.streak+' (лучшая '+r.best_streak+') · самоцветы '+r.gems+' · настроение '+r.mood}).catch(function(e){toast(perr(e))});
   };
+  function gameCard(){
+    if(!isUser())return;
+    rpc('game_get').then(function(g){
+      var n=(g.normal||[]).filter(Boolean).length,e=(g.expert||[]).filter(Boolean).length,s=$('petGameSub');
+      if(s)s.innerHTML=n>=3&&(g.gem||e<3)?'Сегодня награды получены: '+HI+' '+n+' из 3'+(g.gem?' и '+GEM+' +3':''):'Сегодня: '+HI+' '+n+' из 3'+(e?' · эксперт '+e+' из 3':'');
+    }).catch(function(){});
+  }
+  function gameClose(){
+    var f=$('petGameFr'),o=$('petGameOv');if(o)o.classList.remove('pt-on');if(f)f.src='about:blank';
+    document.body.style.overflow=gameClose.ov||'';gameCard();
+  }
+  window.petGameOpen=function(){
+    if(!isUser()){try{requireAuth()}catch(e){}return}
+    var l='ru';try{l=currentLang==='uz'?'uz':(window.UI_EN?'en':'ru')}catch(e){}
+    gameClose.ov=document.body.style.overflow;document.body.style.overflow='hidden';
+    $('petGameFr').src='potions.html?l='+l+'&v=4.91';$('petGameOv').classList.add('pt-on');
+  };
+  window.petGameReset=function(){rpc('game_admin_reset').then(function(r){apply(r.pet,true);gameCard();var o=$('petAdmOut');if(o)o.textContent='Игра за сегодня сброшена'}).catch(function(e){toast(perr(e))})};
+  window.addEventListener('message',function(e){
+    var f=$('petGameFr');if(e.origin!==location.origin||!f||e.source!==f.contentWindow)return;
+    var d=e.data;if(!d||!d.lcgame)return;
+    if(d.cmd==='close'){gameClose();return}
+    if(d.cmd==='pet'){if(d.pet)apply(d.pet);return}
+    var a=d.a||{},calls={get:['game_get',{}],start:['game_start',{p_mode:a.m,p_lvl:a.l}],finish:['game_finish',{p_mode:a.m,p_lvl:a.l,p_moves:a.mv}]},c=calls[d.cmd];
+    if(!c||!d.id)return;
+    rpc(c[0],c[1]).then(function(r){e.source.postMessage({lcgame:1,id:d.id,data:r},location.origin)}).catch(function(err){e.source.postMessage({lcgame:1,id:d.id,err:String((err&&err.message)||err||'error')},location.origin)});
+  });
   document.addEventListener('click',function(e){var t=e.target;if(t&&t.classList&&t.classList.contains('pt-modal'))t.classList.remove('pt-on')});
   ['petHName','petRName'].forEach(function(id){var el=$(id);if(el)el.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();id==='petHName'?window.petHatch():window.petRename()}})});
   try{var _sw=switchTab;switchTab=function(t){var r=_sw.apply(this,arguments);if(t==='pet')window.petLoad();return r}}catch(e){}
