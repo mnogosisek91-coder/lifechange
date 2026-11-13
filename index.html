@@ -805,6 +805,8 @@
 #moreModal .btn-outline:hover{background:rgba(60,66,150,.6)}
 :is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv img.pt-skp{width:100%;height:100%;object-fit:contain}
 :is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv:has(.pt-skp){aspect-ratio:16/7;background:radial-gradient(ellipse at 50% 70%,#2a2870,#0f172a);border-radius:10px}
+#tab-pet #petHatchBtn{flex:1 1 100%;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 14px;font-size:1rem}
+#tab-pet #petRepBtn,#tab-pet #petChkBtn{flex:1 1 calc(50% - 4px)}
 
 </style>
 <style id="lcTreeSkinCss">
@@ -825,6 +827,27 @@
 .ts-item>button:disabled{opacity:.5;cursor:default}
 #treeCard[data-skin="base"] .tr-petals i{background:linear-gradient(135deg,#fff8e6,#f3dfb0);box-shadow:0 0 6px rgba(255,236,190,.55)}
 
+</style>
+<style id="lcAuthCss">
+#authModal .modal-content{position:relative;overflow-x:hidden;overflow-y:auto;max-width:440px;padding:1.5rem 1.35rem 1.4rem;background:radial-gradient(420px 260px at 90% 0%,rgba(139,92,246,.32),transparent 70%),radial-gradient(380px 260px at 0% 100%,rgba(245,184,46,.13),transparent 70%),linear-gradient(170deg,#1b1f52 0%,#131640 55%,#0d1030 100%);border:1.5px solid rgba(129,132,245,.6);border-radius:20px;box-shadow:0 22px 60px rgba(0,0,0,.65),0 0 40px rgba(124,92,255,.22)}
+#authModal .modal-content::before{content:"";position:absolute;left:0;right:0;top:0;height:260px;pointer-events:none;opacity:.75;background-image:radial-gradient(1.5px 1.5px at 12% 10%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 78% 18%,#fde68a 50%,transparent 55%),radial-gradient(1.5px 1.5px at 92% 52%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 6% 62%,#c7d2fe 50%,transparent 55%),radial-gradient(1.5px 1.5px at 55% 30%,#fff 50%,transparent 55%),radial-gradient(1px 1px at 30% 40%,#fff 50%,transparent 55%)}
+#authModal .modal-content>*:not(.close-modal){position:relative}
+#authModal .close-modal{position:absolute}
+#authModal .close-modal{z-index:3;top:10px;right:12px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:rgba(30,35,90,.7);border:1px solid rgba(165,180,252,.35);color:#c7d2fe;font-size:1.3rem;line-height:1}
+#authModal h3{margin:0 0 1rem!important;text-align:center;font-size:1.45rem;font-weight:800;letter-spacing:-.01em;background:linear-gradient(180deg,#ffe9a3,#f5b82e 70%,#d98a12);-webkit-background-clip:text;background-clip:text;color:transparent}
+#authModal h3::before{content:"LIFECHANGE";display:block;letter-spacing:.42em;padding-left:.42em;font-size:.68rem;font-weight:600;margin-bottom:6px;-webkit-text-fill-color:#a5b4fc;color:#a5b4fc}
+#authModal #authNotice{background:rgba(245,184,46,.1);border:1px solid rgba(245,184,46,.45);border-radius:12px;padding:8px 12px;text-align:center}
+#authModal input[type=text],#authModal input[type=email],#authModal input[type=password],#authModal select{background:rgba(12,15,52,.85)!important;border:1.5px solid #3b3f9a!important;border-radius:12px!important;color:#fff!important;padding:12px 14px!important;font-size:.95rem;transition:border-color .15s,box-shadow .15s}
+#authModal input::placeholder{color:#8e96d6}
+#authModal input:focus,#authModal select:focus{outline:none;border-color:#8184f5!important;box-shadow:0 0 0 3px rgba(129,132,245,.25)}
+#authModal .survey-box{background:rgba(24,28,84,.55);border:1px solid rgba(129,132,245,.35);border-radius:14px}
+#authModal .survey-title{color:#fcd98a}
+#authModal .survey-option{color:#dbe0ff}
+#authModal input[type=radio],#authModal input[type=checkbox]{accent-color:#f5b82e}
+#authModal #authSubmit{width:100%;margin-top:4px;padding:13px 16px;font-size:1.02rem;font-weight:800;border-radius:14px;border:1.5px solid #f5b82e;background:linear-gradient(135deg,#3a2a78,#2a1d62);color:#fcd98a;box-shadow:0 8px 22px rgba(245,184,46,.18)}
+#authModal #authSubmit:hover{background:linear-gradient(135deg,#4a3590,#34257a);border-color:#ffd16a}
+#authModal .link{color:#fcd98a}
+#authModal #tgLoginWrap{border-top:1px solid rgba(129,132,245,.3)!important}
 </style>
 </head>
 <body>
@@ -2255,7 +2278,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.86 · 13.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.87 · 13.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -6928,7 +6951,7 @@ async function adminGemHistory(){
 <script id="lcPet">
 (function(){
   var B='assets/pet/';
-  var PET={"egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.6ee1417b.webp", "red": "pet-s5-red.820c7a42.webp", "orange": "pet-s5-orange.80e022d9.webp", "gold": "pet-s5-gold.a2b0d429.webp", "green": "pet-s5-green.12d3d667.webp", "teal": "pet-s5-teal.4388f57d.webp", "blue": "pet-s5-blue.d3d9c7da.webp", "pink": "pet-s5-pink.bb92bca0.webp"}, "s6": {"violet": "pet-s6-violet-v2.5ec4ab1d.webp", "red": "pet-s6-red-v2.0bfa8455.webp", "orange": "pet-s6-orange-v2.24f728ab.webp", "gold": "pet-s6-gold-v2.cdebf294.webp", "green": "pet-s6-green-v2.5520c036.webp", "teal": "pet-s6-teal-v2.9f1f7ecf.webp", "blue": "pet-s6-blue-v2.60f5f913.webp", "pink": "pet-s6-pink-v2.cffe9d17.webp"}};
+  var PET={"egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.26d32078.webp", "red": "pet-s5-red.ca20f4bf.webp", "orange": "pet-s5-orange.fa0e7d3b.webp", "gold": "pet-s5-gold.eba847b0.webp", "green": "pet-s5-green.127bad33.webp", "teal": "pet-s5-teal.79361266.webp", "blue": "pet-s5-blue.8b75fdb5.webp", "pink": "pet-s5-pink.ad0b2e14.webp"}, "s6": {"violet": "pet-s6-violet-v2.5ec4ab1d.webp", "red": "pet-s6-red-v2.0bfa8455.webp", "orange": "pet-s6-orange-v2.24f728ab.webp", "gold": "pet-s6-gold-v2.cdebf294.webp", "green": "pet-s6-green-v2.5520c036.webp", "teal": "pet-s6-teal-v2.9f1f7ecf.webp", "blue": "pet-s6-blue-v2.60f5f913.webp", "pink": "pet-s6-pink-v2.cffe9d17.webp"}};
   var STN=['Яйцо','Яйцо с трещинами','Малыш','Подросток','Взрослый','Легендарный'];
   var COLORS={violet:['Фиолетовый','#5a55b8'],red:['Красный','#c8455a'],orange:['Оранжевый','#c9743a'],gold:['Золотой','#b59a35'],green:['Зелёный','#2f9a5f'],teal:['Бирюзовый','#2a9a9a'],blue:['Синий','#3f7ab8'],pink:['Розовый','#b04aa0']};
   var TRAITS={fighter:['dumbbell','Боец',['Сегодня вперёд!','Тренировка? Я готов!','Сила в привычках.']],sage:['books','Мудрец',['Расскажи, что прочитал.','Знание греет лучше огня.','Одна страница в день.']],guardian:['shield','Страж',['Я рядом, ты справишься.','Каждый день без срыва это победа.','Береги себя.']],dreamer:['moon','Созерцатель',['Вдох. Выдох. Всё хорошо.','Тише, прислушайся.','Ты уже молодец.']]};
@@ -6987,7 +7010,7 @@ async function adminGemHistory(){
     var box=$('petItems');box.innerHTML='';
     if(v>=3){['head','face','neck'].forEach(function(sl){var k=eq[sl],it=META[k];if(!k||!it||!it.f)return;var d=document.createElement('img');d.className='pt-it';d.src=B+it.f;d.alt='';
       var ed=a.ed,ar=a.ar,ia=it.iar,w,top,hg;
-      if(sl==='head'){w=a.hs*ed*(k==='crown'?0.8:(v===3?1.1:1.25));hg=w*ar/ia;top=a.ey-a.hat*ed*ar-hg+hg*(k==='crown'?0.12:0.2)}
+      if(sl==='head'){w=a.hs*ed*(k==='crown'?(v>=5?0.56:0.8):(v===3?1.1:1.25));hg=w*ar/ia;top=a.ey-a.hat*ed*ar-hg+hg*(k==='crown'?0.12:0.2)}
       else if(sl==='face'){w=ed*(v===3?2.25:2.55)*(it.wm||1);hg=w*ar/ia;top=a.ey-hg*(it.yc||0.5)}
       else{w=ed*(k==='medal'?(v===3?1.3:1.6):(v===3?2.0:2.4));hg=w*ar/ia;top=a.ey+a.neck*ed*ar-(k==='medal'?hg*0.05:hg*0.3)}
       d.style.left=a.ex+'%';d.style.width=w+'%';d.style.top=top+'%';box.appendChild(d)})}
@@ -7066,7 +7089,7 @@ async function adminGemHistory(){
   function apply(r,quiet){
     if(!r)return;var nv=vis(r);
     var grew=S&&lastVis&&nv>lastVis;
-    S=r;lastVis=nv;try{window.lcGems=r.gems}catch(e){}render();
+    S=r;lastVis=nv;try{window.lcGems=r.gems}catch(e){}render();try{window.__funClaim&&window.__funClaim()}catch(e){}
     if(grew&&!quiet){flash();burst();try{playSound('success')}catch(e){}
       try{lcCelebrate({kind:'badge',kicker:'Дракон вырос!',sound:'grow',ico:'<img src="'+imgOf(r)+'" alt="" style="width:130px;height:auto">',name:STN[nv-1],desc:nv===2?'Скорлупа треснула. Скоро вылупление!':'Твой дракон перешёл на новый этап!',reward:0})}catch(e){}}
   }
@@ -7143,6 +7166,30 @@ async function adminGemHistory(){
   render();
 })();
 
+</script>
+<script id="lcFunAchv">
+(function(){
+  var A=[["dr_hatch", "🥚", "Вылупился!", "Вылупите своего дракона", "hatched", 1, 20], ["dr_st4", "🐉", "Подросший дракон", "Вырастите дракона до этапа «Подросток»", "dstage", 4, 30], ["dr_st5", "🔥", "Взрослый дракон", "Вырастите дракона до взрослого", "dstage", 5, 80], ["dr_st6", "👑", "Легендарный дракон", "Вырастите легендарного дракона", "dstage", 6, 500], ["dr_bonus7", "🎁", "Щедрый дракон", "Заберите бонус дракона 7 раз", "bonus", 7, 40], ["dr_bonus30", "💝", "Друг дракона", "Заберите бонус дракона 30 раз", "bonus", 30, 150], ["dr_buy1", "🧣", "Первая обновка", "Купите первую вещь для дракона", "buys", 1, 20], ["dr_skin1", "🎭", "Новый облик", "Купите облик для легендарного дракона", "skins", 1, 100], ["js_run1", "🚀", "Первый прыжок", "Сыграйте в «Искрамэн: вверх!» первый раз", "runs", 1, 10], ["js_run20", "🌌", "Космический прыгун", "Сыграйте в «Искрамэн: вверх!» 20 раз", "runs", 20, 30], ["js_run100", "🛰️", "Покоритель орбиты", "Сыграйте в «Искрамэн: вверх!» 100 раз", "runs", 100, 100], ["js_spark100", "⚡", "Сборщик искр", "Соберите 100 искр в «Искрамэн»", "jsparks", 100, 20], ["js_spark1000", "🌟", "Искровой магнат", "Соберите 1000 искр в «Искрамэн»", "jsparks", 1000, 120], ["js_h1000", "🪐", "Выше облаков", "Наберите 1000 очков за одну игру в «Искрамэн»", "jbest", 1000, 40], ["js_h3000", "☄️", "К звёздам", "Наберите 3000 очков за одну игру в «Искрамэн»", "jbest", 3000, 150], ["js_days7", "📅", "Постоянный игрок", "Играйте в «Искрамэн» 7 разных дней", "jdays", 7, 50]], S=null, busy=false, tmr=null;
+  try{A.forEach(function(a){if(!BADGES.some(function(b){return b.id===a[0]}))BADGES.push({id:a[0],ico:a[1],t:a[2],d:a[3],m:'fn:'+a[4],n:a[5],r:a[6]})});}catch(e){}
+  try{var _m=metric;metric=function(m){if(typeof m==='string'&&m.indexOf('fn:')===0){return S&&S[m.slice(3)]?+S[m.slice(3)]:0}return _m(m)};}catch(e){}
+  function run(){
+    if(busy||typeof sbUid==='undefined'||!sbUid)return;busy=true;
+    rpc('fun_claim',{}).then(function(r){
+      busy=false;if(!r)return;S=r.stats||S;
+      if(r.granted&&r.granted.length){
+        if(r.points!=null){try{points=r.points;syncUI()}catch(e){}}
+        r.granted.forEach(function(g,i){try{claimedSet.add(g.key)}catch(e){}
+          var b=BADGES.find(function(x){return x.id===g.key})||{};
+          setTimeout(function(){try{lcCelebrate({kind:'badge',ico:b.ico||'🏅',name:b.t||'',desc:b.d||'',reward:g.reward})}catch(e){try{toast('🏅 '+(b.t||''))}catch(_){}}},i*1800);
+        });
+      }
+      try{renderBadges()}catch(e){}
+    }).catch(function(){busy=false});
+  }
+  window.__funClaim=function(){clearTimeout(tmr);tmr=setTimeout(run,1500)};
+  try{var _as=applyState;applyState=function(st){var r=_as.apply(this,arguments);window.__funClaim();return r}}catch(e){}
+})();
+try{Object.assign(UZ_EXACT,{"Вылупился!": "Chiqdi!", "Вылупите своего дракона": "Ajdahoingizni tuxumdan chiqaring", "Подросший дракон": "Ulg'aygan ajdaho", "Вырастите дракона до этапа «Подросток»": "Ajdahoni «O'smir» bosqichigacha o'stiring", "Взрослый дракон": "Katta ajdaho", "Вырастите дракона до взрослого": "Ajdahoni katta bo'lguncha o'stiring", "Легендарный дракон": "Afsonaviy ajdaho", "Вырастите легендарного дракона": "Afsonaviy ajdaho o'stiring", "Щедрый дракон": "Saxiy ajdaho", "Заберите бонус дракона 7 раз": "Ajdaho bonusini 7 marta oling", "Друг дракона": "Ajdaho do'sti", "Заберите бонус дракона 30 раз": "Ajdaho bonusini 30 marta oling", "Первая обновка": "Birinchi yangi buyum", "Купите первую вещь для дракона": "Ajdaho uchun birinchi buyumni sotib oling", "Новый облик": "Yangi qiyofa", "Купите облик для легендарного дракона": "Afsonaviy ajdaho uchun qiyofa sotib oling", "Первый прыжок": "Birinchi sakrash", "Сыграйте в «Искрамэн: вверх!» первый раз": "«Iskramen: yuqoriga!» o'yinini birinchi marta o'ynang", "Космический прыгун": "Kosmik sakrovchi", "Сыграйте в «Искрамэн: вверх!» 20 раз": "«Iskramen: yuqoriga!» o'yinini 20 marta o'ynang", "Покоритель орбиты": "Orbita zabt etuvchisi", "Сыграйте в «Искрамэн: вверх!» 100 раз": "«Iskramen: yuqoriga!» o'yinini 100 marta o'ynang", "Сборщик искр": "Uchqun yig'uvchi", "Соберите 100 искр в «Искрамэн»": "«Iskramen»da 100 ta uchqun yig'ing", "Искровой магнат": "Uchqun magnati", "Соберите 1000 искр в «Искрамэн»": "«Iskramen»da 1000 ta uchqun yig'ing", "Выше облаков": "Bulutlardan yuqori", "Наберите 1000 очков за одну игру в «Искрамэн»": "«Iskramen»da bir o'yinda 1000 ball to'plang", "К звёздам": "Yulduzlar sari", "Наберите 3000 очков за одну игру в «Искрамэн»": "«Iskramen»da bir o'yinda 3000 ball to'plang", "Постоянный игрок": "Doimiy o'yinchi", "Играйте в «Искрамэн» 7 разных дней": "«Iskramen»ni 7 xil kun o'ynang"});Object.assign(EN_EXACT,{"Вылупился!": "Hatched!", "Вылупите своего дракона": "Hatch your dragon", "Подросший дракон": "Growing dragon", "Вырастите дракона до этапа «Подросток»": "Grow your dragon to the Teen stage", "Взрослый дракон": "Adult dragon", "Вырастите дракона до взрослого": "Grow your dragon to adulthood", "Легендарный дракон": "Legendary dragon", "Вырастите легендарного дракона": "Raise a legendary dragon", "Щедрый дракон": "Generous dragon", "Заберите бонус дракона 7 раз": "Claim the dragon bonus 7 times", "Друг дракона": "Dragon's friend", "Заберите бонус дракона 30 раз": "Claim the dragon bonus 30 times", "Первая обновка": "First new item", "Купите первую вещь для дракона": "Buy your first item for the dragon", "Новый облик": "New look", "Купите облик для легендарного дракона": "Buy a look for the legendary dragon", "Первый прыжок": "First jump", "Сыграйте в «Искрамэн: вверх!» первый раз": "Play \"Iskramen: Up!\" for the first time", "Космический прыгун": "Space jumper", "Сыграйте в «Искрамэн: вверх!» 20 раз": "Play \"Iskramen: Up!\" 20 times", "Покоритель орбиты": "Orbit conqueror", "Сыграйте в «Искрамэн: вверх!» 100 раз": "Play \"Iskramen: Up!\" 100 times", "Сборщик искр": "Spark collector", "Соберите 100 искр в «Искрамэн»": "Collect 100 sparks in Iskramen", "Искровой магнат": "Spark tycoon", "Соберите 1000 искр в «Искрамэн»": "Collect 1000 sparks in Iskramen", "Выше облаков": "Above the clouds", "Наберите 1000 очков за одну игру в «Искрамэн»": "Score 1000 points in one Iskramen run", "К звёздам": "To the stars", "Наберите 3000 очков за одну игру в «Искрамэн»": "Score 3000 points in one Iskramen run", "Постоянный игрок": "Regular player", "Играйте в «Искрамэн» 7 разных дней": "Play Iskramen on 7 different days"})}catch(e){}
 </script>
 <script id="lcTreeAchv">
 (function(){
@@ -7876,7 +7923,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
     if(runId){
       try {
         const r = await rpc('jumper_finish', {p_run: runId, p_score: hero.sc, p_sparks: runSp});
-        finRes = r; paidToday = r.today; serverBest = r.best;
+        finRes = r; paidToday = r.today; serverBest = r.best; try { window.__funClaim && window.__funClaim(); } catch(e) {}
         if(typeof points !== 'undefined'){ points = r.points; try { syncUI(); } catch(e) {} }
         if(r.paid > 0){ try { playSound('win'); } catch(e) {} }
         refreshInfo(); loadTop();
