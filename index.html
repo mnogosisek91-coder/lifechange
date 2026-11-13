@@ -803,6 +803,8 @@
 #moreModal .modal-content>*:not(.close-modal){position:relative}#moreModal .close-modal{z-index:2}
 #moreModal .btn-outline{background:rgba(30,35,90,.55);border-color:rgba(165,180,252,.28)}
 #moreModal .btn-outline:hover{background:rgba(60,66,150,.6)}
+:is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv img.pt-skp{width:100%;height:100%;object-fit:contain}
+:is(#tab-pet,#petModals) .pt-grid.pt-big .pt-item .pt-pv:has(.pt-skp){aspect-ratio:16/7;background:radial-gradient(ellipse at 50% 70%,#2a2870,#0f172a);border-radius:10px}
 
 </style>
 <style id="lcTreeSkinCss">
@@ -1873,7 +1875,7 @@
                     <div class="pt-row" id="petRenRow" style="margin-top:8px;align-items:center;display:none"><button type="button" id="petRenBtn" style="padding:6px 10px;font-size:.8rem" onclick="petOpenRename()"><img class="ic" src="assets/pet/ic-pencil.7298fdb5.webp" alt=""> Сменить имя</button><span class="pt-note" id="petRenN"></span></div>
                 </div>
                 <div class="pt-card">
-                    <div class="pt-tabs" id="petTabs"><button type="button" class="pt-on" data-t="cl" onclick="petShopTab('cl')"><img class="ic" src="assets/pet/ic-hoodie.945f2c21.webp" alt=""> Одежда</button><button type="button" data-t="bg" onclick="petShopTab('bg')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Фон</button><button type="button" data-t="fl" onclick="petShopTab('fl')"><svg class="ic" aria-hidden="true"><use href="#i-temple"/></svg> Пол</button></div>
+                    <div class="pt-tabs" id="petTabs"><button type="button" class="pt-on" data-t="cl" onclick="petShopTab('cl')"><img class="ic" src="assets/pet/ic-hoodie.945f2c21.webp" alt=""> Одежда</button><button type="button" data-t="bg" onclick="petShopTab('bg')"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg> Фон</button><button type="button" data-t="fl" onclick="petShopTab('fl')"><svg class="ic" aria-hidden="true"><use href="#i-temple"/></svg> Пол</button><button type="button" data-t="sk" onclick="petShopTab('sk')"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg> Облик</button></div>
                     <div class="pt-grid" id="petShop"></div>
                 </div>
                 <div class="pt-card"><h4 class="pt-h4">Как растёт дракон</h4>
@@ -2253,7 +2255,7 @@
         <div class="footer-links"><a href="https://t.me/lifechange_discipline" target="_blank" rel="noopener">📣 Наш канал</a><a href="https://www.instagram.com/lifechange.uz/" target="_blank" rel="noopener">Instagram</a><a onclick="switchTab('about')">О нас</a><a onclick="showLegal('offer')">Оферта</a><a onclick="showLegal('privacy')">Конфиденциальность</a><a onclick="showLegal('points')">Правила искр</a><a onclick="showLegal('warning')">Важная информация</a></div>
         <div>&copy; 2026 LifeChange App. <span data-i18n="footer">Все права защищены. Развивайся каждый день!</span></div>
         <div class="brand-credit">projected by SuLen</div>
-        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.85 · 12.11.2026</div>
+        <div id="appVersion" style="text-align:center;font-size:.7rem;color:var(--text-secondary);opacity:.55;margin-top:6px">v4.86 · 13.11.2026</div>
         <div class="legal-note">Персональные данные пользователей (в том числе цели, привычки и обращения к специалисту) хранятся только в системе LifeChange и не публикуются и не раскрываются публично.</div>
     </footer>
 
@@ -6926,13 +6928,17 @@ async function adminGemHistory(){
 <script id="lcPet">
 (function(){
   var B='assets/pet/';
-  var PET={"egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.6ee1417b.webp", "red": "pet-s5-red.820c7a42.webp", "orange": "pet-s5-orange.80e022d9.webp", "gold": "pet-s5-gold.a2b0d429.webp", "green": "pet-s5-green.12d3d667.webp", "teal": "pet-s5-teal.4388f57d.webp", "blue": "pet-s5-blue.d3d9c7da.webp", "pink": "pet-s5-pink.bb92bca0.webp"}, "s6": {"violet": "pet-s6-violet.9e277859.webp", "red": "pet-s6-red.1554c2de.webp", "orange": "pet-s6-orange.d2bc71cb.webp", "gold": "pet-s6-gold.fa84a721.webp", "green": "pet-s6-green.24fb3b7a.webp", "teal": "pet-s6-teal.ea0d95f8.webp", "blue": "pet-s6-blue.98a08605.webp", "pink": "pet-s6-pink.b33f0d72.webp"}};
+  var PET={"egg": "pet-egg.34aa1b68.webp", "egg2": "pet-egg2.fc0ce43b.webp", "floor": "pet-floor.431ac720.webp", "s3": {"violet": "pet-s3-violet.125a6a03.webp", "red": "pet-s3-red.f48bfd22.webp", "orange": "pet-s3-orange.618df16a.webp", "gold": "pet-s3-gold.c16ad5d4.webp", "green": "pet-s3-green.5d4dafde.webp", "teal": "pet-s3-teal.3e746358.webp", "blue": "pet-s3-blue.a9912fa0.webp", "pink": "pet-s3-pink.df1af12e.webp"}, "s4": {"violet": "pet-s4-violet.05b4f443.webp", "red": "pet-s4-red.6f097bcc.webp", "orange": "pet-s4-orange.d1583606.webp", "gold": "pet-s4-gold.af4d358f.webp", "green": "pet-s4-green.cb14433c.webp", "teal": "pet-s4-teal.46c45c49.webp", "blue": "pet-s4-blue.5e923ca2.webp", "pink": "pet-s4-pink.bdf52cda.webp"}, "s5": {"violet": "pet-s5-violet.6ee1417b.webp", "red": "pet-s5-red.820c7a42.webp", "orange": "pet-s5-orange.80e022d9.webp", "gold": "pet-s5-gold.a2b0d429.webp", "green": "pet-s5-green.12d3d667.webp", "teal": "pet-s5-teal.4388f57d.webp", "blue": "pet-s5-blue.d3d9c7da.webp", "pink": "pet-s5-pink.bb92bca0.webp"}, "s6": {"violet": "pet-s6-violet-v2.5ec4ab1d.webp", "red": "pet-s6-red-v2.0bfa8455.webp", "orange": "pet-s6-orange-v2.24f728ab.webp", "gold": "pet-s6-gold-v2.cdebf294.webp", "green": "pet-s6-green-v2.5520c036.webp", "teal": "pet-s6-teal-v2.9f1f7ecf.webp", "blue": "pet-s6-blue-v2.60f5f913.webp", "pink": "pet-s6-pink-v2.cffe9d17.webp"}};
   var STN=['Яйцо','Яйцо с трещинами','Малыш','Подросток','Взрослый','Легендарный'];
   var COLORS={violet:['Фиолетовый','#5a55b8'],red:['Красный','#c8455a'],orange:['Оранжевый','#c9743a'],gold:['Золотой','#b59a35'],green:['Зелёный','#2f9a5f'],teal:['Бирюзовый','#2a9a9a'],blue:['Синий','#3f7ab8'],pink:['Розовый','#b04aa0']};
   var TRAITS={fighter:['dumbbell','Боец',['Сегодня вперёд!','Тренировка? Я готов!','Сила в привычках.']],sage:['books','Мудрец',['Расскажи, что прочитал.','Знание греет лучше огня.','Одна страница в день.']],guardian:['shield','Страж',['Я рядом, ты справишься.','Каждый день без срыва это победа.','Береги себя.']],dreamer:['moon','Созерцатель',['Вдох. Выдох. Всё хорошо.','Тише, прислушайся.','Ты уже молодец.']]};
   var BASIC_LINES=['Привет! Я рядом.','Каждый шаг делает меня сильнее.','Сделаем сегодня что-то хорошее?'];
   var A={3:{ex:48.9,ey:28.3,ed:17.5,hs:2.5,hat:0.72,neck:1.0,ar:520/389,w:44,b:23},4:{ex:49.5,ey:23.5,ed:6.8,hs:3.9,hat:0.85,neck:2.1,ar:640/338,w:66,b:24},5:{ex:49.7,ey:27,ed:5.1,hs:4.2,hat:0.92,neck:2.2,ar:760/357,w:84,b:24},6:{ex:50.1,ey:27,ed:5.1,hs:4.2,hat:0.92,neck:2.2,ar:760/359,w:84,b:24}};
+  var SKA={sk_gold:{ex:50.0,ey:24.78,ed:5.23,hs:4.2,hat:0.92,neck:2.2,ar:1.9852,w:79,b:26.28},sk_cosmic:{ex:49.96,ey:26.19,ed:5.45,hs:4.2,hat:0.92,neck:2.2,ar:2.0397,w:79,b:29.42},sk_obs:{ex:50.0,ey:26.44,ed:5.46,hs:4.2,hat:0.92,neck:2.2,ar:1.9938,w:79,b:28.85},sk_frost:{ex:49.88,ey:26.48,ed:5.77,hs:4.2,hat:0.92,neck:2.2,ar:2.0463,w:79,b:29.57},sk_clock:{ex:50.08,ey:25.75,ed:5.45,hs:4.2,hat:0.92,neck:2.2,ar:2.0157,w:79,b:29.02}};
+  var SKF={sk_cosmic:"pet-sk-cosmic.c83595eb.webp",sk_obs:"pet-sk-obs.590d54f2.webp",sk_frost:"pet-sk-frost.249018e0.webp",sk_clock:"pet-sk-clock.edbe6f1b.webp"};
+  var SKT={sk_gold:"pet-skt-gold.52b41a80.webp",sk_cosmic:"pet-skt-cosmic.ab9d8c4e.webp",sk_obs:"pet-skt-obs.574628d7.webp",sk_frost:"pet-skt-frost.cf90aba0.webp",sk_clock:"pet-skt-clock.5b50fed0.webp"};
   var META={
+    sk_gold:{n:'Золотой король',sk:1},sk_cosmic:{n:'Космический страж',sk:1},sk_obs:{n:'Обсидиан',sk:1},sk_frost:{n:'Лунный лёд',sk:1},sk_clock:{n:'Часовой',sk:1},
     wiz:{n:'Колпак звездочёта',f:'pet-item-wiz.6b74d656.webp',iar:1.1519},
     crown:{n:'Корона искр',f:'pet-item-crown.3f4358bc.webp',iar:1.7059},
     sun:{n:'Очки драконьего взора',f:'pet-item-dglass.bf8320a1.webp',iar:2.7778,wm:1.38,yc:0.6},
@@ -6954,7 +6960,8 @@ async function adminGemHistory(){
   function isUser(){try{return typeof user!=='undefined'&&!!user}catch(e){return false}}
   function adm(){try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}}
   function vis(st){if(!st)return 1;if(st.hatched)return Math.max(3,st.stage);return st.stage>=2?2:1}
-  function imgOf(st){var v=vis(st);if(v===1)return B+PET.egg;if(v===2)return B+PET.egg2;return B+PET['s'+v][(st&&st.color&&PET.s3[st.color])?st.color:'violet']}
+  function skinOf(st){var k=st&&st.equipped&&st.equipped.skin;return SKA[k]?k:'sk_gold'}
+  function imgOf(st){var v=vis(st);if(v===1)return B+PET.egg;if(v===2)return B+PET.egg2;if(v===6&&SKF[skinOf(st)])return B+SKF[skinOf(st)];return B+PET['s'+v][(st&&st.color&&PET.s3[st.color])?st.color:'violet']}
   var ERR={not_enough_gems:'Не хватает самоцветов.',bad_name:'Имя не подходит: 2–16 букв или цифр, без грубых слов и без смеси латиницы и кириллицы.',name_cooldown:'Имя можно менять раз в 30 дней.',stage_too_low:'Это откроется на следующем этапе дракона.',already_owned:'Эта вещь уже у тебя есть.',not_owned:'Сначала купи эту вещь.',not_for_sale:'Эта вещь не продаётся.',rate_limit:'Слишком много покупок подряд. Подожди минуту.',bonus_claimed:'Бонус за сегодня уже получен.',bonus_not_ready:'Сначала сдай отчёт сегодня.',already_hatched:'Дракон уже вылупился.',not_hatched:'Сначала вылупи дракона.',bad_color:'Выбери цвет из списка.',not_admin:'Только для админа.',bad_item:'Такой вещи нет.',bad_slot:'Такой вещи нет.'};
   try{Object.assign(ERRMAP,{gems_negative:'Нельзя списать больше, чем есть на балансе.'})}catch(e){}
   function perr(e){var m=String((e&&(e.message||e.error_description))||e||'');for(var k in ERR)if(m.indexOf(k)>=0)return ERR[k];try{return errMsg(e)}catch(x){return 'Не получилось. Попробуй ещё раз.'}}
@@ -6966,7 +6973,7 @@ async function adminGemHistory(){
   function fmt(n){try{return Number(n).toLocaleString('ru-RU')}catch(e){return String(n)}}
 
   function render(){
-    var st=S, v=vis(st), a=A[v], dw=$('petWrap');
+    var st=S, v=vis(st), a=v===6?SKA[skinOf(st)]:A[v], dw=$('petWrap');
     if(!dw)return;
     $('petGemsN').textContent=fmt(st?st.gems:0);
     $('petImg').src=imgOf(st);
@@ -6976,7 +6983,7 @@ async function adminGemHistory(){
     var fl=META[eq.floor]||META.marble, fi=$('petFloor');fi.src=B+PET.floor;fi.style.filter=fl.fl||'none';fi.style.opacity=v<3?0:1;
     var sleepy=st&&(st.mood==='sad'||st.mood==='sleepy');
     dw.className='pt-dwrap'+(v<3?' pt-egg':'')+(sleepy?' pt-sleepy':'');
-    if(v<3){dw.style.width='42%';dw.style.bottom='5%'}else{dw.style.width=a.w+'%';dw.style.bottom=(a.b+(v<5?5:7))+'%'}
+    if(v<3){dw.style.width='42%';dw.style.bottom='5%'}else{dw.style.width=a.w+'%';dw.style.bottom=(v===6?a.b:a.b+(v<5?5:7))+'%'}
     var box=$('petItems');box.innerHTML='';
     if(v>=3){['head','face','neck'].forEach(function(sl){var k=eq[sl],it=META[k];if(!k||!it||!it.f)return;var d=document.createElement('img');d.className='pt-it';d.src=B+it.f;d.alt='';
       var ed=a.ed,ar=a.ar,ia=it.iar,w,top,hg;
@@ -7026,22 +7033,24 @@ async function adminGemHistory(){
   function renderShop(){
     var g=$('petShop');if(!g)return;g.innerHTML='';g.classList.toggle('pt-big',tab!=='cl');
     var cat=(S&&S.catalog)||[],eq=(S&&S.equipped)||{},v=vis(S);
-    var slots=tab==='cl'?['head','face','neck']:tab==='bg'?['bg']:['floor'];
+    var slots=tab==='cl'?['head','face','neck']:tab==='bg'?['bg']:tab==='sk'?['skin']:['floor'];
     var list=cat.filter(function(i){return slots.indexOf(i.slot)>=0&&META[i.key]});
-    if(!S){list=Object.keys(META).filter(function(k){var m=META[k];return tab==='cl'?!!m.f:tab==='bg'?('bg' in m):('fl' in m)}).map(function(k){return {key:k,slot:tab==='cl'?'head':tab==='bg'?'bg':'floor',status:'login'}})}
+    if(!S){list=Object.keys(META).filter(function(k){var m=META[k];return tab==='cl'?!!m.f:tab==='bg'?('bg' in m):tab==='sk'?!!m.sk:('fl' in m)}).map(function(k){return {key:k,slot:tab==='cl'?'head':tab==='bg'?'bg':tab==='sk'?'skin':'floor',status:'login',price_gems:k==='sk_gold'?null:undefined}})}
     list=list.filter(function(i){return !(META[i.key].def&&eq[i.slot]===i.key)});
     list.forEach(function(it){
-      var m=META[it.key],d=document.createElement('div'),isEq=eq[it.slot]===it.key;
+      var m=META[it.key],d=document.createElement('div'),isEq=it.slot==='skin'?skinOf(S)===it.key:eq[it.slot]===it.key;
       d.className='pt-item'+(isEq?' pt-eq':'');
       var pv;
-      if('bg' in m)pv=m.bg?'<img class="pt-bgp" src="'+B+m.bg+'" alt="" loading="lazy">':'<span class="pt-bgp pt-bgbasic"></span>';
+      if(m.sk)pv='<img class="pt-skp" src="'+B+SKT[it.key]+'" alt="" loading="lazy">';
+      else if('bg' in m)pv=m.bg?'<img class="pt-bgp" src="'+B+m.bg+'" alt="" loading="lazy">':'<span class="pt-bgp pt-bgbasic"></span>';
       else if('fl' in m)pv='<img class="pt-flp" src="'+B+PET.floor+'" style="filter:'+m.fl+'" alt="" loading="lazy">';
       else pv='<img src="'+B+m.f+'" alt="" loading="lazy">';
       d.innerHTML='<div class="pt-pv">'+pv+'</div><b>'+esc(m.n)+'</b>';
       var meta=document.createElement('div'),b=document.createElement('button');b.type='button';
       if(it.status==='login'){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' нужен вход</span>';b.textContent='Войти';b.onclick=function(){try{requireAuth()}catch(e){}}}
+      else if(it.slot==='skin'&&it.key==='sk_gold'&&S&&S.stage>=6){meta.innerHTML='<span class="pt-lk">Основной</span>';if(isEq){b.textContent='Выбран';b.disabled=true}else{b.textContent='Надеть';b.onclick=function(){act('pet_unequip',{p_slot:'skin'})}}}
       else if(it.status==='owned'){meta.innerHTML='<span class="pt-lk">Куплено</span>';
-        if(isEq){b.textContent=(it.slot==='bg'||it.slot==='floor')?'Выбран':'Снять';b.disabled=(it.slot==='bg'||it.slot==='floor');b.onclick=function(){act('pet_unequip',{p_slot:it.slot})}}
+        if(isEq){b.textContent=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin')?'Выбран':'Снять';b.disabled=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin');b.onclick=function(){act('pet_unequip',{p_slot:it.slot})}}
         else{b.textContent='Надеть';b.disabled=(['head','face','neck'].indexOf(it.slot)>=0&&!S.hatched);b.onclick=function(){act('pet_equip',{p_slot:it.slot,p_item:it.key})}}}
       else if(it.status==='available'&&it.price_gems!=null){meta.innerHTML='<span class="pt-pr pt-gm">'+GEM+' '+fmt(it.price_gems)+'</span>';b.textContent='Купить';b.className='pt-g pt-gold';b.onclick=function(){askBuy(it)}}
       else if(it.status==='need_stage'){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' с этапа '+it.min_stage+'</span>';b.textContent='Закрыто';b.disabled=true}
@@ -7050,6 +7059,7 @@ async function adminGemHistory(){
       d.appendChild(meta);d.appendChild(b);g.appendChild(d);
     });
     var soon=tab==='cl'?3:tab==='fl'?2:0;
+    if(tab==='sk'){var np=document.createElement('p');np.className='pt-note';np.style.cssText='grid-column:1/-1;margin:0 0 4px';np.textContent=(S&&S.stage>=6)?'Облики меняют внешний вид легендарного дракона. Купленные остаются у тебя навсегда.':'Облики откроются, когда дракон станет легендарным (этап 6).';g.insertBefore(np,g.firstChild)}
     for(var i=0;i<soon;i++){var d2=document.createElement('div');d2.className='pt-item pt-soon';d2.innerHTML='<div class="pt-pv"><span class="pt-sq">'+IC('star')+'</span></div><b>Скоро</b><div><span class="pt-lk">Новинка готовится</span></div><button type="button" disabled>Скоро</button>';g.appendChild(d2)}
   }
 
@@ -7086,7 +7096,7 @@ async function adminGemHistory(){
     var m=META[it.key];
     if((S.gems||0)<it.price_gems){toast('Не хватает самоцветов: нужно '+fmt(it.price_gems));window.petGemsInfo();return}
     $('petBuyT').textContent='Купить «'+m.n+'»?';
-    $('petBuyPv').innerHTML='bg' in m?(m.bg?'<img src="'+B+m.bg+'" alt="" style="height:100%;width:100%;object-fit:cover;border-radius:12px">':''):('fl' in m?'<img src="'+B+PET.floor+'" style="filter:'+m.fl+'" alt="">':'<img src="'+B+m.f+'" alt="">');
+    $('petBuyPv').innerHTML=m.sk?'<img src="'+B+SKT[it.key]+'" alt="">':'bg' in m?(m.bg?'<img src="'+B+m.bg+'" alt="" style="height:100%;width:100%;object-fit:cover;border-radius:12px">':''):('fl' in m?'<img src="'+B+PET.floor+'" style="filter:'+m.fl+'" alt="">':'<img src="'+B+m.f+'" alt="">');
     $('petBuyN').innerHTML='Цена: '+GEM+' <b>'+fmt(it.price_gems)+'</b>. У тебя: '+fmt(S.gems)+'.';
     var go=$('petBuyGo');go.disabled=false;
     go.onclick=function(){go.disabled=true;
