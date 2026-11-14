@@ -176,7 +176,7 @@ const full=t=>t.length===CAP&&t.every(v=>v===t[0]);
 function layout(){const n=T.length,rows=n>5?2:1,per=Math.ceil(n/rows);TSC=n>10?.84:1;const slot=Math.min(86,LW/per),tw=TW*TSC,th=TH*TSC;
   const P=[];for(let i=0;i<n;i++){const r=i<per?0:1,k=r?i-per:i,cnt=r?n-per:per;P.push({x:(LW-cnt*slot)/2+k*slot+(slot-tw)/2,y:64+r*(th+44)})}
   LH=64+rows*(th+44)-12;return P}
-function fit(){const bb=$('boardbox'),w=bb.clientWidth-12,hh=bb.clientHeight-12,d=window.devicePixelRatio||1;scale=Math.max(.2,Math.min(w/LW,hh/LH));cv.style.width=(LW*scale)+'px';cv.style.height=(LH*scale)+'px';cv.width=Math.round(LW*scale*d);cv.height=Math.round(LH*scale*d);cv.dataset.d=d}
+function fit(){const bb=$('boardbox'),w=bb.clientWidth-12,hh=bb.clientHeight-12,d=window.devicePixelRatio||1;scale=Math.max(.2,Math.min(w/LW,hh/LH));cv.style.width=(LW*scale)+'px';cv.style.height=(LH*scale)+'px';const nw=Math.round(LW*scale*d),nh=Math.round(LH*scale*d);if(cv.width!==nw)cv.width=nw;if(cv.height!==nh)cv.height=nh;cv.dataset.d=d}
 /* ---------- рисование ---------- */
 function shade(hex,k){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;const f=k>0?255:0,a=Math.abs(k);r=Math.round(r+(f-r)*a);g=Math.round(g+(f-g)*a);b=Math.round(b+(f-b)*a);return'rgb('+r+','+g+','+b+')'}
 function tubePath(x0){const r=(IRx-ILx)/2;ctx.beginPath();ctx.moveTo(x0+ILx,ITy);ctx.lineTo(x0+ILx,IBy-r);ctx.arc(x0+ILx+r,IBy-r,r,Math.PI,0,true);ctx.lineTo(x0+IRx,ITy)}
