@@ -7312,7 +7312,7 @@ async function adminGemHistory(){
     if(!isUser()){try{requireAuth()}catch(e){}return}
     var l='ru';try{l=currentLang==='uz'?'uz':(window.UI_EN?'en':'ru')}catch(e){}
     gameClose.ov=document.body.style.overflow;document.body.style.overflow='hidden';
-    $('petGameFr').src='potions.html?l='+l+'&v=4.93';$('petGameOv').classList.add('pt-on');
+    $('petGameFr').src='potions.html?l='+l+'&v=4.94';$('petGameOv').classList.add('pt-on');
   };
   window.petGameReset=function(){rpc('game_admin_reset').then(function(r){apply(r.pet,true);gameCard();var o=$('petAdmOut');if(o)o.textContent='Игра за сегодня сброшена'}).catch(function(e){toast(perr(e))})};
   window.addEventListener('message',function(e){

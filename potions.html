@@ -249,7 +249,7 @@ function step(t){
     if(k<d1){m=ease(k/d1)}else if(k<d1+d2){m=1;th=TH_*ease((k-d1)/d2)}
     else if(k<d1+d2+d3){m=1;th=TH_;A.p=Math.min(1,(k-d1-d2)/d3);A.stream=Math.min(1,(k-d1-d2)/90)*(A.p>.93?(1-A.p)/.07:1)}
     else if(k<d1+d2+d3+d4){A.p=1;const q=ease((k-d1-d2-d3)/d4);m=1-q;th=TH_*(1-q)}
-    else{finish();requestAnimationFrame(step);return}
+    else{finish();step(t);return}
     A.pose={px:rest.x+(hov.x-rest.x)*m,py:rest.y+(hov.y-rest.y)*m-(1-Math.abs(1-2*m))*0,th};
     if(A.p==null)A.p=0}
   P.forEach((_,i)=>{if(!(anim&&anim.a===i))drawTube(i,P,t)});
