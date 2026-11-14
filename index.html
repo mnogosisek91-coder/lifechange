@@ -3279,6 +3279,7 @@ const ERRMAP = {
   already_reported: 'Отчёт по этому челленджу за сегодня уже принят. Приходите завтра!',
   daily_cap: 'На сегодня достаточно: максимум 12 отчётов в день. Продолжим завтра!',
   free_limit: 'В бесплатном тарифе доступен только 1 челлендж. Оформите PRO, чтобы участвовать во всех.',
+  no_file_found: 'Файл не загрузился. Прикрепите фото или видео ещё раз.',
   dup_file: 'Этот файл уже использован в другом отчёте. Загрузите новое фото или видео.',
   no_file: 'Прикрепите фото или видео-подтверждение.',
   already_claimed: 'Награда за сегодня уже получена. Приходите завтра!', already_spun: 'Вы уже крутили колесо сегодня!',
@@ -3874,7 +3875,7 @@ function nLoad(){
   else { const lim = dateStr(-2); NOTIFS.forEach(n => { if(String(n.date || '') < lim) readNotifs.add(n.id); }); nSave(); } // новый аккаунт на устройстве: всё старше 2 дней считаем прочитанным
   renderNotifs(false);
 }
-setInterval(() => { if(sbUid) loadUserNotifs(); }, 60000);
+setInterval(() => { if(sbUid && document.visibilityState === 'visible') loadUserNotifs(); }, 120000);
 { const _tn = toggleNotifs; toggleNotifs = function(e) { loadUserNotifs(); _tn(e); }; }
 async function adminRevoke() {
   const email = document.getElementById('grantEmail').value.trim();
@@ -7820,7 +7821,7 @@ Object.assign(EN_EXACT, {"Порядок за 10 минут (14 дней)": "10-
     } catch(e) {}
   }
   css();
-  bgTimer = setInterval(bgPoll, 45000); setTimeout(bgPoll, 4000);
+  setTimeout(bgPoll, 4000);
 
   // ---------------- админка ----------------
   let aUser = null, aLast = 0, aMsgs = [], aTimer = null, aBusy = false;
@@ -8513,7 +8514,7 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   try{var _oc=openChat;openChat=function(){hide();return _oc.apply(this,arguments)};window.openChat=openChat}catch(e){}
   addEventListener('resize',function(){var p=document.getElementById('lcChPop');if(p)place(p)});
   document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')setTimeout(check,800)});
-  setInterval(check,20000);setTimeout(check,5000);
+  setInterval(check,60000);setTimeout(check,5000);
   window.lcChatCheck=check;
 })();
 
