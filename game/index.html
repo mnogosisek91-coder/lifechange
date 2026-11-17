@@ -91,7 +91,7 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 .chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:8px}
 .chips span{font-size:11px;background:#232c57;border-radius:8px;padding:3px 7px}
 #xit{position:absolute;left:8px;top:8px;z-index:5;width:34px;height:34px;border-radius:10px;border:1px solid #3a4478;background:rgba(10,14,30,.75);font-size:16px;padding:0;color:#fff}
-#modbtn{position:absolute;right:8px;top:8px;z-index:5;width:40px;height:40px;border-radius:12px;border:2px solid #7bd88f;background:rgba(10,14,30,.8);font-size:20px;padding:0;color:#fff;display:none}.mrow{flex-wrap:wrap}.mrow .ct{flex:1 1 140px;min-width:0}.mrow .ct b{word-break:break-word}.mact{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}.mact button.red{background:linear-gradient(#ff8a8a,#e04a4a);color:#fff}.mact button.gr{background:#2a335f;color:#dfe6ff}.mbd{font-size:10px;font-weight:800;border-radius:6px;padding:1px 5px;margin-right:4px;background:#2a335f;color:#cfe}.mbd.a{background:#f5a524;color:#2a1a00}.mbd.m{background:#4aa86a;color:#fff}.mbd.x{background:#e04a4a;color:#fff}#dtog{position:absolute;right:8px;top:8px;z-index:5;width:42px;height:42px;border-radius:12px;border:2px solid #ffd166;background:rgba(10,14,30,.8);font-size:22px;padding:0;color:#fff;box-shadow:0 0 12px rgba(255,200,80,.5)}#dpan{top:56px!important}
+#modbtn{position:absolute;right:8px;top:8px;z-index:5;width:40px;height:40px;border-radius:12px;border:2px solid #7bd88f;background:rgba(10,14,30,.8);font-size:20px;padding:0;color:#fff;display:none}.mrow{flex-wrap:wrap}.mrow .ct{flex:1 1 140px;min-width:0}.mrow .ct b{word-break:break-word}.mact{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}.mact button.red{background:linear-gradient(#ff8a8a,#e04a4a);color:#fff}.mact button.gr{background:#2a335f;color:#dfe6ff}.mbd{font-size:10px;font-weight:800;border-radius:6px;padding:1px 5px;margin-right:4px;background:#2a335f;color:#cfe}.mbd.a{background:#f5a524;color:#2a1a00}.mbd.m{background:#4aa86a;color:#fff}.chr{float:right;margin-left:6px;border:0;background:none;color:#aab;font-size:11px;padding:0 2px}.mbd.g{background:#1f8f5a;color:#fff}.mbd.x{background:#e04a4a;color:#fff}#dtog{position:absolute;right:8px;top:8px;z-index:5;width:42px;height:42px;border-radius:12px;border:2px solid #ffd166;background:rgba(10,14,30,.8);font-size:22px;padding:0;color:#fff;box-shadow:0 0 12px rgba(255,200,80,.5)}#dpan{top:56px!important}
 #dpan{position:absolute;right:8px;top:48px;z-index:5;background:rgba(10,14,30,.85);border:1px solid #3a4478;border-radius:12px;padding:6px 8px;display:none;flex-direction:column;gap:6px;max-width:calc(100% - 16px)}
 #dpan.open{display:flex}
 #dpan b{font-size:10px;opacity:.7;letter-spacing:.04em}
@@ -1512,7 +1512,7 @@ function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementB
   e.querySelector('.eg').textContent=T[0];e.querySelector('h2').textContent=T[1];e.querySelector('p').textContent=T[2];
   if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
   e.classList.add('on')}
-function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit()}
+function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit();socPlat()}
 /* Общий кошелёк с платформой: самоцветы = баланс платформы, тепло из игры уходит дракону (до 2 в день) */
 var kpBusy=0,kpT=0;
 window.kpSoon=function(){if(!PLATST||kpT)return;kpT=setTimeout(function(){kpT=0;kpSync()},900)};
@@ -1538,7 +1538,7 @@ function modInit(){if(!PLATST||!plCl)return;plCl.rpc('mod_me').then(function(q){
 function modBtn(){var b=document.getElementById('modbtn');if(b){b.style.display=(KPROLE&&mode==='home')?'block':'none';b.onclick=function(){showMod()}}}
 function modErr(e){var m=(e&&e.message)||'ошибка';return m==='not_mod'||m==='not_admin'?'Нет прав':m==='protected'?'Этого человека трогать нельзя':m==='self'?'К себе применить нельзя':m}
 function showMod(tab){if(!KPROLE)return;if(tab)mTab=tab;
-  var T=[['u','Люди'],['r','Отчёты'],['c','Жалобы']];
+  var T=[['u','Игроки'],['c','Жалобы']];
   screen('<div class="hdr"><h2>🛡 Модерация</h2></div><p class="qinfo" style="text-align:center;margin:2px 0 6px">'+(KPROLE.admin?'Роль: админ. Можно выдавать модераторов.':'Роль: модератор.')+'</p><div class="qseg">'+T.map(function(t){return '<button data-t="'+t[0]+'"'+(mTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div><div id="modBody" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div><button class="g" id="modClose">Закрыть</button>',true);
   [].forEach.call(ovbox.querySelectorAll('.qseg button'),function(b){b.onclick=function(){showMod(b.dataset.t)}});
   document.getElementById('modClose').onclick=function(){hideScreen()};
@@ -1547,40 +1547,66 @@ function modMsg(t){var b=document.getElementById('modBody');if(b)b.innerHTML='<p
 function modDo(fn,args){return plCl.rpc(fn,args).then(function(q){if(q.error){alert(modErr(q.error));return false}return true}).catch(function(){alert('Нет связи');return false})}
 function modLoad(){var bd=document.getElementById('modBody');if(!bd)return;var tab=mTab;
   if(tab==='u'){
-    bd.innerHTML='<div style="display:flex;gap:6px"><input id="mQ" value="'+mEsc(mQ)+'" placeholder="Имя или @ник" style="flex:1;min-width:0;border-radius:10px;border:1px solid #3a4478;background:#121936;color:#fff;padding:9px;font-size:14px"><button class="b" id="mGo" style="width:auto;margin:0;padding:9px 14px">Найти</button></div><div id="mList" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';
+    bd.innerHTML='<div style="display:flex;gap:6px"><input id="mQ" value="'+mEsc(mQ)+'" placeholder="Имя игрока" style="flex:1;min-width:0;border-radius:10px;border:1px solid #3a4478;background:#121936;color:#fff;padding:9px;font-size:14px"><button class="b" id="mGo" style="width:auto;margin:0;padding:9px 14px">Найти</button></div><div id="mList" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';
     var go=function(){mQ=document.getElementById('mQ').value;modLoad()};document.getElementById('mGo').onclick=go;document.getElementById('mQ').onkeydown=function(e){if(e.key==='Enter')go()};
-    plCl.rpc('mod_users',{p_q:mQ}).then(function(q){var L=document.getElementById('mList');if(!L||mTab!=='u')return;if(q.error)return L.innerHTML='<p class="qinfo">'+mEsc(modErr(q.error))+'</p>';
-      var a=q.data||[];if(!a.length)return L.innerHTML='<p class="qinfo" style="text-align:center">Никого не нашли</p>';
-      L.innerHTML=a.map(function(u){var bd2=(u.is_admin?'<span class="mbd a">админ</span>':'')+(u.is_moderator?'<span class="mbd m">модератор</span>':'')+(u.banned?'<span class="mbd x">бан</span>':'');
+    plCl.rpc('mod_players',{p_q:mQ}).then(function(q){var L=document.getElementById('mList');if(!L||mTab!=='u')return;if(q.error)return L.innerHTML='<p class="qinfo">'+mEsc(modErr(q.error))+'</p>';
+      var a=q.data||[];if(!a.length)return L.innerHTML='<p class="qinfo" style="text-align:center">Игроков не нашли</p>';
+      L.innerHTML=a.map(function(u){var bd2=(u.online?'<span class="mbd g">онлайн</span>':'')+(u.is_admin?'<span class="mbd a">админ</span>':'')+(u.is_moderator?'<span class="mbd m">модератор</span>':'')+(u.banned?'<span class="mbd x">бан</span>':'');
         var acts='';if(KPROLE.admin&&!u.is_admin)acts+='<button class="gr" data-a="mod" data-id="'+u.id+'" data-on="'+(u.is_moderator?0:1)+'">'+(u.is_moderator?'Снять модератора':'Сделать модератором')+'</button>';
         if(!u.is_admin&&(KPROLE.admin||!u.is_moderator))acts+=u.banned?'<button class="gr" data-a="unban" data-id="'+u.id+'">Снять бан</button>':'<button class="red" data-a="ban" data-id="'+u.id+'">Бан</button>';
-        return '<div class="cc mrow"><div class="ct"><b>'+mEsc(u.name||'Без имени')+'</b><span>'+bd2+(u.tg_username?'@'+mEsc(u.tg_username):'')+(u.email?' · '+mEsc(u.email):'')+'</span></div><div class="mact">'+acts+'</div></div>'}).join('');
+        return '<div class="cc mrow"><div class="ct"><b>'+mEsc(u.name||'Без имени')+'</b><span>'+bd2+'ур. '+mEsc(u.level)+(u.email?' · '+mEsc(u.email):'')+'</span></div><div class="mact">'+acts+'</div></div>'}).join('');
       [].forEach.call(L.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modUserAct(b)}})}).catch(function(){modMsg('Нет связи')})
-  }else if(tab==='r'){
-    plCl.rpc('mod_reports').then(function(q){if(mTab!=='r')return;if(q.error)return modMsg(modErr(q.error));var a=q.data||[];if(!a.length)return modMsg('Отчётов нет');
-      bd.innerHTML=a.map(function(r){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(r.name||'Без имени')+'</b><span>'+mEsc(r.challenge)+' · '+mEsc(r.day)+' · +'+mEsc(r.points)+'</span><div class="mph" id="mph'+r.id+'"></div></div><div class="mact">'+(r.file_path?'<button class="gr" data-a="photo" data-id="'+r.id+'" data-p="'+mEsc(r.file_path)+'">Фото</button>':'')+'<button class="red" data-a="rej" data-id="'+r.id+'">Отклонить</button></div></div>'}).join('');
-      [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modRepAct(b)}})}).catch(function(){modMsg('Нет связи')})
   }else{
     plCl.rpc('mod_complaints').then(function(q){if(mTab!=='c')return;if(q.error)return modMsg(modErr(q.error));var a=q.data||[];if(!a.length)return modMsg('Жалоб нет');
-      bd.innerHTML=a.map(function(c){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(c.from_name)+' → '+mEsc(c.target_name)+'</b><span>'+mEsc(c.body)+'</span>'+(c.status==='closed'?'<span style="opacity:.6">закрыта</span>':'')+'</div><div class="mact">'+(c.status==='new'?'<button class="gr" data-a="cl" data-id="'+c.id+'">Закрыть жалобу</button>':'')+'</div></div>'}).join('');
-      [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modDo('mod_complaint_close',{p_id:+b.dataset.id}).then(function(ok){if(ok)modLoad()})}})}).catch(function(){modMsg('Нет связи')})}}
+      bd.innerHTML=a.map(function(c){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(c.from_name)+' → '+mEsc(c.target_name)+'</b><span>'+mEsc(c.body)+'</span>'+(c.status==='closed'?'<span style="opacity:.6">закрыта</span>':'')+'</div><div class="mact">'+(c.status==='new'?(c.msg_id?'<button class="gr" data-a="dm" data-id="'+c.msg_id+'">Удалить сообщение</button>':'')+(!c.protected&&!c.banned?'<button class="red" data-a="ban" data-id="'+c.target_user+'">Бан автору</button>':'')+'<button class="gr" data-a="cl" data-id="'+c.id+'">Закрыть жалобу</button>':'')+'</div></div>'}).join('');
+      [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){var a=b.dataset.a;if(a==='ban')return modUserAct(b);modDo(a==='dm'?'mod_chat_delete':'mod_complaint_close',a==='dm'?{p_id:+b.dataset.id}:{p_id:+b.dataset.id}).then(function(ok){if(ok)modLoad()})}})}).catch(function(){modMsg('Нет связи')})}}
 function modUserAct(b){var a=b.dataset.a,id=b.dataset.id;
   if(a==='mod')return modDo('mod_set_moderator',{p_user:id,p_on:b.dataset.on==='1'}).then(function(ok){if(ok)modLoad()});
   if(a==='unban')return modDo('mod_unban',{p_user:id}).then(function(ok){if(ok)modLoad()});
   if(a==='ban'){var box=b.parentNode;box.innerHTML='<span style="font-size:12px;opacity:.8;width:100%;text-align:right">На сколько банить?</span>'+[['1 ч',1],['24 ч',24],['7 дн',168],['Навсегда',0]].map(function(x){return '<button class="red" data-h="'+x[1]+'">'+x[0]+'</button>'}).join('')+'<button class="gr" data-h="x">Отмена</button>';
     [].forEach.call(box.querySelectorAll('button'),function(c){c.onclick=function(){if(c.dataset.h==='x')return modLoad();modDo('mod_ban',{p_user:id,p_hours:+c.dataset.h,p_reason:'Нарушение правил'}).then(function(ok){modLoad()})}})}}
-function modRepAct(b){var id=+b.dataset.id;
-  if(b.dataset.a==='photo'){var box=document.getElementById('mph'+id);if(!box)return;if(box.firstChild){box.innerHTML='';return}box.textContent='Загрузка…';
-    return plCl.storage.from('reports').createSignedUrl(b.dataset.p,300).then(function(r){if(!r||r.error||!r.data){box.textContent='Фото не открылось';return}box.innerHTML='<img src="'+mEsc(r.data.signedUrl)+'" alt="" style="max-width:100%;border-radius:10px;margin-top:6px">'}).catch(function(){box.textContent='Нет связи'})}
-  if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Точно?';return}
-  modDo('mod_reject_report',{p_id:id}).then(function(ok){if(ok)modLoad()})}
+/* Настоящие игроки, онлайн и чат (сервер: g_ping, g_players_list, chat_get, chat_send) */
+var socTm=0,socBan=false,chMsgs={g:[],c:[]},chN=0;
+function socKey(){try{return pStage(dLevel().l)+'_'+(P.dcol||'violet')}catch(e){return 'baby_violet'}}
+function socPlat(){if(!PLATST)return;var h=document.getElementById('home');if(!h)return;
+  if(!document.getElementById('onbtn')){var o=document.createElement('button');o.id='onbtn';o.innerHTML='<i></i>Онлайн <b>–</b>';o.onclick=rOnline;h.appendChild(o);var c=document.createElement('button');c.id='chbtn';c.textContent='💬 Чат';c.onclick=function(){rChat()};h.appendChild(c)}
+  socPing();if(!socTm)socTm=setInterval(function(){if(!document.hidden)socPing()},45000)}
+var socLast=0;function socPing(){if(!PLATST||!plCl)return;var nw=Date.now();if(nw-socLast<5000)return;socLast=nw;plCl.rpc('g_ping',{p_level:dLevel().l,p_dk:socKey()}).then(function(q){var d=q&&q.data;if(!d||q.error)return;socBan=!!d.banned;var e=document.getElementById('onbtn');if(e&&typeof d.online==='number')e.querySelector('b').textContent=d.online}).catch(function(){})}
+function socAgo(s){return s<120?'в сети':s<3600?'был(а) '+Math.floor(s/60)+' мин назад':s<86400?'был(а) '+Math.floor(s/3600)+' ч назад':'был(а) '+Math.floor(s/86400)+' дн назад'}
+function rOnline(){var L=document.getElementById('onl')||mkLay('onl');
+  L.innerHTML='<div class="lh"><b id="onT">🟢 Игроки</b><button id="onX">Закрыть</button></div><div class="lb" id="onB"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';L.classList.add('on');
+  document.getElementById('onX').onclick=function(){L.classList.remove('on')};
+  plCl.rpc('g_players_list',{p_q:''}).then(function(q){var B=document.getElementById('onB');if(!B)return;if(q.error||!q.data){B.innerHTML='<p class="qinfo" style="text-align:center">Не удалось загрузить</p>';return}
+    var d=q.data,a=d.list||[];document.getElementById('onT').textContent='🟢 '+d.online+' онлайн · '+d.total+' в игре';
+    B.innerHTML=a.map(function(u){return '<div class="onr"><i'+(u.online?'':' style="background:#556;box-shadow:none"')+'></i><span>'+sEsc(u.name)+(u.me?' (ты)':'')+'</span><small>ур. '+u.level+' · '+socAgo(u.ago)+'</small></div>'}).join('')||'<p class="qinfo" style="text-align:center">Пока никого</p>'}).catch(function(){var B=document.getElementById('onB');if(B)B.innerHTML='<p class="qinfo" style="text-align:center">Нет связи</p>'})}
+function chErr(e){var m=(e&&e.message)||'';return {too_fast:'Слишком быстро, подожди секунду',too_many:'Слишком много сообщений, подожди минуту',banned:'Тебе закрыт доступ к чату',no_clan:'Ты не в клане',bad_text:'Пустое сообщение'}[m]||'Не отправилось'}
+function rChat(tab){chTab=tab||chTab||'g';chN=0;clearInterval(chTm);var L=document.getElementById('cht')||mkLay('cht');
+  L.innerHTML='<div class="lh"><b>💬 Чат</b><button id="chX">Закрыть</button></div><div class="ltab"><button data-ct="g" class="'+(chTab==='g'?'on':'')+'">Общий</button><button data-ct="c" class="'+(chTab==='c'?'on':'')+'">Клановый</button></div><div class="lb" id="chb"><p class="qinfo" style="text-align:center">Загрузка…</p></div><p id="chE" class="qinfo" style="text-align:center;margin:0;min-height:16px;color:#ffb4b4"></p><div class="chin"><input id="chI" maxlength="200" placeholder="Сообщение"><button id="chS">▶</button></div>';
+  L.classList.add('on');
+  document.getElementById('chX').onclick=function(){L.classList.remove('on');clearInterval(chTm)};
+  [].forEach.call(L.querySelectorAll('.ltab button'),function(b){b.onclick=function(){rChat(b.dataset.ct)}});
+  var send=function(){var i=document.getElementById('chI'),t=i.value.trim();if(!t)return;i.value='';document.getElementById('chE').textContent='';
+    plCl.rpc('chat_send',{p_ch:chTab,p_body:t}).then(function(q){if(q.error){document.getElementById('chE').textContent=chErr(q.error);i.value=t;return}chPoll(0)}).catch(function(){document.getElementById('chE').textContent='Нет связи';i.value=t})};
+  document.getElementById('chS').onclick=send;document.getElementById('chI').onkeydown=function(e){if(e.key==='Enter')send()};
+  chMsgs[chTab]=[];chPoll(1);chTm=setInterval(function(){if(!document.hidden)chPoll(0)},4000)}
+function chPoll(full){var tab=chTab,a=chMsgs[tab]||[],after=(full||(++chN%6===0))?0:(a.length?a[a.length-1].id:0);
+  plCl.rpc('chat_get',{p_ch:tab,p_after:after}).then(function(q){if(tab!==chTab)return;var d=q&&q.data;if(!d||q.error)return;
+    if(after===0)chMsgs[tab]=d.msgs||[];else if((d.msgs||[]).length)chMsgs[tab]=chMsgs[tab].concat(d.msgs).slice(-80);
+    chDraw(tab,d)}).catch(function(){})}
+function chDraw(tab,d){var b=document.getElementById('chb');if(!b)return;var a=chMsgs[tab]||[];
+  if(tab==='c'&&d.clan===false){b.innerHTML='<p class="qinfo" style="text-align:center;margin-top:30px">Клановый чат откроется, когда ты вступишь в клан.</p>';return}
+  var atEnd=b.scrollTop+b.clientHeight>=b.scrollHeight-40,old=b.scrollTop;
+  b.innerHTML=a.length?'<div class="chm">'+a.map(function(m){return '<div class="'+(m.mine?'me':'')+'"><b>'+sEsc(m.name)+'</b><small>'+chTime(m.t)+'</small>'+(m.mine?'':'<button class="chr" data-r="'+m.id+'" title="Пожаловаться">⚠</button>')+(KPROLE?'<button class="chr" data-d="'+m.id+'" title="Удалить">✕</button>':'')+'<br>'+sEsc(m.body)+'</div>'}).join('')+'</div>':'<p class="qinfo" style="text-align:center;margin-top:30px">Пока тихо. Напиши первым!</p>';
+  [].forEach.call(b.querySelectorAll('button[data-r]'),function(x){x.onclick=function(){if(x.dataset.c!=='1'){x.dataset.c='1';x.textContent='Пожаловаться?';return}plCl.rpc('complaint_msg',{p_id:+x.dataset.r}).then(function(q){x.textContent=q.error?'—':'✔ отправлено';x.disabled=true})}});
+  [].forEach.call(b.querySelectorAll('button[data-d]'),function(x){x.onclick=function(){plCl.rpc('mod_chat_delete',{p_id:+x.dataset.d}).then(function(){chPoll(1)})}});
+  b.scrollTop=atEnd?b.scrollHeight:old}
 function platInit(){if(!PLAT_ON)return;var hx=document.getElementById('hexit');if(hx){hx.style.display='';hx.onclick=function(){location.href='/'}}plGate('check');
   function go(){try{plCl=plCl||window.supabase.createClient(PL_URL,PL_KEY)}catch(e){return plGate('err')}
     plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');
       return plCl.rpc('pet_get').then(function(q){if(q.error||!q.data)return plGate('err');var st=q.data;if(!st.hatched)return plGate('egg');plOk(st)})}).catch(function(){plGate('err')})}
   if(window.supabase&&window.supabase.createClient)return go();
   var sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';sc.onload=go;sc.onerror=function(){plGate('err')};document.head.appendChild(sc)}
-function socInit(h){if(RELEASE||document.getElementById('onbtn'))return;var o=document.createElement('button');o.id='onbtn';o.innerHTML='<i></i>Онлайн <b>0</b>';o.onclick=showOnline;h.appendChild(o);var c=document.createElement('button');c.id='chbtn';c.textContent='💬 Чат';c.onclick=function(){showChat()};h.appendChild(c);onUpd();setInterval(onUpd,30000)}
+function socInit(h){if(RELEASE){if(PLATST)socPlat();return}if(document.getElementById('onbtn'))return;var o=document.createElement('button');o.id='onbtn';o.innerHTML='<i></i>Онлайн <b>0</b>';o.onclick=showOnline;h.appendChild(o);var c=document.createElement('button');c.id='chbtn';c.textContent='💬 Чат';c.onclick=function(){showChat()};h.appendChild(c);onUpd();setInterval(onUpd,30000)}
 if(!RELEASE){window.__st=function(){return st};window.__P=function(){return P};window.__cast=function(id){castSpell(id)};window.__camp=startCamp;window.__tempt=startTempt;window.__flip=function(v){DFLIP=v};window.__spawn=function(id){spawn(ENEMIES.filter(function(x){return x.id===id})[0])};}
 fit();
 (function(){
