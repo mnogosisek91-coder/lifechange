@@ -352,7 +352,7 @@ var KEY='ldd_demo_v1';
 function defP(){return {gold:0,heat:0,sparks:0,gems:0,unlocked:['fire','bolt'],lv:{},chests:0,round:0,best:0,b:{lair:1},clan:null,tc:Date.now()}}
 function load(){try{var s=localStorage.getItem(KEY);if(s){return Object.assign(defP(),JSON.parse(s))}}catch(e){}return defP()}
 function eggUpd(){var e=document.getElementById('egg');if(e)e.classList.toggle('on',!!P.egg)}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}if(window.kpSoon)window.kpSoon()}
 var P=load();
 var UIIMG={"coin": "assets/4e98482c81.webp", "spark": "assets/661dfbc7f3.webp", "gem": "assets/26daa6359a.webp", "heart": "assets/bca3efe9ac.webp", "shield": "assets/825267611a.webp", "paw": "assets/65e1969b4c.webp", "chestW": "assets/60e3980666.webp", "chestS": "assets/b6d9c53620.webp", "chestR": "assets/d33cfa0239.webp", "trophy": "assets/7ebcded5aa.webp", "home": "assets/052df95586.webp", "shop": "assets/fd8773d019.webp", "book": "assets/4bae6d31ac.webp", "quest": "assets/db9fe56cd0.webp", "lock": "assets/7aa8242888.webp", "hammer": "assets/da00e21d43.webp", "swords": "assets/1d8fea8ad4.webp", "dragon": "assets/ac90c81bf4.webp", "orb": "assets/e38562d956.webp", "skull": "assets/2ba1605927.webp", "heat": "assets/67490c0db2.webp", "foe": "assets/76f8fae0a7.webp", "bossq": "assets/7206447082.webp", "emb1": "assets/5dd59587fe.webp", "emb2": "assets/2065819740.webp", "emb3": "assets/4e3b078c14.webp", "emb4": "assets/d0bfca0653.webp", "emb5": "assets/da0a7a8cb6.webp", "emb6": "assets/fa78ba67d7.webp", "emb7": "assets/42ac84f944.webp", "emb8": "assets/e8981be2f2.webp", "emb9": "assets/0f95360c0a.webp", "emb10": "assets/41206db6d5.webp", "clan": "assets/214b75623c.webp", "rk1": "assets/7daaac4abe.webp", "rk2": "assets/3686866f66.webp", "rk3": "assets/d935ed0dba.webp", "rk4": "assets/7a8b69ad84.webp", "rk5": "assets/fddabd953d.webp"};
 function IC(n){return '<img class="ic" alt="" src="'+UIIMG[n]+'">'}
@@ -721,7 +721,7 @@ var GEM_DAY=3;
 function gemEarn(n){n=n||0;if(n<=0)return 0;var k=dayKey();if(!P.gd||P.gd.d!==k)P.gd={d:k,n:0};var g=Math.max(0,Math.min(n,GEM_DAY-P.gd.n));P.gd.n+=g;return g}
 if(!RELEASE)window.__gem=function(n){return gemEarn(n)};if(!RELEASE)window.__gA=function(g){return gAllow(g)};if(!RELEASE)window.__sr=function(){hideScreen();startRound()};if(!RELEASE)window.__sres=showResult;if(!RELEASE)window.__shard=shardRoll;if(!RELEASE)window.__pity=artPity;
 function giveRC(r){r.gems=gemEarn(r.gems);giveR(r)}
-function giveR(r){P.gold+=r.gold||0;P.sparks+=r.sparks||0;P.heat=(P.heat||0)+(r.heat||0);P.gems+=r.gems||0}
+function giveR(r){P.gold+=r.gold||0;P.sparks+=r.sparks||0;P.heat=(P.heat||0)+(r.heat||0);if(PLAT_ON&&r.heat)P.hp=(P.hp||0)+r.heat;P.gems+=r.gems||0}
 function leftTxt(ms){var m=Math.max(1,Math.floor(ms/6e4)),d=Math.floor(m/1440),h=Math.floor(m%1440/60);m=m%60;return d?d+' д '+h+' ч':(h?h+' ч '+m+' мин':m+' мин')}
 var qTab='d';
 function showTasks(tab){
@@ -734,7 +734,7 @@ function showTasks(tab){
   else{var arr=qTab==='d'?q.ds:q.ws;
     h+='<div class="qinfo">Обновятся через '+leftTxt((qTab==='d'?nd:nw).getTime()-now.getTime())+'</div><div class="cards">'+arr.map(function(x,i){return {o:x.c?2:x.p>=x.n?0:1,i:i,h:row(QI[x.t],QT[x.t]+' — '+x.n,x.p,x.n,x.r,x.p>=x.n,x.c,qTab+i)}}).sort(function(a,b){return a.o-b.o||a.i-b.i}).map(function(x){return x.h}).join('')+'</div>';
     if(qTab==='d')h+='<div class="cc" style="'+(q.db?'':'opacity:.8')+'"><div class="ci">'+IC('chestR')+'</div><div class="ct"><b>Бонус за все три</b><span>'+(q.db?'Бонус получен':'Забери все ежедневные задания и получи '+IC('gem')+' 1')+'</span></div></div>'}
-  screen('<div class="hdr"><h2>Задания</h2></div>'+resRow()+'<p class="qinfo" style="text-align:center;margin:2px 0 6px">Самоцветы из игры: не больше '+GEM_DAY+' в день (сегодня '+(P.gd&&P.gd.d===dayKey()?P.gd.n:0)+')</p><div class="qseg">'+[['d','Ежедневные'],['w','Недельные'],['a','Достижения']].map(function(t){return '<button data-t="'+t[0]+'"'+(qTab===t[0]?' class="on"':'')+'>'+t[1]+(qc[t[0]]?'<b class="nb2">'+qc[t[0]]+'</b>':'')+'</button>'}).join('')+'</div>'+h,true);
+  screen('<div class="hdr"><h2>Задания</h2></div>'+resRow()+'<p class="qinfo" style="text-align:center;margin:2px 0 6px">Самоцветы из игры: не больше '+GEM_DAY+' в день (сегодня '+(P.gd&&P.gd.d===dayKey()?P.gd.n:0)+')'+(PLATST?'<br>Тепло из игры дракону на платформе: '+(P.hk&&P.hk.d===dayKey()?P.hk.n:0)+' из 2 сегодня':'')+'</p><div class="qseg">'+[['d','Ежедневные'],['w','Недельные'],['a','Достижения']].map(function(t){return '<button data-t="'+t[0]+'"'+(qTab===t[0]?' class="on"':'')+'>'+t[1]+(qc[t[0]]?'<b class="nb2">'+qc[t[0]]+'</b>':'')+'</button>'}).join('')+'</div>'+h,true);
   [].forEach.call(ovbox.querySelectorAll('.qseg button'),function(b){b.onclick=function(){showTasks(b.dataset.t)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-q]'),function(b){b.onclick=function(){var k=b.dataset.q,x;
     if(k[0]==='a'){var i=+k.slice(1),a=ACH[i];if(q.a[i]||a.p()<a.n)return;q.a[i]=true;giveR(a.r)}
@@ -1325,7 +1325,7 @@ function showShop(reward){
   setMode('shop');var sl=spLeft();
   var cards=Object.keys(CH).map(function(k){var c=CH[k],cost=chCost(k),dead=sl.none&&k!=='wood';
     return '<div class="cc"><div class="ci">'+c.ic+'<button class="ib" data-i="'+k+'" aria-label="Шансы выпадения">i</button></div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span>'+(dead?'<small style="color:#ffd166">Все заклинания уже открыты — сундук не нужен</small>':(k!=='wood'&&sl.lk<=2?'<small style="color:#ffd166">Осталось открыть заклинаний: '+sl.lk+'</small>':''))+'</div><button data-k="'+k+'"'+((P[c.cur]<cost||dead)?' disabled':'')+'>'+(dead?'Максимум':cost+' '+CUR[c.cur])+'</button></div>'}).join('');
-  var ex=[{ic:'💎',n:'Обмен самоцвета',d:'1 💎 → 120 🪙 золота',k:'g2c',cost:1,cur:'gems'},{ic:'🔥',n:'Тепло для дракона',d:'2 💎 → 3 🔥 тепла: от него растёт дракон',k:'g2h',cost:2,cur:'gems'}].map(function(c){
+  var ex=[{ic:'💎',n:'Обмен самоцвета',d:'1 💎 → 120 🪙 золота',k:'g2c',cost:1,cur:'gems'},{ic:'🔥',n:'Тепло для дракона',d:'2 💎 → 3 🔥 тепла: от него растёт дракон',k:'g2h',cost:2,cur:'gems'}].filter(function(c){return !(PLATST&&c.k==='g2h')}).map(function(c){
     return '<div class="cc"><div class="ci">'+c.ic+'</div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span></div><button data-x="'+c.k+'"'+(P[c.cur]<c.cost?' disabled':'')+'>'+c.cost+' '+CUR[c.cur]+'</button></div>'}).join('');
   screen('<div class="hdr"><h2>Магазин</h2></div>'+resRow()+
     '<div id="rwBox" style="min-height:8px">'+(reward||'')+'</div>'+
@@ -1512,7 +1512,25 @@ function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementB
   e.querySelector('.eg').textContent=T[0];e.querySelector('h2').textContent=T[1];e.querySelector('p').textContent=T[2];
   if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
   e.classList.add('on')}
-function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill()}
+function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1)}
+/* Общий кошелёк с платформой: самоцветы = баланс платформы, тепло из игры уходит дракону (до 2 в день) */
+var kpBusy=0,kpT=0;
+window.kpSoon=function(){if(!PLATST||kpT)return;kpT=setTimeout(function(){kpT=0;kpSync()},900)};
+function kpSync(force){
+  if(!PLATST||!plCl||kpBusy)return;
+  var link=P.glink===1,g0=P.gems,b0=link?(P.gbase||0):g0,dg=Math.round(g0-b0),hp=Math.max(0,Math.round(P.hp||0));
+  if(link&&!dg&&!hp&&!force)return;
+  kpBusy=1;
+  plCl.rpc('keeper_sync',{p_gems:dg,p_heat:hp}).then(function(q){kpBusy=0;
+    var d=q&&q.data;if(!q||q.error||!d||typeof d.gems!=='number')return;
+    var rest=Math.round(P.gems-b0)-(link?(d.applied||0):0);
+    P.hp=Math.max(0,(P.hp||0)-hp);P.gbase=d.gems;P.glink=1;P.gems=Math.max(0,d.gems+rest);P.hk={d:dayKey(),n:d.heat||0};
+    try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}
+    try{hud()}catch(e){}
+  }).catch(function(){kpBusy=0})}
+document.addEventListener('visibilitychange',function(){if(!document.hidden)kpSync(1)});
+setInterval(function(){if(!document.hidden&&PLATST&&(P.gems!==P.gbase||P.hp>0))kpSync()},120000);
+if(!RELEASE)window.__kp=function(){return kpSync(1)};
 function platInit(){if(!PLAT_ON)return;var hx=document.getElementById('hexit');if(hx){hx.style.display='';hx.onclick=function(){location.href='/'}}plGate('check');
   function go(){try{plCl=plCl||window.supabase.createClient(PL_URL,PL_KEY)}catch(e){return plGate('err')}
     plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');
