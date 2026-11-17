@@ -716,7 +716,7 @@ function qBadge(){var q=qRefresh(),c=0;q.ds.concat(q.ws).forEach(function(x){if(
 function rewTxt(r){var o=[];if(r.gold)o.push(IC('coin')+' '+r.gold);if(r.heat)o.push(IC('heat')+' '+r.heat);if(r.sparks)o.push(IC('spark')+' '+r.sparks);if(r.gems)o.push(IC('gem')+' '+r.gems);return o.join('  ')}
 var GEM_DAY=3;
 function gemEarn(n){n=n||0;if(n<=0)return 0;var k=dayKey();if(!P.gd||P.gd.d!==k)P.gd={d:k,n:0};var g=Math.max(0,Math.min(n,GEM_DAY-P.gd.n));P.gd.n+=g;return g}
-if(!RELEASE)window.__gem=function(n){return gemEarn(n)};
+if(!RELEASE)window.__gem=function(n){return gemEarn(n)};if(!RELEASE)window.__gA=function(g){return gAllow(g)};if(!RELEASE)window.__sr=function(){hideScreen();startRound()};if(!RELEASE)window.__sres=showResult;
 function giveRC(r){r.gems=gemEarn(r.gems);giveR(r)}
 function giveR(r){P.gold+=r.gold||0;P.sparks+=r.sparks||0;P.heat=(P.heat||0)+(r.heat||0);P.gems+=r.gems||0}
 function leftTxt(ms){var m=Math.max(1,Math.floor(ms/6e4)),d=Math.floor(m/1440),h=Math.floor(m%1440/60);m=m%60;return d?d+' д '+h+' ч':(h?h+' ч '+m+' мин':m+' мин')}
@@ -914,7 +914,7 @@ function update(dt){
     var mm=1;if(e.stun>0){e.stun-=dt;mm=0}else if(e.slow>0){e.slow-=dt;mm=0.35}
     if(st.duel)duelEnemy(e,dt,mm);else e.x-=e.sp*mm*dt});
   st.en=st.en.filter(function(e){
-    if(e.hp<=0){var g=e.boss?40+Math.min(P.round,6)*10:Math.round(2+e.d.hp/20);g=Math.round(g*(1+.1*bLv('arena')+A('gold')+.1*PS('hunter')));P.gold+=g;st.earned+=g;qEv('kill',1);if(e.boss)qEv('boss',1);if(st.duel&&A('lif')>0)st.dhp=Math.min(st.dmax,st.dhp+st.dmax*A('lif'));
+    if(e.hp<=0){var g=e.boss?40+Math.min(P.round,6)*10:Math.round(2+e.d.hp/20);g=Math.max(1,Math.round(g*GK*(1+.1*bLv('arena')+A('gold')+.1*PS('hunter'))));g=gAllow(g);P.gold+=g;st.earned+=g;qEv('kill',1);if(e.boss)qEv('boss',1);if(st.duel&&A('lif')>0)st.dhp=Math.min(st.dmax,st.dhp+st.dmax*A('lif'));
       if(e.last)stat(st.rs,e.last).kills++
       st.fx.push({x:e.x,y:e.y-e.d.r*1.4,t:0,txt:'+'+g,col:'#ffd166'});
       if(e.boss){st.bossGone=true;P.sparks+=1;st.fx.push({x:e.x,y:e.y-e.d.r*2,t:0,txt:'+1',ic:'spark',col:'#fff4a0'});burst(e.x,e.y-30,'h',30)}
@@ -964,7 +964,7 @@ function statsTable(){
     return '<div class="srow"><div class="sn"><span>'+nm+'</span><b>'+pc+'%</b></div><div class="sb"><i style="width:'+pc+'%"></i></div></div>'}).join('')}
 function end(win){
   st.running=false;setMode('result');rlEl.classList.remove('on');st.hand=[];renderSkills();
-  if(st.camp){campEnd(win);return}if(st.rv){rvEnd(win);return}if(st.tp){tpEnd(win);return}var bonus=win?20+st.lives*3:0;P.gold+=bonus;if(win){P.round++;P.best=Math.max(P.best||0,P.round);qEv('win',1);if(st.lives>=MAXL())qEv('perfect',1)}save();hud();showResult(win,bonus)}
+  if(st.camp){campEnd(win);return}if(st.rv){rvEnd(win);return}if(st.tp){tpEnd(win);return}var bonus=win?gAllow(6+st.lives):0;P.gold+=bonus;if(win){P.round++;P.best=Math.max(P.best||0,P.round);qEv('win',1);if(st.lives>=MAXL())qEv('perfect',1)}save();hud();showResult(win,bonus)}
 var resetArm=false;
 var BIMG={"lair": "assets/dfd7833316.webp", "forge": "assets/c724c4f06d.webp", "treasury": "assets/cd8ec20da7.webp", "tower": "assets/bd6da9fdea.webp", "spring": "assets/1583a5e1d6.webp", "market": "assets/65c4752789.webp", "arena": "assets/165840824f.webp"}
 var BLD=[{id:'lair',n:'Логово',x:0,y:-0.95,w:28},{id:'forge',n:'Кузница',x:0.8,y:-0.55,w:25},{id:'spring',n:'Источник',x:1,y:0.2,w:24},{id:'arena',n:'Арена',x:0.62,y:0.98,w:27},{id:'market',n:'Рынок',x:-0.62,y:0.98,w:26},{id:'treasury',n:'Сокровищница',s:'Казна',x:-1,y:0.2,w:24},{id:'tower',n:'Алтарь дракона',s:'Алтарь',x:-0.8,y:-0.55,w:23}];
@@ -983,8 +983,11 @@ function bLv(id){if(id==='lair')return (P.b&&P.b.lair)||0;return (P.clan&&P.clan
 function MAXL(){if((mode==='battle'||mode==='result')&&st&&st.cfg&&st.cfg.lives)return st.cfg.lives;return 10+bLv('spring')}
 function bCap(id){return 5}
 function bCost(id,l){return id==='lair'?Math.round(90*Math.pow(2.2,l)):Math.round(50*Math.pow(1.9,l))}
-function tcPend(){var l=bLv('lair');if(!l)return 0;var h=Math.min(6,Math.max(0,(Date.now()-(P.tc||Date.now()))/3.6e6));return Math.floor(h*14*l*(1+.2*bLv('treasury')))}
-function fCost(id){return Math.round(45*lvl(id)*lvl(id)*(1-.08*bLv('forge')))}
+var GK=.4,GCAP_ALL=600,GCAP_END=250;
+function gDay(){var k=tYmd(new Date());if(!P.gd||P.gd.k!==k)P.gd={k:k,a:0,e:0};return P.gd}
+function gAllow(g){var d=gDay(),en=!st.duel,room=Math.min(GCAP_ALL-d.a,en?GCAP_END-d.e:1e9),x=Math.max(0,Math.min(g,room));d.a+=x;if(en)d.e+=x;if(x<g&&!st.gcapMsg){st.gcapMsg=1;try{st.fx.push({x:W/2,y:H*.4,t:0,txt:'Дневной лимит золота',col:'#ffd166',big:1})}catch(e){}}return x}
+function tcPend(){var l=bLv('lair');if(!l)return 0;var h=Math.min(6,Math.max(0,(Date.now()-(P.tc||Date.now()))/3.6e6));return Math.floor(h*6*l*(1+.2*bLv('treasury')))}
+function fCost(id){return Math.round(90*lvl(id)*lvl(id)*(1-.08*bLv('forge')))}
 var bEls={},bTimer=null;
 function renderBuildings(){
   var h=document.getElementById('home');
@@ -1268,7 +1271,8 @@ function layoutD(){var h=document.getElementById('home'),W=h.clientWidth,H=h.cli
 function goHome(){
   hideScreen();setMode('home');hud();renderBuildings();}
 function showResult(win,bonus){
-  screen('<h2>'+(win?'Раунд пройден!':'Раунд проигран')+'</h2><p>Золото за раунд: <b>+'+(st.earned+bonus)+'</b>'+(win?' (бонус за жизни +'+bonus+')':'')+' · жизни '+st.lives+'/'+MAXL()+'</p>'+resRow()+statsTable()+
+  var gd=gDay(),capMsg=(!st.duel&&gd.e>=GCAP_END)||gd.a>=GCAP_ALL?'<p style="margin:6px 0 0;font-size:12px;color:#ffd166">Дневной лимит золота за бои достигнут. Новое золото — завтра. Опыт и враги — как обычно.</p>':'';
+  screen('<h2>'+(win?'Раунд пройден!':'Раунд проигран')+'</h2><p>Золото за раунд: <b>+'+(st.earned+bonus)+'</b>'+(win?' (бонус за жизни +'+bonus+')':'')+' · жизни '+st.lives+'/'+MAXL()+'</p>'+capMsg+resRow()+statsTable()+
     '<p style="margin:8px 0 0;font-size:11px;opacity:.7">Здоровье врагов в следующем раунде: ×'+hpScale(P.round).toFixed(2)+'</p>'+
     '<button class="b" id="nextBtn">'+(win?'Дальше — раунд '+(P.round+1):'Повторить раунд '+(P.round+1))+'</button><button class="b alt" id="shopBtn">🎁 В магазин</button><button class="g" id="menuBtn">На главную</button>');
   document.getElementById('nextBtn').onclick=function(){hideScreen();startRound()};
