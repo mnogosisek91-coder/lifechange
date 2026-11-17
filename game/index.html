@@ -438,7 +438,7 @@ function campStars(ch){var a=(P.camp&&P.camp[ch])||[],n=0;for(var i=0;i<10;i++)n
 function campOpen(ch,lv){P.camp=P.camp||{};if(ch===1&&lv===1)return true;if(lv>1)return ((P.camp[ch]||[])[lv-2]||0)>0;return ch>1&&((P.camp[ch-1]||[])[9]||0)>0}
 function campNext(){for(var c=1;c<=CAMP.length;c++)for(var l=1;l<=10;l++){if(campOpen(c,l)&&!((P.camp[c]||[])[l-1]))return [c,l]}return [CAMP.length,10]}
 function campFirstRw(ch,lv){var r={gold:40+12*lv+60*(ch-1)};if(lv===10){r.sparks=2;r.gems=1}return r}
-function startCamp(ch,lv){hideScreen();startRound();st.cfg=campCfg(ch,lv);st.hpm=st.cfg.hpm;st.camp={ch:ch,lv:lv};duelInit({ch:ch,lv:lv,waves:3+Math.floor((lv-1)/3),boss:lv===10});
+function startCamp(ch,lv){hideScreen();startRound();st.cfg=campCfg(ch,lv);st.hpm=st.cfg.hpm;st.camp={ch:ch,lv:lv};st.campNew=!(P.camp&&P.camp[ch]&&P.camp[ch][lv-1]);duelInit({ch:ch,lv:lv,waves:3+Math.floor((lv-1)/3),boss:lv===10});
   st.fx=[{x:W/2,y:H*.3,t:0,txt:lv===10?'Босс: '+CAMP[ch-1].bn:'Уровень '+lv,col:lv===10?'#ff6b6b':'#ffd166',big:1}];hud()}
 function campDone(){return ((P.camp&&P.camp[CAMP.length]||[])[9]||0)>0}
 function campEnd(win){var cp=st.camp,rw={};
@@ -992,7 +992,7 @@ function bCap(id){return 5}
 function bCost(id,l){return id==='lair'?Math.round(90*Math.pow(2.2,l)):Math.round(50*Math.pow(1.9,l))}
 var GK=.4,GCAP_ALL=600,GCAP_END=250;
 function gDay(){var k=tYmd(new Date());if(!P.gg||P.gg.k!==k)P.gg={k:k,a:0,e:0};return P.gg}
-function gAllow(g){var d=gDay(),en=!st.duel,room=Math.min(GCAP_ALL-d.a,en?GCAP_END-d.e:1e9),x=Math.max(0,Math.min(g,room));d.a+=x;if(en)d.e+=x;if(x<g&&!st.gcapMsg){st.gcapMsg=1;try{st.fx.push({x:W/2,y:H*.4,t:0,txt:'Дневной лимит золота',col:'#ffd166',big:1})}catch(e){}}return x}
+function gAllow(g){if(st.camp&&st.campNew)return g;var d=gDay(),en=!st.duel,room=Math.min(GCAP_ALL-d.a,en?GCAP_END-d.e:1e9),x=Math.max(0,Math.min(g,room));d.a+=x;if(en)d.e+=x;if(x<g&&!st.gcapMsg){st.gcapMsg=1;try{st.fx.push({x:W/2,y:H*.4,t:0,txt:'Дневной лимит золота',col:'#ffd166',big:1})}catch(e){}}return x}
 function tcPend(){var l=bLv('lair');if(!l)return 0;var h=Math.min(6,Math.max(0,(Date.now()-(P.tc||Date.now()))/3.6e6));return Math.floor(h*6*l*(1+.2*bLv('treasury')))}
 function fCost(id){return Math.round(25*Math.pow(lvl(id),1.7)*(1-.08*bLv('forge')))}
 var bEls={},bTimer=null;
