@@ -91,7 +91,7 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 .chips{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-bottom:8px}
 .chips span{font-size:11px;background:#232c57;border-radius:8px;padding:3px 7px}
 #xit{position:absolute;left:8px;top:8px;z-index:5;width:34px;height:34px;border-radius:10px;border:1px solid #3a4478;background:rgba(10,14,30,.75);font-size:16px;padding:0;color:#fff}
-#dtog{position:absolute;right:8px;top:8px;z-index:5;width:42px;height:42px;border-radius:12px;border:2px solid #ffd166;background:rgba(10,14,30,.8);font-size:22px;padding:0;color:#fff;box-shadow:0 0 12px rgba(255,200,80,.5)}#dpan{top:56px!important}
+#modbtn{position:absolute;right:8px;top:8px;z-index:5;width:40px;height:40px;border-radius:12px;border:2px solid #7bd88f;background:rgba(10,14,30,.8);font-size:20px;padding:0;color:#fff;display:none}.mrow{flex-wrap:wrap}.mrow .ct{flex:1 1 140px;min-width:0}.mrow .ct b{word-break:break-word}.mact{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end}.mact button.red{background:linear-gradient(#ff8a8a,#e04a4a);color:#fff}.mact button.gr{background:#2a335f;color:#dfe6ff}.mbd{font-size:10px;font-weight:800;border-radius:6px;padding:1px 5px;margin-right:4px;background:#2a335f;color:#cfe}.mbd.a{background:#f5a524;color:#2a1a00}.mbd.m{background:#4aa86a;color:#fff}.mbd.x{background:#e04a4a;color:#fff}#dtog{position:absolute;right:8px;top:8px;z-index:5;width:42px;height:42px;border-radius:12px;border:2px solid #ffd166;background:rgba(10,14,30,.8);font-size:22px;padding:0;color:#fff;box-shadow:0 0 12px rgba(255,200,80,.5)}#dpan{top:56px!important}
 #dpan{position:absolute;right:8px;top:48px;z-index:5;background:rgba(10,14,30,.85);border:1px solid #3a4478;border-radius:12px;padding:6px 8px;display:none;flex-direction:column;gap:6px;max-width:calc(100% - 16px)}
 #dpan.open{display:flex}
 #dpan b{font-size:10px;opacity:.7;letter-spacing:.04em}
@@ -236,7 +236,7 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
   <div id="hud"><button id="hexit" type="button" style="display:none" aria-label="Выйти на платформу">←</button><img id="hlogo" alt="" src="assets/3e2be70852.webp"><span id="rd">Раунд 1</span><div class="bar"><i id="hp"></i></div><span id="lv">❤️ 10</span><span id="cur">🪙 0</span></div>
   <div id="fieldbox"><canvas id="cv"></canvas>
     <div id="home"></div>
-    <button id="xit" aria-label="Выйти" style="display:none">✕</button>
+    <button id="xit" aria-label="Выйти" style="display:none">✕</button><button id="modbtn" aria-label="Модерация" type="button">🛡️</button>
     <button id="dtog" aria-label="События"><span class="di">⚔️</span><span class="dl">События</span></button>
     <div id="dpan"><b>ДЕМО: ЭТАП ДРАКОНА</b><div class="row" id="dst"></div><div class="row" id="dcl"></div></div>
     <div id="ov"><div class="box" id="ovbox"></div></div>
@@ -789,7 +789,7 @@ function tickHand(dt){if(!st.hand||!st.hcd)return;for(var i=0;i<st.hand.length;i
 function useHand(i){if(!st.running||!st.hand[i])return;var id=st.hand[i];st.hand[i]=null;st.hcd=st.hcd||[];st.hcd[i]=st.hcm=slotCd();castSpell(id);if(PS('echo')&&Math.random()<.06*PS('echo')){var dpe=dragonPos();st.fx.push({x:dpe.x,y:dpe.y-H*.14,t:0,txt:'Эхо!',col:'#c8a0ff'});st.later.push({t:.45,fn:function(){if(st.running)castSpell(id)}})}qEv('cast',1);skEl.replaceChild(mkSlot(i,false),skEl.children[i])}
 
 var mode='home',navEl=document.getElementById('nav');
-function setMode(m){mode=m;var b=m==='battle';document.getElementById('xit').style.display=b?'':'none';document.getElementById('dtog').style.display=(b||m==='result')?'none':'';if(!b){document.getElementById('atk').style.display='none';document.getElementById('aauto').style.display='none'}document.getElementById('skwrap').style.display=b?'':'none';navEl.style.display=(b||m==='result')?'none':'';document.getElementById('home').style.display=m==='home'?'block':'none';[].forEach.call(navEl.children,function(x){x.classList.toggle('on',x.dataset.m===m)});document.getElementById('hud').querySelector('.bar').style.visibility=(b||m==='result')?'visible':'hidden';if(!b&&m!=='result'){try{hud()}catch(e){}}}
+function setMode(m){mode=m;try{modBtn()}catch(e){}var b=m==='battle';document.getElementById('xit').style.display=b?'':'none';document.getElementById('dtog').style.display=(b||m==='result')?'none':'';if(!b){document.getElementById('atk').style.display='none';document.getElementById('aauto').style.display='none'}document.getElementById('skwrap').style.display=b?'':'none';navEl.style.display=(b||m==='result')?'none':'';document.getElementById('home').style.display=m==='home'?'block':'none';[].forEach.call(navEl.children,function(x){x.classList.toggle('on',x.dataset.m===m)});document.getElementById('hud').querySelector('.bar').style.visibility=(b||m==='result')?'visible':'hidden';if(!b&&m!=='result'){try{hud()}catch(e){}}}
 function startRound(){setMode('battle');
   var c=rcfg(P.round);
   st={running:true,cfg:c,hpm:hpScale(P.round),t:0,nextSpawn:1,bossSpawned:false,bossGone:false,en:[],fx:[],pa:[],part:[],bolts:[],rings:[],later:[],em:[],mets:[],shake:0,flashB:0,flashT:0,blindT:0,leak:0,lives:MAXL(),shield:0,earned:0,rs:{},fireT:0,reload:0,hand:[],bag:[]};
@@ -1512,7 +1512,7 @@ function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementB
   e.querySelector('.eg').textContent=T[0];e.querySelector('h2').textContent=T[1];e.querySelector('p').textContent=T[2];
   if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
   e.classList.add('on')}
-function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1)}
+function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit()}
 /* Общий кошелёк с платформой: самоцветы = баланс платформы, тепло из игры уходит дракону (до 2 в день) */
 var kpBusy=0,kpT=0;
 window.kpSoon=function(){if(!PLATST||kpT)return;kpT=setTimeout(function(){kpT=0;kpSync()},900)};
@@ -1531,6 +1531,49 @@ function kpSync(force){
 document.addEventListener('visibilitychange',function(){if(!document.hidden)kpSync(1)});
 setInterval(function(){if(!document.hidden&&PLATST&&(P.gems!==P.gbase||P.hp>0))kpSync()},120000);
 if(!RELEASE)window.__kp=function(){return kpSync(1)};
+/* Модерация (только для админа и модераторов, права проверяет сервер) */
+var KPROLE=null,mTab='u',mQ='';
+function mEsc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function modInit(){if(!PLATST||!plCl)return;plCl.rpc('mod_me').then(function(q){var d=q&&q.data;if(!d||q.error)return;KPROLE=(d.admin||d.moderator)?{admin:!!d.admin}:null;modBtn()}).catch(function(){})}
+function modBtn(){var b=document.getElementById('modbtn');if(b){b.style.display=(KPROLE&&mode==='home')?'block':'none';b.onclick=function(){showMod()}}}
+function modErr(e){var m=(e&&e.message)||'ошибка';return m==='not_mod'||m==='not_admin'?'Нет прав':m==='protected'?'Этого человека трогать нельзя':m==='self'?'К себе применить нельзя':m}
+function showMod(tab){if(!KPROLE)return;if(tab)mTab=tab;
+  var T=[['u','Люди'],['r','Отчёты'],['c','Жалобы']];
+  screen('<div class="hdr"><h2>🛡 Модерация</h2></div><p class="qinfo" style="text-align:center;margin:2px 0 6px">'+(KPROLE.admin?'Роль: админ. Можно выдавать модераторов.':'Роль: модератор.')+'</p><div class="qseg">'+T.map(function(t){return '<button data-t="'+t[0]+'"'+(mTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div><div id="modBody" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div><button class="g" id="modClose">Закрыть</button>',true);
+  [].forEach.call(ovbox.querySelectorAll('.qseg button'),function(b){b.onclick=function(){showMod(b.dataset.t)}});
+  document.getElementById('modClose').onclick=function(){hideScreen()};
+  modLoad()}
+function modMsg(t){var b=document.getElementById('modBody');if(b)b.innerHTML='<p class="qinfo" style="text-align:center">'+mEsc(t)+'</p>'}
+function modDo(fn,args){return plCl.rpc(fn,args).then(function(q){if(q.error){alert(modErr(q.error));return false}return true}).catch(function(){alert('Нет связи');return false})}
+function modLoad(){var bd=document.getElementById('modBody');if(!bd)return;var tab=mTab;
+  if(tab==='u'){
+    bd.innerHTML='<div style="display:flex;gap:6px"><input id="mQ" value="'+mEsc(mQ)+'" placeholder="Имя или @ник" style="flex:1;min-width:0;border-radius:10px;border:1px solid #3a4478;background:#121936;color:#fff;padding:9px;font-size:14px"><button class="b" id="mGo" style="width:auto;margin:0;padding:9px 14px">Найти</button></div><div id="mList" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';
+    var go=function(){mQ=document.getElementById('mQ').value;modLoad()};document.getElementById('mGo').onclick=go;document.getElementById('mQ').onkeydown=function(e){if(e.key==='Enter')go()};
+    plCl.rpc('mod_users',{p_q:mQ}).then(function(q){var L=document.getElementById('mList');if(!L||mTab!=='u')return;if(q.error)return L.innerHTML='<p class="qinfo">'+mEsc(modErr(q.error))+'</p>';
+      var a=q.data||[];if(!a.length)return L.innerHTML='<p class="qinfo" style="text-align:center">Никого не нашли</p>';
+      L.innerHTML=a.map(function(u){var bd2=(u.is_admin?'<span class="mbd a">админ</span>':'')+(u.is_moderator?'<span class="mbd m">модератор</span>':'')+(u.banned?'<span class="mbd x">бан</span>':'');
+        var acts='';if(KPROLE.admin&&!u.is_admin)acts+='<button class="gr" data-a="mod" data-id="'+u.id+'" data-on="'+(u.is_moderator?0:1)+'">'+(u.is_moderator?'Снять модератора':'Сделать модератором')+'</button>';
+        if(!u.is_admin&&(KPROLE.admin||!u.is_moderator))acts+=u.banned?'<button class="gr" data-a="unban" data-id="'+u.id+'">Снять бан</button>':'<button class="red" data-a="ban" data-id="'+u.id+'">Бан</button>';
+        return '<div class="cc mrow"><div class="ct"><b>'+mEsc(u.name||'Без имени')+'</b><span>'+bd2+(u.tg_username?'@'+mEsc(u.tg_username):'')+(u.email?' · '+mEsc(u.email):'')+'</span></div><div class="mact">'+acts+'</div></div>'}).join('');
+      [].forEach.call(L.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modUserAct(b)}})}).catch(function(){modMsg('Нет связи')})
+  }else if(tab==='r'){
+    plCl.rpc('mod_reports').then(function(q){if(mTab!=='r')return;if(q.error)return modMsg(modErr(q.error));var a=q.data||[];if(!a.length)return modMsg('Отчётов нет');
+      bd.innerHTML=a.map(function(r){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(r.name||'Без имени')+'</b><span>'+mEsc(r.challenge)+' · '+mEsc(r.day)+' · +'+mEsc(r.points)+'</span><div class="mph" id="mph'+r.id+'"></div></div><div class="mact">'+(r.file_path?'<button class="gr" data-a="photo" data-id="'+r.id+'" data-p="'+mEsc(r.file_path)+'">Фото</button>':'')+'<button class="red" data-a="rej" data-id="'+r.id+'">Отклонить</button></div></div>'}).join('');
+      [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modRepAct(b)}})}).catch(function(){modMsg('Нет связи')})
+  }else{
+    plCl.rpc('mod_complaints').then(function(q){if(mTab!=='c')return;if(q.error)return modMsg(modErr(q.error));var a=q.data||[];if(!a.length)return modMsg('Жалоб нет');
+      bd.innerHTML=a.map(function(c){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(c.from_name)+' → '+mEsc(c.target_name)+'</b><span>'+mEsc(c.body)+'</span>'+(c.status==='closed'?'<span style="opacity:.6">закрыта</span>':'')+'</div><div class="mact">'+(c.status==='new'?'<button class="gr" data-a="cl" data-id="'+c.id+'">Закрыть жалобу</button>':'')+'</div></div>'}).join('');
+      [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modDo('mod_complaint_close',{p_id:+b.dataset.id}).then(function(ok){if(ok)modLoad()})}})}).catch(function(){modMsg('Нет связи')})}}
+function modUserAct(b){var a=b.dataset.a,id=b.dataset.id;
+  if(a==='mod')return modDo('mod_set_moderator',{p_user:id,p_on:b.dataset.on==='1'}).then(function(ok){if(ok)modLoad()});
+  if(a==='unban')return modDo('mod_unban',{p_user:id}).then(function(ok){if(ok)modLoad()});
+  if(a==='ban'){var box=b.parentNode;box.innerHTML='<span style="font-size:12px;opacity:.8;width:100%;text-align:right">На сколько банить?</span>'+[['1 ч',1],['24 ч',24],['7 дн',168],['Навсегда',0]].map(function(x){return '<button class="red" data-h="'+x[1]+'">'+x[0]+'</button>'}).join('')+'<button class="gr" data-h="x">Отмена</button>';
+    [].forEach.call(box.querySelectorAll('button'),function(c){c.onclick=function(){if(c.dataset.h==='x')return modLoad();modDo('mod_ban',{p_user:id,p_hours:+c.dataset.h,p_reason:'Нарушение правил'}).then(function(ok){modLoad()})}})}}
+function modRepAct(b){var id=+b.dataset.id;
+  if(b.dataset.a==='photo'){var box=document.getElementById('mph'+id);if(!box)return;if(box.firstChild){box.innerHTML='';return}box.textContent='Загрузка…';
+    return plCl.storage.from('reports').createSignedUrl(b.dataset.p,300).then(function(r){if(!r||r.error||!r.data){box.textContent='Фото не открылось';return}box.innerHTML='<img src="'+mEsc(r.data.signedUrl)+'" alt="" style="max-width:100%;border-radius:10px;margin-top:6px">'}).catch(function(){box.textContent='Нет связи'})}
+  if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Точно?';return}
+  modDo('mod_reject_report',{p_id:id}).then(function(ok){if(ok)modLoad()})}
 function platInit(){if(!PLAT_ON)return;var hx=document.getElementById('hexit');if(hx){hx.style.display='';hx.onclick=function(){location.href='/'}}plGate('check');
   function go(){try{plCl=plCl||window.supabase.createClient(PL_URL,PL_KEY)}catch(e){return plGate('err')}
     plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');
