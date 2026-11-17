@@ -1216,11 +1216,17 @@ function artPity(){artMig();var need=Math.min(ARTS.length,Math.floor(dLevel().l*
 function xpRow(){var x=st.lastXp;if(!x)return '';var pt=(st.lastPity||[]).map(function(a){return '<div class="artdrop">'+artIc(a,1)+'<div><b>Дракон нашёл артефакт!</b><span>'+a.n+' · '+RAR[a.r]+'</span><small>'+a.t(1)+'</small></div></div>'}).join('');return '<div class="xprow">'+IC('dragon')+' Опыт дракона: <b>+'+x.n+'</b>'+(x.up?' · <b>уровень '+x.up+'!</b>':'')+(x.slot?'<br><b>Новый слот артефактов!</b>':'')+'</div>'+pt}
 function A(k){var t=0;(P.eq||[]).forEach(function(id){var a=ABYID[id],o=(P.art||{})[id];if(a&&o&&a.b[k])t+=a.b[k]*o.l});return t}
 var SHN={1:6,2:9,3:12};
+var SHGEO={"fang": [3, 2], "scale": [3, 2], "heart": [3, 2], "clover": [3, 2], "sand": [3, 2], "stone": [3, 2], "amulet": [3, 3], "clock": [3, 3], "spear": [3, 3], "seal": [3, 3], "feather": [4, 3], "eye": [4, 3], "crown": [4, 3]},SHATL={"fang":"assets/215931613f.webp","scale":"assets/6766d1b348.webp","heart":"assets/ca0ba6e1c2.webp","clover":"assets/c0bba8935f.webp","sand":"assets/3aa8b8347f.webp","stone":"assets/adf486e685.webp","amulet":"assets/fcde1c6c13.webp","clock":"assets/98615c92d6.webp","spear":"assets/e3f6c1504f.webp","seal":"assets/756110cca8.webp","feather":"assets/bc0502e233.webp","eye":"assets/7af16433dc.webp","crown":"assets/5013d183ee.webp"};
+(function(){var st=document.createElement('style');st.textContent='.shp{display:inline-block;background-repeat:no-repeat;flex:none}.shp.no{filter:brightness(0);opacity:.28}.shgrid{display:grid;gap:4px;justify-content:center;margin:8px 0}.shgrid .shp{border-radius:6px;background-color:rgba(255,255,255,.05)}.artdrop .shrow{display:flex;gap:2px;flex:none}'+Object.keys(SHATL).map(function(k){return '.sh_'+k+'{background-image:url('+SHATL[k]+')}'}).join('');document.head.appendChild(st)})();
+function shPiece(a,i,sz,own){var g=SHGEO[a.id];if(!g)return '';return '<span class="shp sh_'+a.id+(own?'':' no')+'" style="width:'+sz+'px;height:'+sz+'px;background-size:'+g[0]*sz+'px '+g[1]*sz+'px;background-position:-'+(i%g[0])*sz+'px -'+Math.floor(i/g[0])*sz+'px"></span>'}
+function shGrid(a){var g=SHGEO[a.id],m=(P.sp&&P.sp[a.id])||0,h='',i,N=shN(a);for(i=0;i<N;i++)h+=shPiece(a,i,g[0]>3?62:70,!!(m&(1<<i)));return '<div class="shgrid" style="grid-template-columns:repeat('+g[0]+',auto)">'+h+'</div>'}
+function spCnt(m){var c=0;while(m){c+=m&1;m>>=1}return c}
+
 function shN(a){return SHN[a.r]||8}
-function artMig(){P.art=P.art||{};P.sh=P.sh||{};Object.keys(P.art).forEach(function(id){var o=P.art[id],a=ABYID[id];if(a&&o.c>0){P.sh[id]=(P.sh[id]||0)+o.c*shN(a);o.c=0}})}
+function artMig(){P.art=P.art||{};P.sh=P.sh||{};P.sp=P.sp||{};ARTS.forEach(function(a){if(!P.art[a.id]&&P.sp[a.id]===undefined&&(P.sh[a.id]||0)>0)P.sp[a.id]=(1<<Math.min(P.sh[a.id],shN(a)))-1});Object.keys(P.art).forEach(function(id){var o=P.art[id],a=ABYID[id];if(a&&o.c>0){P.sh[id]=(P.sh[id]||0)+o.c*shN(a);o.c=0}})}
 function artCap(){return Math.floor(dLevel().l*ARTS.length/60)+1}
 function artHave(){return Object.keys(P.art||{}).length}
-function artAsm(a){P.art=P.art||{};if(P.art[a.id])return false;P.art[a.id]={l:1,c:0};P.sh[a.id]=Math.max(0,(P.sh[a.id]||0)-shN(a));if((P.eq||[]).length<slotsN())P.eq=(P.eq||[]).concat(a.id);return true}
+function artAsm(a){P.art=P.art||{};if(P.art[a.id])return false;P.art[a.id]={l:1,c:0};P.sp=P.sp||{};P.sp[a.id]=0;P.sh[a.id]=Math.max(0,(P.sh[a.id]||0)-shN(a));if((P.eq||[]).length<slotsN())P.eq=(P.eq||[]).concat(a.id);return true}
 var SH_DAY=8;
 function shardRoll(n,ch){artMig();var gd=gDay();gd.s=gd.s||0;if(gd.s>=SH_DAY)return null;n=Math.min(n,SH_DAY-gd.s);gd.s+=n;var r=Math.random()*100,ep=4+ch*.5,rr=24+ch*.6,rar=r<ep?3:(r<ep+rr?2:1),pool=ARTS.filter(function(a){return a.r===rar});
   var open=artHave()<artCap();
@@ -1228,15 +1234,15 @@ function shardRoll(n,ch){artMig();var gd=gDay();gd.s=gd.s||0;if(gd.s>=SH_DAY)ret
   var cand=started.length&&Math.random()<.7?started:(fresh.length?fresh:up);
   if(!cand.length){cand=ARTS.filter(function(a){return !P.art[a.id]&&open}).concat(ARTS.filter(function(a){return P.art[a.id]&&P.art[a.id].l<AMAX}))}
   if(!cand.length)return null;
-  var a=cand[Math.floor(Math.random()*cand.length)];P.sh[a.id]=(P.sh[a.id]||0)+n;
-  var res={a:a,n:n,asm:false,have:P.sh[a.id],need:shN(a),isNew:false};
-  if(!P.art[a.id]&&P.sh[a.id]>=shN(a)){artAsm(a);res.asm=true;res.isNew=true;res.have=P.sh[a.id]}
-  else if(P.art[a.id]){var o=P.art[a.id];res.need=o.l*shN(a);res.up=true}
+  var a=cand[Math.floor(Math.random()*cand.length)],N=shN(a),pcs=[],res;
+  if(!P.art[a.id]){P.sp=P.sp||{};var m=P.sp[a.id]||0,miss=[],i;for(i=0;i<N;i++)if(!(m&(1<<i)))miss.push(i);var k=n;while(k>0&&miss.length){var j=Math.floor(Math.random()*miss.length);pcs.push(miss[j]);m|=1<<miss[j];miss.splice(j,1);k--}P.sp[a.id]=m;P.sh[a.id]=spCnt(m)+k;
+    res={a:a,n:n,asm:false,have:spCnt(m),need:N,isNew:false,pcs:pcs};if(spCnt(m)>=N){artAsm(a);res.asm=true;res.isNew=true}}
+  else{P.sh[a.id]=(P.sh[a.id]||0)+n;var o=P.art[a.id];for(var q=0;q<n;q++)pcs.push(Math.floor(Math.random()*N));res={a:a,n:n,asm:false,have:P.sh[a.id],need:o.l*N,up:true,pcs:pcs}}
   save();return res}
 function artRoll(chance,ch,n){if(Math.random()>=chance)return null;return shardRoll(n||1,ch)}
-function shIc(a,big){var n=(P.sh&&P.sh[a.id])||0,im=ARTIMG[a.id],pc=Math.min(100,Math.round(n/shN(a)*100)),c='ai r'+a.r+(big?' big':'');if(!im||!n)return '<span class="'+c+'">?</span>';return '<span class="'+c+'" style="position:relative"><img alt="" src="'+im+'" style="filter:brightness(.16) grayscale(1)"><img alt="" src="'+im+'" style="position:absolute;left:7%;top:7%;clip-path:inset('+(100-pc)+'% 0 0 0)"></span>'}
+function shIc(a,big){var n=P.art&&P.art[a.id]?(P.sh&&P.sh[a.id])||0:spCnt((P.sp&&P.sp[a.id])||0),im=ARTIMG[a.id],pc=Math.min(100,Math.round(n/shN(a)*100)),c='ai r'+a.r+(big?' big':'');if(!im||!n)return '<span class="'+c+'">?</span>';return '<span class="'+c+'" style="position:relative"><img alt="" src="'+im+'" style="filter:brightness(.16) grayscale(1)"><img alt="" src="'+im+'" style="position:absolute;left:7%;top:7%;clip-path:inset('+(100-pc)+'% 0 0 0)"></span>'}
 function artIc(a,big){return '<span class="ai r'+a.r+(big?' big':'')+'">'+(ARTIMG[a.id]?'<img src="'+ARTIMG[a.id]+'" alt="">':a.e)+'</span>'}
-function artRow(){var x=st.lastArt;if(!x)return '';return '<div class="artdrop">'+artIc(x.a,1)+'<div><b>'+(x.asm?'Артефакт собран!':(x.n>1?'Найдено осколков: ×'+x.n:'Найден осколок'))+'</b><span>'+x.a.n+' · '+RAR[x.a.r]+'</span><small>'+(x.asm?x.a.t(1):(x.up?'Осколков для улучшения: '+x.have+' / '+x.need:'Осколков: '+x.have+' / '+x.need))+'</small></div></div>'}
+function artRow(){var x=st.lastArt;if(!x)return '';var ic=x.asm?artIc(x.a,1):'<span class="shrow">'+(x.pcs||[]).slice(0,3).map(function(i){return shPiece(x.a,i,52,true)}).join('')+'</span>';return '<div class="artdrop">'+ic+'<div><b>'+(x.asm?'Артефакт собран!':(x.n>1?'Найдено осколков: ×'+x.n:'Найден осколок'))+'</b><span>'+x.a.n+' · '+RAR[x.a.r]+'</span><small>'+(x.asm?x.a.t(1):(x.up?'Осколков для улучшения: '+x.have+' / '+x.need:'Осколков: '+x.have+' / '+x.need))+'</small></div></div>'}
 var dTab='s',aSel='';
 function showSpell(id){var sp=BYID[id],u=P.unlocked.indexOf(id)>=0,l=lvl(id),mx=l>=5,c=fCost(id);
   function ef(L){return 'Сила ×'+(1+.25*(L-1)).toFixed(2)+' · длительность ×'+(1+.1*(L-1)).toFixed(1)}
@@ -1263,10 +1269,10 @@ function showDragon(tab){artMig();if(tab)dTab=tab;P.ds=P.ds||{s:0,h:0,a:0};P.art
   else{
     var sl='';for(var i=0;i<SLOTLV.length;i++){var id=P.eq[i],a=ABYID[id];if(i>=slotsN()){sl+='<div class="slot lk"><span>'+IC('lock')+'</span><small>Ур. дракона '+SLOTLV[i]+'</small></div>';continue}sl+=a?'<button class="slot'+(aSel===id?' sel':'')+'" data-s="'+id+'">'+artIc(a,1)+'<small>'+a.n+'</small></button>':'<div class="slot empty"><span>＋</span><small>Свободно</small></div>'}
     var grid=ARTS.map(function(a){var o=P.art[a.id],eq=P.eq.indexOf(a.id)>=0;
-      return '<button class="atile'+(aSel===a.id?' sel':'')+(o?'':((P.sh[a.id]||0)>0?' unk part':' unk'))+'" data-s="'+a.id+'">'+(o?artIc(a)+'<i class="lv">'+o.l+'</i>'+(eq?'<i class="eq">✓</i>':''):shIc(a)+((P.sh[a.id]||0)>0?'<i class="lv">'+P.sh[a.id]+'/'+shN(a)+'</i>':''))+'</button>'}).join('');
+      return '<button class="atile'+(aSel===a.id?' sel':'')+(o?'':(spCnt(P.sp[a.id]||0)>0?' unk part':' unk'))+'" data-s="'+a.id+'">'+(o?artIc(a)+'<i class="lv">'+o.l+'</i>'+(eq?'<i class="eq">✓</i>':''):shIc(a)+(spCnt(P.sp[a.id]||0)>0?'<i class="lv">'+spCnt(P.sp[a.id]||0)+'/'+shN(a)+'</i>':''))+'</button>'}).join('');
     var det='';var sa=ABYID[aSel];
     if(sa){var o=P.art[sa.id];
-      if(!o)det='<div class="adet"><div class="ahd">'+shIc(sa,1)+'<div><b>'+((P.sh[sa.id]||0)>0?'Осколки найдены':'Не найден')+'</b><small>'+RAR[sa.r]+'</small></div></div><p>Осколки: <b>'+(P.sh[sa.id]||0)+' / '+shN(sa)+'</b><br>Осколки выпадают за победы в «Пути дракона» и «Искушениях». Собери все — артефакт появится сам.</p></div>';
+      if(!o)det='<div class="adet"><div class="ahd">'+shIc(sa,1)+'<div><b>'+(spCnt(P.sp[sa.id]||0)>0?'Осколки найдены':'Не найден')+'</b><small>'+RAR[sa.r]+'</small></div></div>'+shGrid(sa)+'<p>Осколки: <b>'+spCnt(P.sp[sa.id]||0)+' / '+shN(sa)+'</b><br>Осколки выпадают за победы в «Пути дракона» и «Искушениях». Собери все — артефакт появится сам.</p></div>';
       else{var eq2=P.eq.indexOf(sa.id)>=0,can=o.l<AMAX&&(P.sh[sa.id]||0)>=o.l*shN(sa);
         det='<div class="adet"><div class="ahd">'+artIc(sa,1)+'<div><b>'+sa.n+' · ур. '+o.l+'</b><small>'+RAR[sa.r]+'</small></div></div><p>'+sa.t(o.l)+(o.l<AMAX?'<br><span style="opacity:.75">Следующий уровень: '+sa.t(o.l+1)+'</span>':'')+'</p><small>'+(o.l<AMAX?'Осколков '+(P.sh[sa.id]||0)+' / '+o.l*shN(sa)+' до улучшения':'Максимальный уровень')+'</small>'+
           '<div class="two"><button class="b'+(eq2?' alt':'')+'" data-e="'+sa.id+'">'+(eq2?'Снять':'Надеть')+'</button>'+(o.l<AMAX?'<button class="b'+(can?'':' alt')+'" data-up="'+sa.id+'"'+(can?'':' disabled')+'>Улучшить</button>':'')+'</div></div>'}}
