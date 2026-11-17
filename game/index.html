@@ -1472,6 +1472,23 @@ function showChat(tab){chTab=tab||chTab;if(chTab==='c'&&!P.clan&&tab==='c'){}var
   var last=0;function send(){var i=document.getElementById('chI'),x=(i.value||'').trim();if(!x||Date.now()-last<2000)return;if(/(https?:|www\.|t\.me|\.com|\.uz|\.ru)/i.test(x)){i.value='';i.placeholder='Ссылки в чате запрещены';return}last=Date.now();chAdd(chTab,'Ты',x);save();i.value='';chList()}
   document.getElementById('chS').onclick=send;document.getElementById('chI').onkeydown=function(e){if(e.key==='Enter')send()};
   clearInterval(chTm);chTm=setInterval(function(){if(!document.getElementById('cht').classList.contains('on')){clearInterval(chTm);return}if(Math.random()<.4){chBot(chTab==='c'&&P.clan?'c':'g');chList()}},8000)}
+/* связь с платформой LifeChange: вход, яйцо, вид дракона */
+var PLAT_ON=RELEASE&&(/(^|\.)lifechange\.uz$/.test(location.hostname)||/[?&]plat=1/.test(location.search)),PLATST=null,PL_URL='https://eknhitligfpoqmoxaect.supabase.co',PL_KEY='sb_publishable_qGOiIts0uyg9xjU0QC_AWg_OEJ1ElOB',plCl=null;
+function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementById('eggT'),T={
+  check:['🐉','Проверяем дракона…','',''],
+  login:['🔑','Войди в LifeChange','Игра доступна игрокам платформы. Войди в свой аккаунт на LifeChange и вернись сюда.','Открыть LifeChange'],
+  egg:['🥚','Дракон ещё в яйце','Игра откроется, когда он вылупится. Выполняй привычки на платформе — яйцо согревается с каждым днём.','К моему дракону'],
+  err:['⚠️','Не удалось проверить дракона','Проверь интернет и попробуй ещё раз.','Повторить']}[k];
+  e.querySelector('.eg').textContent=T[0];e.querySelector('h2').textContent=T[1];e.querySelector('p').textContent=T[2];
+  if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
+  e.classList.add('on')}
+function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet'};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill()}
+function platInit(){if(!PLAT_ON)return;plGate('check');
+  function go(){try{plCl=plCl||window.supabase.createClient(PL_URL,PL_KEY)}catch(e){return plGate('err')}
+    plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');
+      return plCl.rpc('pet_get').then(function(q){if(q.error||!q.data)return plGate('err');var st=q.data;if(!st.hatched)return plGate('egg');plOk(st)})}).catch(function(){plGate('err')})}
+  if(window.supabase&&window.supabase.createClient)return go();
+  var sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';sc.onload=go;sc.onerror=function(){plGate('err')};document.head.appendChild(sc)}
 function socInit(h){if(RELEASE||document.getElementById('onbtn'))return;var o=document.createElement('button');o.id='onbtn';o.innerHTML='<i></i>Онлайн <b>0</b>';o.onclick=showOnline;h.appendChild(o);var c=document.createElement('button');c.id='chbtn';c.textContent='💬 Чат';c.onclick=function(){showChat()};h.appendChild(c);onUpd();setInterval(onUpd,30000)}
 if(!RELEASE){window.__st=function(){return st};window.__P=function(){return P};window.__cast=function(id){castSpell(id)};window.__camp=startCamp;window.__tempt=startTempt;window.__flip=function(v){DFLIP=v};window.__spawn=function(id){spawn(ENEMIES.filter(function(x){return x.id===id})[0])};}
 fit();
@@ -1486,7 +1503,7 @@ fit();
  ST.forEach(function(s){var b=document.createElement('button');b.className='ch';b.textContent=s[1];b.dataset.s=s[0];b.onclick=function(){cur.st=s[0];apply()};stEl.appendChild(b)});
  Object.keys(CL).forEach(function(c){var b=document.createElement('button');b.className='dot';b.style.background=CL[c];b.dataset.c=c;b.onclick=function(){cur.c=c;apply()};clEl.appendChild(b)});
  apply();if(!RELEASE)window.__dragon=function(s,c){cur.st=s;cur.c=c||cur.c;apply()};
- window.dsync=function(){if(!RELEASE)return;P.dcol=P.dcol||['violet','red','orange','gold','green','teal','blue','pink'][Math.floor(Math.random()*8)];var s2=pStage(dLevel().l);if(cur.st!==s2||cur.c!==P.dcol){cur.st=s2;cur.c=P.dcol;apply();save()}};window.dsync();
+ window.dsync=function(){if(!RELEASE)return;P.dcol=P.dcol||['violet','red','orange','gold','green','teal','blue','pink'][Math.floor(Math.random()*8)];var s2=pStage(dLevel().l),c2=P.dcol;if(PLATST){s2=['baby','teen','adult','legend'][PLATST.v-3]||'legend';c2=PLATST.color}if(cur.st!==s2||cur.c!==c2){cur.st=s2;cur.c=c2;apply();if(!PLATST)save()}};window.dsync();
 })();
 document.getElementById('xit').onclick=function(){if(mode!=='battle'||!st.running)return;st.running=false;
   var tp=!!st.tp,cp=!!st.camp,rvb=!!st.rv;
@@ -1496,7 +1513,7 @@ document.getElementById('xit').onclick=function(){if(mode!=='battle'||!st.runnin
 document.getElementById('dtog').onclick=function(){showEvents()};
 navEl.onclick=function(e){var b=e.target.closest('button');if(!b||b.disabled)return;closeLays();var m=b.dataset.m;if(m==='home')goHome();else if(m==='shop')showShop();else if(m==='spells')showCollection();else if(m==='tasks')showTasks();else if(m==='dragon'){goHome();showDragon()}else if(m==='clan')showClan()};
 goHome();
-eggUpd();if(RELEASE)document.getElementById('eggT').remove();else document.getElementById('eggT').onclick=function(){P.egg=false;save();eggUpd()};
+eggUpd();if(RELEASE)document.getElementById('eggT').style.display='none';else document.getElementById('eggT').onclick=function(){P.egg=false;save();eggUpd()};platInit();
 (function(){var sp=document.getElementById('splash'),skip=/[?&](nosplash|speed=)/.test(location.search);if(skip){sp.remove();setTimeout(showDaily,500);return}setTimeout(function(){sp.classList.add('off');setTimeout(function(){sp.remove()},500)},2500);setTimeout(showDaily,3000)})();
 requestAnimationFrame(frame);
 })();
