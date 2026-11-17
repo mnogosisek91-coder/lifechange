@@ -154,7 +154,7 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 .fi{width:46px;height:46px;flex:none;position:relative;overflow:hidden;border-radius:10px}.fi img{width:100%;height:100%;object-fit:cover;display:block}.fi i{display:none}
 .bm .fl{width:100%;display:flex;flex-direction:column;gap:6px;margin-top:6px}
 #egg{position:absolute;inset:0;z-index:999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:radial-gradient(circle at 50% 35%,#2a1f5c,#0f172a 70%);color:#f6dc9a}#egg.on{display:flex}#egg .eg{font-size:96px;line-height:1;animation:eggw 2.2s ease-in-out infinite;filter:drop-shadow(0 0 22px rgba(233,185,73,.55))}@keyframes eggw{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg) scale(1.05)}}#egg h2{margin:0;font-size:22px}#egg p{margin:0;font-size:14px;line-height:1.4;color:#d9d4f2;max-width:300px}#egg button{margin-top:10px;background:linear-gradient(#f6dc9a,#e9b949);color:#1b1442;border:0;border-radius:12px;padding:10px 18px;font-weight:800;font-size:13px}
-.dhero{position:relative;height:150px;margin:2px 0 8px;border-radius:14px;border:1px solid #5b5fc7;background:radial-gradient(circle at 50% 70%,rgba(246,220,154,.28),rgba(42,31,92,.55) 60%,rgba(23,27,58,.7));display:flex;align-items:flex-end;justify-content:center;overflow:hidden}.dhero img{height:100%;max-width:100%;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}.dhero span{position:absolute;left:8px;top:8px;background:linear-gradient(#2a1f5c,#1b1442);border:1px solid #e9b949;color:#f6dc9a;border-radius:10px;padding:2px 9px;font-size:12px;font-weight:800}
+.dhero{position:relative;height:150px;margin:2px 0 8px;border-radius:14px;border:1px solid #5b5fc7;background:radial-gradient(circle at 50% 70%,rgba(246,220,154,.28),rgba(42,31,92,.55) 60%,rgba(23,27,58,.7));display:flex;align-items:flex-end;justify-content:center;overflow:hidden}.dhero img{height:calc(100% - 34px);max-width:100%;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.55))}.dnick{position:absolute;left:64px;right:64px;top:8px;text-align:center;font-size:22px;font-weight:900;color:#ffe9a8;letter-spacing:.5px;text-shadow:0 0 3px #1b1442,0 0 3px #1b1442,0 2px 8px rgba(0,0,0,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;z-index:2}.dhero span{position:absolute;left:8px;top:8px;background:linear-gradient(#2a1f5c,#1b1442);border:1px solid #e9b949;color:#f6dc9a;border-radius:10px;padding:2px 9px;font-size:12px;font-weight:800}
 [data-pn]{cursor:pointer;text-decoration:underline dotted rgba(246,220,154,.55);text-underline-offset:3px}
 #home #onbtn,#home #chbtn{position:absolute;left:auto;bottom:auto;width:104px;justify-content:center;transform:none;box-shadow:none;right:10px;pointer-events:auto;display:flex;align-items:center;gap:6px;background:linear-gradient(#2a1f5c,#1b1442);border:1px solid #e9b949;color:#f6dc9a;border-radius:12px;padding:5px 10px;font-size:12px;font-weight:800;-webkit-tap-highlight-color:transparent}
 #home #onbtn{top:48px}#home #chbtn{top:84px}#onbtn i{width:8px;height:8px;border-radius:50%;background:#34d399;box-shadow:0 0 6px #34d399;display:inline-block}
@@ -334,7 +334,7 @@ var SK=[
  {id:'poison',n:'Яд',d:'Отравляет всех на 8 секунд'},
  {id:'flash',n:'Вспышка',d:'Останавливает всю волну'},
  {id:'blind',n:'Ослепление',d:'Замедляет волну на 6 секунд'},
- {id:'shield',n:'Щит',d:'Блокирует 3 прохода врагов'},
+ {id:'shield',n:'Щит',d:'Стена с шипами: враги отлетают назад и получают урон (3 заряда)'},
  {id:'ice',n:'Лёд',d:'Замораживает, враги получают +40% урона'},
  {id:'meteor',n:'Метеоры',d:'6 метеоров с уроном по площади'},
  {id:'wind',n:'Ветер',d:'Отбрасывает волну назад'},
@@ -926,7 +926,9 @@ function update(dt){
       st.fx.push({x:e.x,y:e.y-e.d.r*1.4,t:0,txt:'+'+g,col:'#ffd166'});
       if(e.boss){st.bossGone=true;P.sparks+=1;st.fx.push({x:e.x,y:e.y-e.d.r*2,t:0,txt:'+1',ic:'spark',col:'#fff4a0'});burst(e.x,e.y-30,'h',30)}
       return false}
-    if(st.shield>0&&e.x<WALLX()){st.shield--;st.wallHit=.35;st.fx.push({x:WALLX()+20,y:e.y-20,t:0,txt:'',ic:'shield',col:'#9fd8ff'});burst(WALLX(),e.y-20,'s',18);if(e.boss)st.bossGone=true;return false}
+    if(st.shield>0&&!st.duel&&e.x<WALLX()&&!(e.wcd>performance.now())){st.shield--;st.wallHit=.35;e.wcd=performance.now()+900;st.fx.push({x:WALLX()+20,y:e.y-20,t:0,txt:'',ic:'shield',col:'#9fd8ff'});burst(WALLX(),e.y-20,'s',18);
+      e.x=WALLX()+6;e.push=Math.max(e.push||0,W*(e.boss?.22:.42));e.stun=Math.max(e.stun||0,e.boss?.5:.9);
+      dmg(e,e.max*(e.boss?.08:.45)*(1+.2*PS('thorns')),'#ffb36b','wall');for(var si=0;si<8;si++)emit(WALLX()+8,e.y-10+(Math.random()-.5)*30,{c:'s',vx:60+Math.random()*120,vy:(Math.random()-.5)*120,life:.5,s:5,grow:.2})}
     if(e.x<-80){var n=e.boss?3:1;
       if(false){}
       else{st.lives=Math.max(0,st.lives-n);st.leak=.5;st.fx.push({x:36,y:e.y,t:0,txt:'-'+n,ic:'heart',col:'#ff6b6b'})}
@@ -1282,7 +1284,7 @@ function showDragon(tab){artMig();if(tab)dTab=tab;P.ds=P.ds||{s:0,h:0,a:0};P.art
           '<div class="two"><button class="b'+(eq2?' alt':'')+'" data-e="'+sa.id+'">'+(eq2?'Снять':'Надеть')+'</button>'+(o.l<AMAX?'<button class="b'+(can?'':' alt')+'" data-up="'+sa.id+'"'+(can?'':' disabled')+'>Улучшить</button>':'')+'</div></div>'}}
     else det='<p class="qinfo" style="text-align:center">Нажми на артефакт, чтобы увидеть описание</p>';
     body='<div class="slots">'+sl+'</div><div class="agrid">'+grid+'</div>'+det}
-  var dl=dLevel();screen('<div class="hdr"><h2>'+sEsc(myNick())+'</h2></div>'+resRow()+'<div class="dhero"><img alt="" src="'+dragSrc(MYDK)+'"><span>Ур. '+dl.l+'</span></div><div class="dlv"><b>Уровень '+dl.l+'</b><div class="qb"><i style="width:'+(dl.n?Math.round(dl.x/dl.n*100):100)+'%"></i></div><small>'+(dl.n?'Опыт '+dl.x+' / '+dl.n:'Максимальный уровень')+'</small></div><div class="qseg" style="grid-template-columns:repeat(4,1fr);font-size:11px">'+[['s','Статы'],['p','Навыки'],['a','Артефакты'],['z','Заклинания']].map(function(t){return '<button data-tab="'+t[0]+'"'+(dTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div>'+body+'<button class="g" id="dsX">Закрыть</button>',true);
+  var dl=dLevel();screen(resRow()+'<div class="dhero"><b class="dnick">'+sEsc(myNick())+'</b><img alt="" src="'+dragSrc(MYDK)+'"><span>Ур. '+dl.l+'</span></div><div class="dlv"><b>Уровень '+dl.l+'</b><div class="qb"><i style="width:'+(dl.n?Math.round(dl.x/dl.n*100):100)+'%"></i></div><small>'+(dl.n?'Опыт '+dl.x+' / '+dl.n:'Максимальный уровень')+'</small></div><div class="qseg" style="grid-template-columns:repeat(4,1fr);font-size:11px">'+[['s','Статы'],['p','Навыки'],['a','Артефакты'],['z','Заклинания']].map(function(t){return '<button data-tab="'+t[0]+'"'+(dTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div>'+body+'<button class="g" id="dsX">Закрыть</button>',true);
   [].forEach.call(ovbox.querySelectorAll('button[data-tab]'),function(b){b.onclick=function(){showDragon(b.dataset.tab)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-d]'),function(b){b.onclick=function(){var k=b.dataset.d,l=dsL(k),c=dsCost(l);if(l>=DSMAX||P.gold<c)return;P.gold-=c;P.ds[k]=l+1;save();hud();updateDPill();showDragon()}});
   [].forEach.call(ovbox.querySelectorAll('button[data-ps]'),function(b){b.onclick=function(){var k=b.dataset.ps,l=PSR(k),c=PSCOST[l];if(l>=PSMAX||dLevel().l<PSLV[k]||P.gems<c)return;P.gems-=c;P.ps=P.ps||{};P.ps[k]=l+1;save();hud();showDragon()}});
@@ -1402,6 +1404,7 @@ function draw(){
     ctx.save();ctx.beginPath();ctx.rect(0,0,W,H*ap);ctx.clip();
     ctx.lineWidth=3;ctx.strokeStyle='rgba(200,240,255,'+(.85*al+hit*.15)+')';ctx.beginPath();ctx.moveTo(wx,0);ctx.lineTo(wx,H);ctx.stroke();
     ctx.setLineDash([12,10]);ctx.lineDashOffset=tm*30;ctx.lineWidth=2;ctx.strokeStyle='rgba(255,230,150,'+(.6*al)+')';ctx.beginPath();ctx.moveTo(wx+9,0);ctx.lineTo(wx+9,H);ctx.moveTo(wx-9,0);ctx.lineTo(wx-9,H);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,236,170,'+(.8*al)+')';for(var sy=14;sy<H;sy+=34){ctx.beginPath();ctx.moveTo(wx+2,sy-9);ctx.lineTo(wx+22+hit*8,sy);ctx.lineTo(wx+2,sy+9);ctx.closePath();ctx.fill()}
     for(var wi=0;wi<st.shield;wi++){var wy=H*(.38+.5*(wi+.5)/6);ctx.fillStyle='rgba(255,240,170,'+(.9*al)+')';ctx.beginPath();ctx.arc(wx,wy,5,0,7);ctx.fill()}
     ctx.restore()}
   // враги
