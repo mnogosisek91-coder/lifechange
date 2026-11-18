@@ -237,7 +237,7 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 .bkback{border:0;border-radius:10px;color:#fff;font-weight:900;font-size:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;font-family:inherit}.bkback small{font-size:9px}.bkback span{font-size:18px}
 #skills .sk{animation:none}#skills .sk .co{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(40,60,140,.6);border-radius:0 0 10px 10px;text-decoration:none}
 #skills .sk .ct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:15px;color:#f6dc9a;text-shadow:0 1px 3px #000}
-#skills .sk.gcd{opacity:.55}#skills .sk.off{filter:grayscale(1) brightness(.65);border-color:#666;box-shadow:none}#skills .sk.off .ct{font-size:12px;color:#d6c3ff;filter:none}
+#skills{position:relative}#skills .gbar{position:absolute;left:0;top:-5px;height:3px;border-radius:2px;background:#ffd166;box-shadow:0 0 6px #ffd166;pointer-events:none;transition:width .1s linear;width:0}#skills .sk.gcd{opacity:.8}#skills .sk.gcd .ct{font-size:13px;color:#cfe3ff}#skills .sk.off{filter:grayscale(1) brightness(.65);border-color:#666;box-shadow:none}#skills .sk.off .ct{font-size:12px;color:#d6c3ff;filter:none}
 </style></head><body>
 <div id="splash"><img alt="" src="assets/2692e8dba5.webp"><b>Хранитель привычек</b><i></i></div>
 <div id="app">
@@ -925,16 +925,16 @@ function mkCell(id){var d=document.createElement('button');d.className='sk';var 
   var sm=document.createElement('small');sm.textContent=BYID[id].n;d.appendChild(sm);var lb=document.createElement('i');lb.className='lvb';d.appendChild(lb);
   var co=document.createElement('u');co.className='co';d.appendChild(co);var ct=document.createElement('em');ct.className='ct';d.appendChild(ct);
   d.onclick=function(){useSpell(id)};st.cells[id]={el:d,lb:lb,co:co,ct:ct};return d}
-function renderSkills(){skEl.innerHTML='';st.cells={};if(!st.ch)return;
+function renderSkills(){skEl.innerHTML='';st.cells={};if(!st.ch)return;var gb=document.createElement('div');gb.className='gbar';skEl.appendChild(gb);st.gbar=gb;
   if(st.bkOpen){var b=BKS.filter(function(x){return x.id===st.bkOpen})[0],L=bkSp(b);skEl.style.gridTemplateColumns='44px repeat('+Math.max(5,L.length)+',minmax(0,1fr))';skEl.classList.add('open');skEl.style.setProperty('--bc',b.c);
     var bk=document.createElement('button');bk.className='bkback';bk.style.background=b.c;bk.innerHTML='<img alt="" src="'+BKIMG[b.id]+'" style="width:34px;height:34px">◀<small>книги</small>';bk.onclick=function(){st.bkOpen=null;renderSkills()};skEl.appendChild(bk);
     L.forEach(function(id){skEl.appendChild(mkCell(id))})}
   else{skEl.classList.remove('open');skEl.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';st.bks={};
     BKS.forEach(function(b){var e=document.createElement('button');e.className='bk';e.style.setProperty('--c',b.c);var n=bkSp(b).length;e.innerHTML='<img class="bi" alt="" src="'+BKIMG[b.id]+'"><b>'+b.n+'</b><i class="n">0</i><i class="rd"></i>';if(!n)e.classList.add('dis');e.onclick=function(){if(!n||!st.running)return;st.bkOpen=b.id;st.bkAt=Date.now();renderSkills()};st.bks[b.id]={el:e,n:e.querySelector('.n'),rd:e.querySelector('.rd')};skEl.appendChild(e)})}
   uiSkills()}
-function uiSkills(){if(!st.ch)return;
+function uiSkills(){if(!st.ch)return;if(st.gbar)st.gbar.style.width=(st.gcd>0?Math.min(100,st.gcd/GCD*100):0)+'%';
   if(st.bkOpen){Object.keys(st.cells||{}).forEach(function(id){var c=st.cells[id],ch=st.ch[id]||0,cd=st.scd[id]||0,mx=SPCH[id]||2;c.lb.textContent='×'+ch;c.el.classList.toggle('off',ch<=0);c.el.classList.toggle('gcd',ch>0&&st.gcd>0);
-    c.co.style.height=(ch<mx&&cd>0?Math.min(100,cd/(slotCd(id)||1)*100):0)+'%';c.ct.textContent=ch<=0?(st.arm===id?'Купить 💎'+chPrice(id)+'?':cd.toFixed(1)):''})}
+    c.co.style.height=(ch<mx&&cd>0?Math.min(100,cd/(slotCd(id)||1)*100):0)+'%';c.ct.textContent=ch<=0?(st.arm===id?'Купить 💎'+chPrice(id)+'?':cd.toFixed(1)):(st.gcd>0?st.gcd.toFixed(1):'')})}
   else if(st.bks){BKS.forEach(function(b){var o=st.bks[b.id];if(!o)return;var L=bkSp(b),rd=L.filter(function(id){return (st.ch[id]||0)>0&&(st.scd[id]||0)<=0}).length,left=L.reduce(function(a,id){return a+(st.ch[id]||0)},0);o.n.textContent=left;o.rd.textContent=rd?'●':'';o.el.classList.toggle('rdy',rd>0)})}}
 
 var SKIN='sk_gold';
@@ -1085,7 +1085,7 @@ function castSpell(id){
 /* ---- цикл ---- */
 var last=0;
 function frame(ts){
-  var dt=Math.min(0.05,(ts-(last||ts))/1000)*SPEED*((typeof st==='object'&&st&&st.bkOpen&&st.running)?.25:1);last=ts;
+  var dt=Math.min(0.05,(ts-(last||ts))/1000)*SPEED*1;last=ts;
   try{if(st.running)update(dt)}catch(e){fatal(e)}
   try{draw()}catch(e){if(!window.__drawErr){window.__drawErr=e;try{console.error(e)}catch(x){}}}
   requestAnimationFrame(frame)}
