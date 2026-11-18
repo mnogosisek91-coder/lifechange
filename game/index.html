@@ -483,7 +483,9 @@ function duelNext(){if(st.bossSpawned)return;
   else{st.bossSpawned=true;st.bossGone=true}}
 function duelHit(e){var dp=dragonPos();if(st.stealth>0){st.fx.push({x:dp.x,y:dp.y-H*.1,t:0,txt:'Мимо!',col:'#c8a0ff'});return}var n=Math.max(1,Math.round(st.cfg.edm*(e.rv?e.rv.r*(1+.06*Math.max(0,st.dch-6)):1)*(e.boss?1.9*((st.dch||1)>=18?1+.6*(st.dch-17):1):.8+e.d.hp/90)*(.9+Math.random()*.2)*(1-dsArm())*(e.curse>0?.8:1)));
   if(st.shield>0){st.shield-=e.boss?Math.min(2,st.shield):1;st.wallHit=.35;st.fx.push({x:dp.x,y:dp.y-H*.08,t:0,txt:'',ic:'shield',col:'#9fd8ff'});burst(dp.x+W*.1,dp.y,'s',14);n=Math.max(1,Math.round(n*.4))}
-  st.dhp=Math.max(0,st.dhp-n);if(st.veil>0){var vh=n*st.veilP;st.dhp=Math.min(st.dmax,st.dhp+vh);st.fx.push({x:dp.x+24,y:dp.y-H*.12,t:0,txt:'+'+Math.round(vh),col:'#ff7a95'})}if(st.endure>0&&st.dhp<1)st.dhp=1;if(st.dhp<=0&&PS('revive')&&!st.revived){st.revived=1;st.dhp=st.dmax*[.2,.3,.4,.5,.6][PSR('revive')-1];st.fx.push({x:dp.x,y:dp.y-H*.16,t:0,txt:'Второе дыхание!',col:'#7dffa0',big:1});st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'140,255,160',w:7})}
+  if(hasP('p_harden')){n=Math.max(1,Math.round(n*(1-.03*(st.hardN||0))));st.hardN=Math.min(5,(st.hardN||0)+1);st.hardT=5}
+  if(st.stone>0&&st.stoneHp>0){var ab=Math.min(n,st.stoneHp);st.stoneHp-=ab;n-=ab;st.fx.push({x:dp.x,y:dp.y-H*.1,t:0,txt:'Щит -'+Math.round(ab),col:'#c9b8a8'});burst(dp.x+W*.08,dp.y,'s',8);if(n<=0){st.dhit=.2;return}}
+  st.dhp=Math.max(0,st.dhp-n);if(st.veil>0){var vh=n*st.veilP;st.dhp=Math.min(st.dmax,st.dhp+vh);st.fx.push({x:dp.x+24,y:dp.y-H*.12,t:0,txt:'+'+Math.round(vh),col:'#ff7a95'})}if(st.endure>0&&st.dhp<1)st.dhp=1;if(st.dhp<=0&&hasP('p_rewind')&&!st.rewound){st.rewound=1;st.dhp=st.dmax*.25;st.fx.push({x:dp.x,y:dp.y-H*.16,t:0,txt:'Перемотка!',col:'#7dffe0',big:1});st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'120,255,220',w:7})}if(st.dhp<=0&&PS('revive')&&!st.revived){st.revived=1;st.dhp=st.dmax*[.2,.3,.4,.5,.6][PSR('revive')-1];st.fx.push({x:dp.x,y:dp.y-H*.16,t:0,txt:'Второе дыхание!',col:'#7dffa0',big:1});st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'140,255,160',w:7})}
   if(PS('thorns')&&e.hp>0)dmg(e,n*.4*PS('thorns'),'#ff8a5c','dragon');
   st.dhit=.35;st.leak=.35;st.shake=Math.max(st.shake,e.boss?.35:.15);
   st.fx.push({x:dp.x,y:dp.y-H*.1,t:0,txt:'-'+n,col:'#ff6b6b'});burst(dp.x,dp.y,'f',6)}
@@ -888,28 +890,52 @@ function dragonPos(){if(st&&st.duel){var q=duelDr();return {x:q.x,y:q.feet-q.dh*
 
 var st={running:false,en:[],fx:[],pa:[],part:[],bolts:[],rings:[],later:[],em:[],mets:[],shake:0,flashB:0,flashT:0,blindT:0,leak:0,lives:10,shield:0,hand:[],reload:0,rs:{},earned:0};
 
-function newBag(){var a=P.unlocked.filter(function(id){return !(st.cfg&&st.cfg.ban&&st.cfg.ban.indexOf(id)>=0)});if(!a.length)a=P.unlocked.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}st.bag=a}
+function newBag(){var a=UNL().filter(function(id){return !(st.cfg&&st.cfg.ban&&st.cfg.ban.indexOf(id)>=0)});if(!a.length)a=P.unlocked.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}st.bag=a}
 var CLIM={stealth:1,drain:2,endure:1};function limOut(id){return !!(st.camp&&st.cu&&CLIM[id]&&(st.cu[id]||0)>=CLIM[id])}
 function pickCard(){for(var t=0;t<2;t++){for(var j=st.bag.length-1;j>=0;j--)if(st.hand.indexOf(st.bag[j])<0&&!limOut(st.bag[j]))return st.bag.splice(j,1)[0];newBag()}return null}
-function dealHand(){st.hand=[];st.hcd=[];var ban=(st.cfg&&st.cfg.ban)||[],av=P.unlocked.filter(function(id){return ban.indexOf(id)<0}).length||P.unlocked.length,n=Math.min(5,av);if(!st.bag||!st.bag.length)newBag();for(var i=0;i<n;i++){var c=pickCard();if(c)st.hand.push(c)}st.dealAnim=true;renderSkills();st.dealAnim=false}
-var NSK={"stealth": "assets/4d8aeb375b.webp", "drain": "assets/0cebd5ef58.webp", "warcry": "assets/53dec20b3f.webp", "curse": "assets/4ed9832ebc.webp","bloodveil": "assets/f0b783a0c7.webp","beam": "assets/e4ef90b27e.webp","endure": "assets/bed4c5b047.webp"};Object.keys(NSK).forEach(function(k){SKIMG[k]=NSK[k]});UIIMG.atk="assets/400789c352.webp";
+function dealHand(){st.hand=[];st.hcd=[];var ban=(st.cfg&&st.cfg.ban)||[],av=UNL().filter(function(id){return ban.indexOf(id)<0}).length||UNL().length,n=Math.min(5,av);if(!st.bag||!st.bag.length)newBag();for(var i=0;i<n;i++){var c=pickCard();if(c)st.hand.push(c)}st.dealAnim=true;renderSkills();st.dealAnim=false}
+var NSK={"stealth": "assets/4d8aeb375b.webp", "drain": "assets/0cebd5ef58.webp", "warcry": "assets/53dec20b3f.webp", "curse": "assets/4ed9832ebc.webp","bloodveil": "assets/f0b783a0c7.webp","beam": "assets/e4ef90b27e.webp","endure": "assets/bed4c5b047.webp","stoneskin": "assets/e99e681181.webp","moonfrost": "assets/370f0c2520.webp","starfall": "assets/8e38392a3a.webp","timestop": "assets/6a6e3b8e70.webp","p_harden": "assets/771d4909fd.webp","p_rime": "assets/9c108f1fce.webp","p_gravity": "assets/7134eb56dd.webp","p_rewind": "assets/77e5e3bced.webp"};Object.keys(NSK).forEach(function(k){SKIMG[k]=NSK[k]});UIIMG.atk="assets/400789c352.webp";
 var SKI={};Object.keys(SKIMG).forEach(function(k){SKI[k]=img(SKIMG[k])});
 (function(){document.getElementById('rlPaw').src=UIIMG.paw;var pb=document.querySelector('#rl .pawbox'),ids=Object.keys(SKIMG).slice(0,6);ids.forEach(function(id,i){var im=document.createElement('img');im.className='fc';im.alt='';im.src=SKIMG[id];im.style.setProperty('--dx',((i-2.5)*16)+'px');im.style.setProperty('--rt',((i%2?1:-1)*(20+i*8))+'deg');im.style.animationDelay=(i*.22)+'s';pb.appendChild(im)})})();
 var atkEl=document.getElementById('atk');if(UIIMG.atk){atkEl.firstChild.innerHTML=IC('atk');atkEl.classList.add('im')}
 function manualAtk(){if(!st||!st.running||!st.duel||st.atkT>0||st.stealth>0)return;var dp=dragonPos(),tg=null;st.en.forEach(function(e){if(e.x>10&&e.x<W+10&&(!tg||e.x<tg.x))tg=e});if(!tg)return;
   st.atkT=st.atkM=1.3*(1-Math.min(.5,A('spd')))/(st.warcry>0?1.5:1);var cr=!!st.ambush;st.ambush=false;st.pa.push({kind:'ball',x:dp.x+W*.14,y:dp.y,tg:tg,t:0,m:1.8,crit:cr});P.tot=P.tot||{kill:0};P.tot.atk=(P.tot.atk||0)+1}
-atkEl.onclick=manualAtk;if(!RELEASE)window.__atk=manualAtk;
+atkEl.onclick=manualAtk;if(!RELEASE){window.__atk=manualAtk;window.__skin=function(k){window.__skinKeep=1;setSkin(k)}}
 var aaEl=document.getElementById('aauto');function aaShow(){aaEl.classList.toggle('on',!!P.aa);aaEl.textContent=P.aa?'АВТО: вкл':'АВТО'}aaEl.onclick=function(){P.aa=!P.aa;save();aaShow()};aaShow();
 var skEl=document.getElementById('skills'),rlEl=document.getElementById('rl'),rlb=document.getElementById('rlb');
 function mkSlot(i,anim){var id=st.hand&&st.hand[i],d;
   if(id){d=document.createElement('button');d.className='sk'+(anim?' deal':'');if(anim)d.style.animationDelay=(i*.07)+'s';var im=SKI[id].cloneNode(true);im.alt='';d.appendChild(im);
-    var sm=document.createElement('small');sm.textContent=BYID[id].n;d.appendChild(sm);var lb=document.createElement('i');lb.className='lvb';lb.textContent='Ур.'+lvl(id);d.appendChild(lb);
+    var sm=document.createElement('small');sm.textContent=BYID[id].n;d.appendChild(sm);var lb=document.createElement('i');lb.className='lvb';lb.textContent=SKN[id]?'Облик':'Ур.'+lvl(id);d.appendChild(lb);
     d.onclick=function(){useHand(i)}}
   else{d=document.createElement('div');d.className='sk empty';var cdn=st.hcd&&st.hcd[i]>0;if(cdn)d.classList.add('cd');d.innerHTML=(cdn?'<u></u><em></em>':'')+'<img class="ph" alt="" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" style="visibility:hidden"><small style="visibility:hidden">.</small>'}
   return d}
 function renderSkills(){skEl.innerHTML='';var hn=Math.max(1,Math.min(5,(st.hand||[]).length||5));skEl.style.gridTemplateColumns='repeat('+hn+',minmax(0,'+(hn<5?'88px':'1fr')+'))';skEl.style.justifyContent=hn<5?'center':'';
   for(var i=0;i<hn;i++)skEl.appendChild(mkSlot(i,st.dealAnim))}
-var SCD={fire:3,bolt:4,poison:6,flash:8,blind:8,shield:10,ice:9,meteor:12,wind:7,heal:12,stealth:10,drain:6,warcry:14,curse:20,bloodveil:25,beam:12,endure:25};
+
+var SKIN='sk_gold';
+var SKB={sk_gold:{n:'Золотой король',hp:.05,arm:.05,dmg:.05},
+ sk_obs:{n:'Обсидиан',hp:.12,arm:.18,dmg:.04,mg:'stoneskin',ps:'p_harden'},
+ sk_frost:{n:'Лунный лёд',hp:.08,arm:.10,dmg:.10,mg:'moonfrost',ps:'p_rime'},
+ sk_cosmic:{n:'Космический страж',hp:.08,arm:.06,dmg:.18,mg:'starfall',ps:'p_gravity'},
+ sk_clock:{n:'Часовой',hp:.10,arm:.10,dmg:.10,mg:'timestop',ps:'p_rewind'}};
+var SKN={stoneskin:{n:'Каменная кожа',d:'6 с: щит поглощает 25% макс. здоровья'},moonfrost:{n:'Лунная стужа',d:'Замораживает всех врагов на 4 с (босс 3 с)'},starfall:{n:'Звёздопад',d:'8 метеоров по площади, двойной урон'},timestop:{n:'Остановка времени',d:'Все враги замирают на 3 с, перезарядки −30%'},
+ p_harden:{n:'Закалка',d:'Каждый удар по дракону: броня +3% на 5 с (до 5 раз)',ps:1},p_rime:{n:'Иней',d:'12% шанс: удар дракона замедляет врага на 3 с',ps:1},p_gravity:{n:'Притяжение',d:'+15% урона по боссам',ps:1},p_rewind:{n:'Перемотка',d:'Раз за бой: при смертельном ударе вернёт 25% здоровья',ps:1}};
+Object.keys(SKN).forEach(function(k){BYID[k]={id:k,n:SKN[k].n,d:SKN[k].d};SKI[k]=img(SKIMG[k])});
+EM.stoneskin='🪨';EM.moonfrost='🌙';EM.starfall='🌠';EM.timestop='⏳';
+function skinB(){return SKB[SKIN]||SKB.sk_gold}
+function hasP(k){return skinB().ps===k}
+function UNL(){var a=P.unlocked.slice(),m=skinB().mg;if(m&&a.indexOf(m)<0)a.push(m);return a}
+var SB_URL='https://eknhitligfpoqmoxaect.supabase.co',SB_KEY='sb_publishable_qGOiIts0uyg9xjU0QC_AWg_OEJ1ElOB';
+function setSkin(k){SKIN=SKB[k]?k:'sk_gold';try{localStorage.setItem('ldd_skin',SKIN)}catch(e){}}
+function loadSkin(){
+  try{var c=localStorage.getItem('ldd_skin');if(c&&SKB[c])SKIN=c}catch(e){}
+  var at=null;try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(/^sb-.*-auth-token$/.test(k)){var o=JSON.parse(localStorage.getItem(k));at=o&&(o.access_token||(o.currentSession&&o.currentSession.access_token));if(at)break}}}catch(e){}
+  if(!at){if(SKIN!=='sk_gold'&&!window.__skinKeep)setSkin('sk_gold');return}
+  try{fetch(SB_URL+'/rest/v1/rpc/pet_get',{method:'POST',headers:{apikey:SB_KEY,Authorization:'Bearer '+at,'Content-Type':'application/json'},body:'{}'}).then(function(r){return r.ok?r.json():null}).then(function(d){if(!d||window.__skinKeep)return;var k=d.equipped&&d.equipped.skin;if(!st||!st.running)setSkin(k||'sk_gold')}).catch(function(){})}catch(e){}}
+loadSkin();document.addEventListener('visibilitychange',function(){if(!document.hidden)loadSkin()});
+function skinCard(){var b=skinB(),p=function(x){return '+'+Math.round(x*100)+'%'},row=function(id){var x=SKN[id];return '<div style="display:flex;gap:8px;align-items:center;margin-top:6px"><img src="'+SKIMG[id]+'" style="width:44px;height:44px;border-radius:9px;flex:none"><div style="text-align:left"><b style="font-size:12px">'+(x.ps?'Навык: ':'Магия: ')+x.n+'</b><div style="font-size:11px;opacity:.75;line-height:1.25">'+x.d+'</div></div></div>'};
+  return '<div style="margin:8px 0;padding:9px 11px;border:1px solid #5b5fc7;border-radius:12px;background:rgba(30,35,71,.6)"><div style="font-size:11px;opacity:.7;text-align:left">ОБЛИК ДРАКОНА (меняется на платформе)</div><b style="font-size:14px;display:block;text-align:left">'+b.n+'</b><div style="font-size:12px;text-align:left;margin-top:2px">❤️ '+p(b.hp)+' &nbsp; 🛡️ '+p(b.arm)+' &nbsp; ⚔️ '+p(b.dmg)+'</div>'+(b.mg?row(b.mg)+row(b.ps):'<div style="font-size:11px;opacity:.65;text-align:left;margin-top:4px">Особых магии и навыка нет — только бонус к характеристикам</div>')+'</div>'}
+var SCD={stoneskin:22,moonfrost:24,starfall:16,timestop:40,fire:3,bolt:4,poison:6,flash:8,blind:8,shield:10,ice:9,meteor:12,wind:7,heal:12,stealth:10,drain:6,warcry:14,curse:20,bloodveil:25,beam:12,endure:25};
 function slotCd(id){var b=SCD[id]||4;return Math.max(b*.4,b*(1-A('rl')-.08*PS('paw')))}
 function tickHand(dt){if(!st.hand||!st.hcd)return;for(var i=0;i<st.hand.length;i++){var el=skEl.children[i];
   if(st.hand[i]){continue}
@@ -928,8 +954,8 @@ function startRound(){setMode('battle');
 
 /* ---- урон ---- */
 function dsL(k){var d=P.ds||{};return d[k]||0}
-function dsArm(){return Math.min(.6,.04*dsL('a')+.015*bLv('lair')+A('arm'))}
-function dmg(e,n,col,src){n*=1+.05*bLv('tower')+.04*bLv('lair')+.06*dsL('s')+A('dmg');if(e.boss)n*=1+A('boss');if(st.duel&&st.dhp<st.dmax*.5)n*=1+.15*PS('rage');if(src==='dragon'){n*=1+.1*PS('fire');if(PS('crit')&&Math.random()<.08*PS('crit')){n*=2+.3*PS('critdmg');col='#ffe066'}}if(e.frost>0)n*=1.4;if(e.rvSh>0)n*=.35;if(e.curse>0)n*=1.3;if(st.warcry>0)n*=1.3;var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.hit=0.12;e.last=src||e.last;
+function dsArm(){return Math.min(.6,(.04*dsL('a')+.015*bLv('lair')+A('arm'))*(1+(skinB().arm||0)))}
+function dmg(e,n,col,src){if(e.boss&&hasP('p_gravity'))n*=1.15;if(src==='dragon'&&hasP('p_rime')&&Math.random()<.12){e.slow=Math.max(e.slow,3);burst(e.x,e.y-20,'i',6)}n*=1+.05*bLv('tower')+.04*bLv('lair')+.06*dsL('s')+A('dmg');if(e.boss)n*=1+A('boss');if(st.duel&&st.dhp<st.dmax*.5)n*=1+.15*PS('rage');if(src==='dragon'){n*=1+.1*PS('fire');if(PS('crit')&&Math.random()<.08*PS('crit')){n*=2+.3*PS('critdmg');col='#ffe066'}}if(e.frost>0)n*=1.4;if(e.rvSh>0)n*=.35;if(e.curse>0)n*=1.3;if(st.warcry>0)n*=1.3;var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.hit=0.12;e.last=src||e.last;
   if(src)stat(st.rs,src).dmg+=real
   st.fx.push({x:e.x,y:e.y-e.d.r,t:0,txt:Math.round(n),col:col||'#fff'})}
 function tick(e,n,src){var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.last=src;stat(st.rs,src).dmg+=real}
@@ -1002,6 +1028,21 @@ function castSpell(id){
   }else if(id==='endure'){
     st.endure=endT(lvl(id))*(1+A('dur'));st.endureMax=st.endure;if(st.duel)st.dhp=Math.max(st.dhp,1);else st.lives=Math.max(st.lives,1);
     st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'255,210,100',w:8});st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Последний вздох',col:'#ffd166'});
+  }else if(id==='stoneskin'){
+    if(st.duel){st.stone=6;st.stoneHp=st.dmax*.25}else st.lives=Math.min(MAXL(),st.lives+2);
+    st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'200,150,110',w:8});burst(dp.x,dp.y-10,'s',16);st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Каменная кожа',col:'#d9b99a'});
+  }else if(id==='moonfrost'){
+    en.forEach(function(e){e.stun=Math.max(e.stun,(e.boss?3:4)*dm);e.frost=Math.max(e.frost||0,(e.boss?3:4)*dm);burst(e.x,e.y-20,'i',14)});
+    st.em.push({type:'snow',t:0,dur:.9});st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*1.3,col:'170,225,255',w:9});st.flashB=.1;st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Лунная стужа',col:'#aee6ff'});
+  }else if(id==='starfall'){
+    for(var si=0;si<8;si++){(function(si){st.later.push({t:si*.17,fn:function(){var a=st.en.filter(function(e){return e.hp>0&&e.x>0&&e.x<W+30}),tx,ty;
+      if(a.length){var t0=a[Math.floor(Math.random()*a.length)];tx=t0.x+(Math.random()-.5)*30;ty=t0.y}else{tx=W*(.15+Math.random()*.7);ty=laneY(Math.floor(Math.random()*LANES))}
+      st.mets.push({x1:tx+W*.3,y1:-40,x2:tx,y2:ty,t:0,dur:.5,m:m*2})}})})(si)}
+    st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Звёздопад',col:'#d0a8ff'});
+  }else if(id==='timestop'){
+    en.forEach(function(e){e.stun=Math.max(e.stun,3);burst(e.x,e.y-20,'w',10)});
+    if(st.hcd)for(var ti=0;ti<st.hcd.length;ti++)if(st.hcd[ti]>0)st.hcd[ti]*=.7;
+    st.flashT=.5;st.rings.push({x:dp.x,y:dp.y,t:0,life:.9,maxR:W*1.3,col:'255,220,120',w:8,rays:1});st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Время остановлено',col:'#ffe08a'});
   }else if(id==='heal'){
     if(st.duel){st.dhp=Math.min(st.dmax,st.dhp+st.dmax*.2);st.lives=Math.ceil(st.dhp/st.dmax*10)}else st.lives=Math.min(MAXL(),st.lives+2);st.em.push({type:'heal',t:0,dur:.9});st.rings.push({x:dp.x,y:dp.y,t:0,life:.6,maxR:W*.24,col:'140,255,160',w:6});st.fx.push({x:dp.x,y:dp.y-H*.1,t:0,txt:st.duel?'+20%':'+2',ic:'heart',col:'#7dffa0'});
   }
@@ -1030,7 +1071,7 @@ function update(dt){
   tickHand(dt);
   rlEl.classList.toggle('on',st.reload>0);rlb.style.width=(st.reload>0?(1-st.reload/(st.rlm||3))*100:0)+'%';
   // автоогонь дракона по ближайшему к выходу
-  if(st.veil>0)st.veil=Math.max(0,st.veil-dt);if(st.endure>0)st.endure=Math.max(0,st.endure-dt);if(st.beams)st.beams=st.beams.filter(function(b){b.t+=dt;return b.t<b.life});
+  if(st.stone>0)st.stone=Math.max(0,st.stone-dt);if(st.hardT>0){st.hardT-=dt;if(st.hardT<=0)st.hardN=0}if(st.veil>0)st.veil=Math.max(0,st.veil-dt);if(st.endure>0)st.endure=Math.max(0,st.endure-dt);if(st.beams)st.beams=st.beams.filter(function(b){b.t+=dt;return b.t<b.life});
   if(st.stealth>0){st.stealth-=dt;if(st.stealth<=0){st.stealth=0;st.ambush=true;st.fx.push({x:dp.x,y:dp.y-H*.16,t:0,txt:'Из тени!',col:'#ffe066',big:1})}}
   if(st.warcry>0)st.warcry-=dt;if(st.atkT>0)st.atkT-=dt;
   if(st.duel){atkEl.style.display='';aaEl.style.display='';if(P.aa&&!(st.atkT>0)&&!(st.stealth>0))manualAtk();var af=st.atkT>0?1-st.atkT/st.atkM:1;atkEl.style.setProperty('--p',Math.round(af*100)+'%');atkEl.classList.toggle('rdy',af>=1&&!(st.stealth>0));atkEl.classList.toggle('crit',!!st.ambush);atkEl.classList.toggle('hid',st.stealth>0);atkEl.lastChild.textContent=st.ambush?'КРИТ!':(st.stealth>0?'Скрыт':'Атаковать')}else{atkEl.style.display='none';aaEl.style.display='none'}
@@ -1364,7 +1405,7 @@ function slotsN(){var l=dLevel().l;return SLOTLV.filter(function(v){return l>=v}
 function giveXP(n){if(n<=0){st.lastXp=null;return}n=Math.round(n*(1+.1*PS('wis')));var b=dLevel().l;P.xp=(P.xp||0)+n;var a=dLevel().l;st.lastPity=artPity();save();st.lastXp={n:n,up:a>b?a:0,slot:slotsN()>SLOTLV.filter(function(v){return b>=v}).length}}
 function artPity(){artMig();var need=Math.min(ARTS.length,Math.floor(dLevel().l*ARTS.length/60)),out=[];while(artHave()<need){var m=ARTS.filter(function(a){return !P.art[a.id]});if(!m.length)break;m.sort(function(x,y){return (P.sh[y.id]||0)/shN(y)-(P.sh[x.id]||0)/shN(x)});var top=m.filter(function(z){return (P.sh[z.id]||0)===(P.sh[m[0].id]||0)}),a=top[Math.floor(Math.random()*top.length)];artAsm(a);out.push(a)}return out}
 function xpRow(){var x=st.lastXp;if(!x)return '';var pt=(st.lastPity||[]).map(function(a){return '<div class="artdrop">'+artIc(a,1)+'<div><b>Дракон нашёл артефакт!</b><span>'+a.n+' · '+RAR[a.r]+'</span><small>'+a.t(1)+'</small></div></div>'}).join('');return '<div class="xprow">'+IC('dragon')+' Опыт дракона: <b>+'+x.n+'</b>'+(x.up?' · <b>уровень '+x.up+'!</b>':'')+(x.slot?'<br><b>Новый слот артефактов!</b>':'')+'</div>'+pt}
-function A(k){var t=0;(P.eq||[]).forEach(function(id){var a=ABYID[id],o=(P.art||{})[id];if(a&&o&&a.b[k])t+=a.b[k]*o.l});return t}
+function A(k){var t=0;(P.eq||[]).forEach(function(id){var a=ABYID[id],o=(P.art||{})[id];if(a&&o&&a.b[k])t+=a.b[k]*o.l});return t+((k==='hp'||k==='dmg')?(skinB()[k]||0):0)}
 var SHN={1:6,2:9,3:12};
 var SHGEO={"fang": [3, 2], "scale": [3, 2], "heart": [3, 2], "clover": [3, 2], "sand": [3, 2], "stone": [3, 2], "amulet": [3, 3], "clock": [3, 3], "spear": [3, 3], "seal": [3, 3], "feather": [4, 3], "eye": [4, 3], "crown": [4, 3]},SHATL={"fang":"assets/215931613f.webp","scale":"assets/6766d1b348.webp","heart":"assets/ca0ba6e1c2.webp","clover":"assets/c0bba8935f.webp","sand":"assets/3aa8b8347f.webp","stone":"assets/adf486e685.webp","amulet":"assets/fcde1c6c13.webp","clock":"assets/98615c92d6.webp","spear":"assets/e3f6c1504f.webp","seal":"assets/756110cca8.webp","feather":"assets/bc0502e233.webp","eye":"assets/7af16433dc.webp","crown":"assets/5013d183ee.webp"};
 (function(){var st=document.createElement('style');st.textContent='.shp{display:inline-block;background-repeat:no-repeat;flex:none}.shp.no{filter:brightness(0);opacity:.28}.shgrid{display:grid;gap:4px;justify-content:center;margin:8px 0}.shgrid .shp{border-radius:6px;background-color:rgba(255,255,255,.05)}.artdrop .shrow{display:flex;gap:2px;flex:none}'+Object.keys(SHATL).map(function(k){return '.sh_'+k+'{background-image:url('+SHATL[k]+')}'}).join('');document.head.appendChild(st)})();
@@ -1450,7 +1491,7 @@ function showDragon(tab){artMig();if(tab)dTab=tab;P.ds=P.ds||{s:0,h:0,a:0};P.art
           '<div class="two"><button class="b'+(eq2?' alt':'')+'" data-e="'+sa.id+'">'+(eq2?'Снять':'Надеть')+'</button>'+(o.l<AMAX?'<button class="b'+(can?'':' alt')+'" data-up="'+sa.id+'"'+(can?'':' disabled')+'>Улучшить</button>':'')+'</div></div>'}}
     else det='<p class="qinfo" style="text-align:center">Нажми на артефакт, чтобы увидеть описание</p>';
     body='<div class="slots">'+sl+'</div><div class="agrid">'+grid+'</div>'+det}
-  var dl=dLevel();screen(resRow()+'<div class="dhero"><b class="dnick">'+sEsc(myNick())+'</b><img alt="" src="'+dragSrc(MYDK)+'"><span>Ур. '+dl.l+'</span></div><div class="dlv"><b>Уровень '+dl.l+'</b><div class="qb"><i style="width:'+(dl.n?Math.round(dl.x/dl.n*100):100)+'%"></i></div><small>'+(dl.n?'Опыт '+dl.x+' / '+dl.n:'Максимальный уровень')+'</small></div><div class="qseg" style="grid-template-columns:repeat(4,1fr);font-size:11px">'+[['s','Статы'],['p','Навыки'],['a','Артефакты'],['z','Заклинания']].map(function(t){return '<button data-tab="'+t[0]+'"'+(dTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div>'+body+'<button class="g" id="dsX">Закрыть</button>',true);
+  var dl=dLevel();screen(resRow()+'<div class="dhero"><b class="dnick">'+sEsc(myNick())+'</b><img alt="" src="'+dragSrc(MYDK)+'"><span>Ур. '+dl.l+'</span></div><div class="dlv"><b>Уровень '+dl.l+'</b><div class="qb"><i style="width:'+(dl.n?Math.round(dl.x/dl.n*100):100)+'%"></i></div><small>'+(dl.n?'Опыт '+dl.x+' / '+dl.n:'Максимальный уровень')+'</small></div>'+skinCard()+'<div class="qseg" style="grid-template-columns:repeat(4,1fr);font-size:11px">'+[['s','Статы'],['p','Навыки'],['a','Артефакты'],['z','Заклинания']].map(function(t){return '<button data-tab="'+t[0]+'"'+(dTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div>'+body+'<button class="g" id="dsX">Закрыть</button>',true);
   [].forEach.call(ovbox.querySelectorAll('button[data-tab]'),function(b){b.onclick=function(){showDragon(b.dataset.tab)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-d]'),function(b){b.onclick=function(){var k=b.dataset.d,l=dsL(k),c=dsCost(l);if(l>=DSMAX||P.gold<c)return;P.gold-=c;P.ds[k]=l+1;save();hud();updateDPill();showDragon()}});
   [].forEach.call(ovbox.querySelectorAll('button[data-ps]'),function(b){b.onclick=function(){var k=b.dataset.ps,l=PSR(k),c=PSCOST[l];if(l>=PSMAX||dLevel().l<PSLV[k]||P.gems<c)return;P.gems-=c;P.ps=P.ps||{};P.ps[k]=l+1;save();hud();showDragon()}});
@@ -1714,14 +1755,26 @@ function modInit(){if(!PLATST||!plCl)return;plCl.rpc('mod_me').then(function(q){
 function modBtn(){var b=document.getElementById('modbtn');if(b){b.style.display=(KPROLE&&mode==='home')?'block':'none';b.onclick=function(){showMod()}}}
 function modErr(e){var m=(e&&e.message)||'ошибка';return m==='not_mod'||m==='not_admin'?'Нет прав':m==='protected'?'Этого человека трогать нельзя':m==='self'?'К себе применить нельзя':m}
 function showMod(tab){if(!KPROLE)return;if(tab)mTab=tab;
-  var T=[['u','Игроки'],['c','Жалобы']];
+  var T=[['u','Игроки'],['c','Жалобы']];if(KPROLE.admin)T.push(['t','Тест']);
   screen('<div class="hdr"><h2>🛡 Модерация</h2></div><p class="qinfo" style="text-align:center;margin:2px 0 6px">'+(KPROLE.admin?'Роль: админ. Можно выдавать модераторов.':'Роль: модератор.')+'</p><div class="qseg">'+T.map(function(t){return '<button data-t="'+t[0]+'"'+(mTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div><div id="modBody" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div><button class="g" id="modClose">Закрыть</button>',true);
   [].forEach.call(ovbox.querySelectorAll('.qseg button'),function(b){b.onclick=function(){showMod(b.dataset.t)}});
   document.getElementById('modClose').onclick=function(){hideScreen()};
   modLoad()}
 function modMsg(t){var b=document.getElementById('modBody');if(b)b.innerHTML='<p class="qinfo" style="text-align:center">'+mEsc(t)+'</p>'}
 function modDo(fn,args){return plCl.rpc(fn,args).then(function(q){if(q.error){alert(modErr(q.error));return false}return true}).catch(function(){alert('Нет связи');return false})}
+function setDL(l){var x=0;for(var i=1;i<l;i++)x+=xpNeed(i);P.xp=x}
+function testPanel(bd){
+  var G=[['🪙 +1 000',function(){P.gold+=1000}],['🪙 +100 000',function(){P.gold+=100000}],['🪙 +10 млн',function(){P.gold+=10000000}],
+   ['💎 +100',function(){P.gems+=100}],['💎 +10 000',function(){P.gems+=10000}],['🔥 +100',function(){P.heat=(P.heat||0)+100}],['🔥 +10 000',function(){P.heat=(P.heat||0)+10000}],
+   ['Дракон +1 ур.',function(){setDL(Math.min(DLMAX,dLevel().l+1))}],['+10 ур.',function(){setDL(Math.min(DLMAX,dLevel().l+10))}],['МАКС ур.',function(){setDL(DLMAX)}],['Сброс ур. 1',function(){P.xp=0}],
+   ['⭐ +10 000 опыта',function(){P.xp=(P.xp||0)+10000}],['Открыть все магии',function(){SK.forEach(function(x){if(P.unlocked.indexOf(x.id)<0)P.unlocked.push(x.id)})}],['Магии +5 ур.',function(){P.lv=P.lv||{};P.unlocked.forEach(function(id){P.lv[id]=Math.min(50,(P.lv[id]||1)+5)})}],['Магии ур. 1',function(){P.lv={}}]];
+  var SKN2=[['sk_gold','Золотой король'],['sk_obs','Обсидиан'],['sk_frost','Лунный лёд'],['sk_cosmic','Космический страж'],['sk_clock','Часовой']];
+  var dl=dLevel();
+  bd.innerHTML='<p class="qinfo" style="text-align:center;margin:2px 0">🪙 '+P.gold+' · 💎 '+P.gems+' · 🔥 '+(P.heat||0)+' · дракон ур. '+dl.l+' · магий '+P.unlocked.length+'</p><p class="qinfo" style="text-align:center;margin:0 0 4px;color:#ffcf7a">Только для админа. Меняет сохранение в этом браузере (демо), на платформу не влияет.</p><div class="mrow" id="tBtns" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div><div class="qinfo" style="text-align:center;margin:8px 0 2px">Примерить облик (только в игре, на платформе не меняется)</div><div id="tSk" style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center"></div>';
+  var bx=document.getElementById('tBtns');G.forEach(function(g){var b=document.createElement('button');b.className='gr';b.style.cssText='width:auto;margin:0;padding:8px 10px;font-size:12px';b.textContent=g[0];b.onclick=function(){g[1]();save();testPanel(bd)};bx.appendChild(b)});
+  var sx=document.getElementById('tSk');SKN2.forEach(function(k){var b=document.createElement('button');b.className=SKIN===k[0]?'b':'gr';b.style.cssText='width:auto;margin:0;padding:8px 10px;font-size:12px';b.textContent=k[1];b.onclick=function(){window.__skinKeep=1;setSkin(k[0]);testPanel(bd)};sx.appendChild(b)})}
 function modLoad(){var bd=document.getElementById('modBody');if(!bd)return;var tab=mTab;
+  if(tab==='t'&&KPROLE&&KPROLE.admin){testPanel(bd);return}
   if(tab==='u'){
     bd.innerHTML='<div style="display:flex;gap:6px"><input id="mQ" value="'+mEsc(mQ)+'" placeholder="Имя игрока" style="flex:1;min-width:0;border-radius:10px;border:1px solid #3a4478;background:#121936;color:#fff;padding:9px;font-size:14px"><button class="b" id="mGo" style="width:auto;margin:0;padding:9px 14px">Найти</button></div><div id="mList" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';
     var go=function(){mQ=document.getElementById('mQ').value;modLoad()};document.getElementById('mGo').onclick=go;document.getElementById('mQ').onkeydown=function(e){if(e.key==='Enter')go()};
