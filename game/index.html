@@ -231,9 +231,9 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 #skills .sk.cd{position:relative;overflow:hidden;opacity:1;background:#10152e;border:2px solid #5b5fc7}#skills .sk.cd u{position:absolute;left:0;right:0;bottom:0;height:100%;background:rgba(99,102,241,.35);text-decoration:none}#skills .sk.cd em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:18px;color:#f6dc9a}
 /*books*/
 #skills.open{background:rgba(23,28,58,.9);border:2px solid var(--bc,#3a4478);border-radius:14px;padding:4px}
-.bk{position:relative;border:0;border-radius:6px 12px 12px 6px;padding:8px 2px 6px;min-height:78px;color:#fff;font-weight:800;font-size:11px;background:var(--c);box-shadow:inset 7px 0 0 #00000040,inset -2px 0 0 #ffffff30,0 3px 0 #0006;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:inherit}
+.bk{position:relative;border:0;border-radius:14px;padding:2px 2px 4px;min-height:78px;color:#fff;font-weight:800;font-size:11px;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--c) 45%,#141a33),#141a33 75%);box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--c) 70%,#fff 0%);display:flex;flex-direction:column;align-items:center;gap:0;font-family:inherit}.bk .bi{width:100%;max-width:74px;aspect-ratio:1;display:block;pointer-events:none;filter:drop-shadow(0 2px 4px #0008)}
 .bk .e{font-size:26px;line-height:1.1}.bk b{font-size:11px}.bk .n{position:absolute;top:-6px;right:-3px;background:#000b;border-radius:8px;font-size:10px;padding:0 5px;color:#ffd166;font-style:normal}.bk .rd{position:absolute;left:5px;bottom:3px;font-size:9px;color:#9dff9d;font-style:normal}
-.bk.rdy{box-shadow:inset 7px 0 0 #00000040,inset -2px 0 0 #ffffff30,0 3px 0 #0006,0 0 12px rgba(255,209,102,.6)}.bk.dis{opacity:.4}
+.bk.rdy{box-shadow:inset 0 0 0 2px #ffd166,0 0 12px rgba(255,209,102,.6)}.bk.dis{opacity:.4}
 .bkback{border:0;border-radius:10px;color:#fff;font-weight:900;font-size:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:0;font-family:inherit}.bkback small{font-size:9px}.bkback span{font-size:18px}
 #skills .sk{animation:none}#skills .sk .co{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(40,60,140,.6);border-radius:0 0 10px 10px;text-decoration:none}
 #skills .sk .ct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:15px;color:#f6dc9a;text-shadow:0 1px 3px #000}
@@ -905,6 +905,7 @@ var BKS=[{id:'u',n:'Урон',e:'🔥',c:'#d8512a',l:['fire','bolt','meteor','be
  {id:'c',n:'Контроль',e:'🌀',c:'#6b5be6',l:['flash','blind','ice','wind','poison','moonfrost']},
  {id:'d',n:'Защита',e:'🛡️',c:'#2f8fd1',l:['shield','bloodveil','endure','curse','stoneskin']},
  {id:'s',n:'Поддержка',e:'💚',c:'#2fa866',l:['heal','warcry','drain','timestop']}];
+var BKIMG={u:"assets/7cddba9831.webp",c:"assets/06754729f5.webp",d:"assets/657f908bd1.webp",s:"assets/b97a1d1704.webp"};
 function limOut(){return false}
 function newBag(){}
 function availIds(){var ban=(st.cfg&&st.cfg.ban)||[],a=UNL().filter(function(id){return ban.indexOf(id)<0&&BYID[id]});return a.length?a:UNL().filter(function(id){return BYID[id]})}
@@ -926,10 +927,10 @@ function mkCell(id){var d=document.createElement('button');d.className='sk';var 
   d.onclick=function(){useSpell(id)};st.cells[id]={el:d,lb:lb,co:co,ct:ct};return d}
 function renderSkills(){skEl.innerHTML='';st.cells={};if(!st.ch)return;
   if(st.bkOpen){var b=BKS.filter(function(x){return x.id===st.bkOpen})[0],L=bkSp(b);skEl.style.gridTemplateColumns='44px repeat('+Math.max(1,L.length)+',minmax(0,1fr))';skEl.classList.add('open');skEl.style.setProperty('--bc',b.c);
-    var bk=document.createElement('button');bk.className='bkback';bk.style.background=b.c;bk.innerHTML='<span>'+b.e+'</span>◀<small>книги</small>';bk.onclick=function(){st.bkOpen=null;renderSkills()};skEl.appendChild(bk);
+    var bk=document.createElement('button');bk.className='bkback';bk.style.background=b.c;bk.innerHTML='<img alt="" src="'+BKIMG[b.id]+'" style="width:34px;height:34px">◀<small>книги</small>';bk.onclick=function(){st.bkOpen=null;renderSkills()};skEl.appendChild(bk);
     L.forEach(function(id){skEl.appendChild(mkCell(id))})}
   else{skEl.classList.remove('open');skEl.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';st.bks={};
-    BKS.forEach(function(b){var e=document.createElement('button');e.className='bk';e.style.setProperty('--c',b.c);var n=bkSp(b).length;e.innerHTML='<span class="e">'+b.e+'</span><b>'+b.n+'</b><i class="n">0</i><i class="rd"></i>';if(!n)e.classList.add('dis');e.onclick=function(){if(!n||!st.running)return;st.bkOpen=b.id;st.bkAt=Date.now();renderSkills()};st.bks[b.id]={el:e,n:e.querySelector('.n'),rd:e.querySelector('.rd')};skEl.appendChild(e)})}
+    BKS.forEach(function(b){var e=document.createElement('button');e.className='bk';e.style.setProperty('--c',b.c);var n=bkSp(b).length;e.innerHTML='<img class="bi" alt="" src="'+BKIMG[b.id]+'"><b>'+b.n+'</b><i class="n">0</i><i class="rd"></i>';if(!n)e.classList.add('dis');e.onclick=function(){if(!n||!st.running)return;st.bkOpen=b.id;st.bkAt=Date.now();renderSkills()};st.bks[b.id]={el:e,n:e.querySelector('.n'),rd:e.querySelector('.rd')};skEl.appendChild(e)})}
   uiSkills()}
 function uiSkills(){if(!st.ch)return;
   if(st.bkOpen){Object.keys(st.cells||{}).forEach(function(id){var c=st.cells[id],ch=st.ch[id]||0,cd=st.scd[id]||0,mx=SPCH[id]||2;c.lb.textContent='×'+ch;c.el.classList.toggle('off',ch<=0);c.el.classList.toggle('gcd',ch>0&&st.gcd>0);
