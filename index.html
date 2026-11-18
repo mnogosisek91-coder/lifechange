@@ -1924,7 +1924,7 @@
                     <div class="pt-note" id="petStg"></div>
                     <div class="pt-bar"><i id="petBarI"></i></div>
                     <div class="pt-note" id="petBarT"></div>
-                    <div class="pt-note" id="petToday" style="margin-top:4px"></div>
+                    <div class="pt-note" id="petToday" style="margin-top:4px"></div><div id="petHeat" style="display:none;margin-top:10px"></div>
                     <div class="pt-row" style="margin-top:10px">
                         <button class="pt-g pt-gold pt-pulse" id="petHatchBtn" type="button" style="display:none" onclick="petOpenHatch()"><img class="ic" src="assets/pet/ic-egg.ed86cdf0.webp" alt=""> Вылупить!</button>
                         <button class="pt-g" id="petRepBtn" type="button" onclick="switchTab('challenges')"><img class="ic" src="assets/pet/ic-pencil.7298fdb5.webp" alt=""> Сдать отчёт</button>
@@ -7148,9 +7148,10 @@ async function adminGemHistory(){
   function isUser(){try{return typeof user!=='undefined'&&!!user}catch(e){return false}}
   function adm(){try{return typeof isAdmin!=='undefined'&&!!isAdmin}catch(e){return false}}
   function vis(st){if(!st)return 1;if(st.hatched)return Math.max(3,st.stage);return st.stage>=2?2:1}
+  var SKBON={sk_gold:[5,5,5],sk_obs:[12,18,4,'Каменная кожа','Закалка'],sk_frost:[8,10,10,'Лунная стужа','Иней'],sk_cosmic:[8,6,18,'Звёздопад','Притяжение'],sk_clock:[10,10,10,'Остановка времени','Перемотка']};
   function skinOf(st){var k=st&&st.equipped&&st.equipped.skin;return SKA[k]?k:'sk_gold'}
   function imgOf(st){var v=vis(st);if(v===1)return B+PET.egg;if(v===2)return B+PET.egg2;if(v===6&&SKF[skinOf(st)])return B+SKF[skinOf(st)];return B+PET['s'+v][(st&&st.color&&PET.s3[st.color])?st.color:'violet']}
-  var ERR={not_enough_gems:'Не хватает самоцветов.',bad_name:'Имя не подходит: 2–16 букв или цифр, без грубых слов и без смеси латиницы и кириллицы.',name_cooldown:'Имя можно менять только за самоцветы.',same_name:'Это имя уже стоит.',stage_too_low:'Это откроется на следующем этапе дракона.',already_owned:'Эта вещь уже у тебя есть.',not_owned:'Сначала купи эту вещь.',not_for_sale:'Эта вещь не продаётся.',rate_limit:'Слишком много покупок подряд. Подожди минуту.',bonus_claimed:'Бонус за сегодня уже получен.',bonus_not_ready:'Сначала сдай отчёт сегодня.',already_hatched:'Дракон уже вылупился.',not_hatched:'Сначала вылупи дракона.',bad_color:'Выбери цвет из списка.',not_admin:'Только для админа.',bad_item:'Такой вещи нет.',bad_slot:'Такой вещи нет.'};
+  var ERR={max_heat:'Тепла уже достаточно для взрослого дракона.',too_much_heat:'Это больше, чем нужно до взрослого. Выбери меньше.',bad_amount:'Не получилось. Попробуй ещё раз.',not_enough_gems:'Не хватает самоцветов.',bad_name:'Имя не подходит: 2–16 букв или цифр, без грубых слов и без смеси латиницы и кириллицы.',name_cooldown:'Имя можно менять только за самоцветы.',same_name:'Это имя уже стоит.',stage_too_low:'Это откроется на следующем этапе дракона.',already_owned:'Эта вещь уже у тебя есть.',not_owned:'Сначала купи эту вещь.',not_for_sale:'Эта вещь не продаётся.',rate_limit:'Слишком много покупок подряд. Подожди минуту.',bonus_claimed:'Бонус за сегодня уже получен.',bonus_not_ready:'Сначала сдай отчёт сегодня.',already_hatched:'Дракон уже вылупился.',not_hatched:'Сначала вылупи дракона.',bad_color:'Выбери цвет из списка.',not_admin:'Только для админа.',bad_item:'Такой вещи нет.',bad_slot:'Такой вещи нет.'};
   try{Object.assign(ERRMAP,{gems_negative:'Нельзя списать больше, чем есть на балансе.'})}catch(e){}
   function perr(e){var m=String((e&&(e.message||e.error_description))||e||'');for(var k in ERR)if(m.indexOf(k)>=0)return ERR[k];try{return errMsg(e)}catch(x){return 'Не получилось. Попробуй ещё раз.'}}
   function toast(m){var t=$('petToast');if(!t)return;t.textContent=m;t.classList.add('pt-on');clearTimeout(toast.h);toast.h=setTimeout(function(){t.classList.remove('pt-on')},2400)}
@@ -7193,6 +7194,7 @@ async function adminGemHistory(){
     else if(st.stage_to){var lo=st.stage_from,hi=st.stage_to;p=Math.max(0,Math.min(100,Math.round((st.heat-lo)/(hi-lo)*100)));t=HI+' Тепло '+st.heat+' / '+hi+' до этапа «'+STN[Math.min(5,st.stage)]+'»'}
     $('petBarI').style.width=p+'%';$('petBarT').innerHTML=t;
     $('petToday').innerHTML=st?('Сегодня: '+HI+' +'+st.heat_today+' тепла из 15'):'';
+    renderHeatBuy();
     $('petHatchBtn').style.display=(st&&!hatched&&st.can_hatch)?'':'none';
     (function(){var gs=$('petGuardSub'),gb=$('petGuardBtn'),ok=!!(st&&hatched);if(gs)gs.textContent=ok?'Защищай логово и расти вместе с драконом':'Откроется, когда дракон вылупится';if(gb)gb.style.opacity=ok?'':'.55'})();
     // бонус
@@ -7219,6 +7221,25 @@ async function adminGemHistory(){
     renderShop();
   }
 
+  var heatArm=null,heatT=null;
+  function renderHeatBuy(){
+    var el=$('petHeat');if(!el)return;
+    var st=S;if(!st||!isUser()||st.heat==null||st.heat_cap==null||st.heat>=st.heat_cap||!st.heat_price){el.style.display='none';el.innerHTML='';return}
+    var left=st.heat_cap-st.heat,pr=st.heat_price,gems=st.gems||0;
+    var packs=[25,100,300].filter(function(n){return n<left});packs.push(left);
+    el.style.display='';el.innerHTML='<div class="pt-note" style="margin-bottom:6px">Ускорить рост: тепло за самоцветы ('+pr+' '+GEM+' за 1 '+HI+'). Облики открываются у взрослого дракона.</div>';
+    var row=document.createElement('div');row.style.cssText='display:flex;flex-wrap:wrap;gap:6px';
+    packs.forEach(function(n,ix){var cost=n*pr,last=(ix===packs.length-1&&n===left&&packs.length>1),b=document.createElement('button');b.type='button';b.className='pt-g pt-gold';b.style.cssText='flex:1 1 auto;min-width:96px;padding:8px 10px;font-size:.8rem';
+      var armed=heatArm===n;
+      b.innerHTML=armed?('Подтвердить · '+GEM+' '+fmt(cost)):((last?'До взрослого ':'')+'+'+n+' '+HI+' · '+GEM+' '+fmt(cost));
+      if(gems<cost&&!armed)b.style.opacity='.55';
+      b.onclick=function(){
+        if(gems<cost){toast('Не хватает самоцветов.');return}
+        if(heatArm!==n){heatArm=n;clearTimeout(heatT);heatT=setTimeout(function(){heatArm=null;renderHeatBuy()},4000);renderHeatBuy();return}
+        heatArm=null;clearTimeout(heatT);b.disabled=true;
+        act('pet_buy_heat',{p_n:n},function(){toast('Тепло +'+n+'. Дракон растёт!')}).catch(function(){renderHeatBuy()})};
+      row.appendChild(b)});
+    el.appendChild(row)}
   function renderShop(){
     var g=$('petShop');if(!g)return;
     /* АРХИВ: вещи для дракона (колпак, корона, очки, медаль) сняты с продажи, хранятся в META и в assets/pet/ — выдаются как эксклюзив на праздники. У кого уже есть — вкладка «Вещи» остаётся только для тех, чтобы надеть/снять. */
@@ -7233,7 +7254,7 @@ async function adminGemHistory(){
     list=list.filter(function(i){return !(META[i.key].def&&eq[i.slot]===i.key)});
     list.forEach(function(it){
       var m=META[it.key],d=document.createElement('div'),isEq=it.slot==='skin'?skinOf(S)===it.key:eq[it.slot]===it.key;
-      var skLock=it.slot==='skin'&&!(S&&S.stage>=6);
+      var skLock=it.slot==='skin'&&!(S&&S.stage>=5);
       d.className='pt-item'+(isEq&&!skLock?' pt-eq':'')+(skLock?' pt-skl':'');
       var pv;
       if(m.sk)pv='<img class="pt-skp'+(skLock?' pt-blur':'')+'" src="'+B+SKT[it.key]+'" alt="" loading="lazy">';
@@ -7242,10 +7263,11 @@ async function adminGemHistory(){
       else if(m.ff){var fv=(it.status==='owned'?VARS[it.key]:PVV[it.key])==='f';pv='<button type="button" class="pt-vb pt-vl" aria-label="Сменить версию">‹</button><img src="'+B+(fv?m.ff:m.f)+'" alt="" loading="lazy"><button type="button" class="pt-vb pt-vr" aria-label="Сменить версию">›</button>'}
       else pv='<img src="'+B+m.f+'" alt="" loading="lazy">';
       d.innerHTML='<div class="pt-pv'+(m.ff?' pt-pvv':'')+'">'+pv+'</div><b>'+esc(skLock&&it.key==='sk_gold'?'???':m.n)+'</b>';
+      if(m.sk&&SKBON[it.key]&&!(skLock&&it.key==='sk_gold')){var sb=SKBON[it.key],sm2=document.createElement('small');sm2.style.cssText='display:block;font-size:10.5px;line-height:1.3;opacity:.85;margin-top:2px';sm2.innerHTML='❤️+'+sb[0]+'% 🛡️+'+sb[1]+'% ⚔️+'+sb[2]+'%'+(sb[3]?'<br>✨ '+sb[3]+'<br>🔰 '+sb[4]:'');d.appendChild(sm2)}
       var meta=document.createElement('div'),b=document.createElement('button');b.type='button';
-      if(skLock){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' откроется на этапе 6</span>';b.textContent='Закрыто';b.disabled=true}
+      if(skLock){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' откроется на этапе 5</span>';b.textContent='Закрыто';b.disabled=true}
       else if(it.status==='login'){meta.innerHTML='<span class="pt-lk">'+IC('lock')+' нужен вход</span>';b.textContent='Войти';b.onclick=function(){try{requireAuth()}catch(e){}}}
-      else if(it.slot==='skin'&&it.key==='sk_gold'&&S&&S.stage>=6){meta.innerHTML='<span class="pt-lk">Основной</span>';if(isEq){b.textContent='Выбран';b.disabled=true}else{b.textContent='Надеть';b.onclick=function(){act('pet_unequip',{p_slot:'skin'})}}}
+      else if(it.slot==='skin'&&it.key==='sk_gold'&&S&&S.stage>=5){meta.innerHTML='<span class="pt-lk">Основной</span>';if(isEq){b.textContent='Выбран';b.disabled=true}else{b.textContent='Надеть';b.onclick=function(){act('pet_unequip',{p_slot:'skin'})}}}
       else if(it.status==='owned'){meta.innerHTML='<span class="pt-lk">Куплено</span>';
         if(isEq){b.textContent=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin')?'Выбран':'Снять';b.disabled=(it.slot==='bg'||it.slot==='floor'||it.slot==='skin');b.onclick=function(){act('pet_unequip',{p_slot:it.slot})}}
         else{b.textContent='Надеть';b.disabled=(['head','face','neck'].indexOf(it.slot)>=0&&!S.hatched);b.onclick=function(){act('pet_equip',{p_slot:it.slot,p_item:it.key})}}}
@@ -7258,7 +7280,7 @@ async function adminGemHistory(){
       d.appendChild(meta);d.appendChild(b);g.appendChild(d);
     });
     var soon=0;
-    if(tab==='sk'){var np=document.createElement('p');np.className='pt-note';np.style.cssText='grid-column:1/-1;margin:0 0 4px';np.textContent=(S&&S.stage>=6)?'Облики меняют внешний вид легендарного дракона. Купленные остаются у тебя навсегда.':'Облики откроются, когда дракон станет легендарным (этап 6).';g.insertBefore(np,g.firstChild)}
+    if(tab==='sk'){var np=document.createElement('p');np.className='pt-note';np.style.cssText='grid-column:1/-1;margin:0 0 4px';np.textContent=(S&&S.stage>=5)?'Облик меняет внешний вид дракона и даёт бонус к здоровью, броне и силе в игре. Купленные остаются у тебя навсегда.':'Облики откроются, когда дракон станет взрослым (этап 5). Можно ускорить рост за самоцветы.';g.insertBefore(np,g.firstChild)}
     for(var i=0;i<soon;i++){var d2=document.createElement('div');d2.className='pt-item pt-soon';d2.innerHTML='<div class="pt-pv"><span class="pt-sq">'+IC('star')+'</span></div><b>Скоро</b><div><span class="pt-lk">Новинка готовится</span></div><button type="button" disabled>Скоро</button>';g.appendChild(d2)}
   }
 
@@ -7394,7 +7416,13 @@ try{(function(){
   P(/^Сдай отчёт сегодня, и дракон подарит \+(\d+)$/,function(m){return "Bugun hisobot topshiring, ajdaho +"+m[1]+" hadya qiladi"},function(m){return "Submit a report today and the dragon will give +"+m[1]});
   P(/^Забрать бонус \+(\d+)$/,function(m){return "Bonusni olish +"+m[1]},function(m){return "Claim bonus +"+m[1]});
   P(/^Следующая смена: (\d+) (.+)$/,function(m){return "Keyingi o'zgartirish: "+m[1]+" "+((typeof UZ_MO!=='undefined'&&UZ_MO[m[2]])||m[2])},function(m){return "Next change: "+(MOEN[m[2]]||m[2])+" "+m[1]});
-  P(/^откроется на этапе 6$/,function(){return "6-bosqichda ochiladi"},function(){return "unlocks at stage 6"});
+  P(/^Тепло \+(\d+)\. Дракон растёт!$/,function(m){return "Issiqlik +"+m[1]+". Ajdaho o'smoqda!"},function(m){return "Heat +"+m[1]+". Your dragon is growing!"});
+  P(/^Это больше, чем нужно до взрослого\. Выбери меньше\.$/,function(){return "Bu ulg'ayguncha kerakdan ko'p. Kamroq tanlang."},function(){return "That is more than needed. Choose less."});
+  P(/^Тепла уже достаточно для взрослого дракона\.$/,function(){return "Ajdaho uchun issiqlik yetarli."},function(){return "Enough heat for an adult dragon."});
+  P(/^Подтвердить · (.+)$/,function(m){return "Tasdiqlash · "+m[1]},function(m){return "Confirm · "+m[1]});
+  P(/^До взрослого \+(\d+) (.+)$/,function(m){return "Kattagacha +"+m[1]+" "+m[2]},function(m){return "To adult +"+m[1]+" "+m[2]});
+  P(/^Ускорить рост: тепло за самоцветы \((\d+) (.+?) за 1 (.+?)\)\. Облики открываются у взрослого дракона\.$/,function(m){return "O'sishni tezlashtirish: issiqlik "+m[2]+" evaziga (1 issiqlik = "+m[1]+"). Ko'rinishlar katta ajdahoda ochiladi."},function(m){return "Speed up growth: buy heat with gems (1 heat = "+m[1]+"). Skins unlock for an adult dragon."});
+  P(/^откроется на этапе 5$/,function(){return "5-bosqichda ochiladi"},function(){return "unlocks at stage 5"});
   P(/^нужен вход$/,function(){return "kirish kerak"},function(){return "sign-in required"});
   P(/^с этапа (\d)$/,function(m){return m[1]+"-bosqichdan"},function(m){return "from stage "+m[1]});
   P(/^серия (\d+) дн\. \(лучшая (\d+)\)$/,function(m){return "seriya "+m[1]+" kun (eng yaxshi "+m[2]+")"},function(m){return "streak "+m[1]+" d. (best "+m[2]+")"});
