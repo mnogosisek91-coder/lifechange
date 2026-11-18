@@ -926,7 +926,7 @@ function mkCell(id){var d=document.createElement('button');d.className='sk';var 
   var co=document.createElement('u');co.className='co';d.appendChild(co);var ct=document.createElement('em');ct.className='ct';d.appendChild(ct);
   d.onclick=function(){useSpell(id)};st.cells[id]={el:d,lb:lb,co:co,ct:ct};return d}
 function renderSkills(){skEl.innerHTML='';st.cells={};if(!st.ch)return;
-  if(st.bkOpen){var b=BKS.filter(function(x){return x.id===st.bkOpen})[0],L=bkSp(b);skEl.style.gridTemplateColumns='44px repeat('+Math.max(1,L.length)+',minmax(0,1fr))';skEl.classList.add('open');skEl.style.setProperty('--bc',b.c);
+  if(st.bkOpen){var b=BKS.filter(function(x){return x.id===st.bkOpen})[0],L=bkSp(b);skEl.style.gridTemplateColumns='44px repeat('+Math.max(5,L.length)+',minmax(0,1fr))';skEl.classList.add('open');skEl.style.setProperty('--bc',b.c);
     var bk=document.createElement('button');bk.className='bkback';bk.style.background=b.c;bk.innerHTML='<img alt="" src="'+BKIMG[b.id]+'" style="width:34px;height:34px">◀<small>книги</small>';bk.onclick=function(){st.bkOpen=null;renderSkills()};skEl.appendChild(bk);
     L.forEach(function(id){skEl.appendChild(mkCell(id))})}
   else{skEl.classList.remove('open');skEl.style.gridTemplateColumns='repeat(4,minmax(0,1fr))';st.bks={};
@@ -1086,9 +1086,12 @@ function castSpell(id){
 var last=0;
 function frame(ts){
   var dt=Math.min(0.05,(ts-(last||ts))/1000)*SPEED*((typeof st==='object'&&st&&st.bkOpen&&st.running)?.25:1);last=ts;
-  if(st.running)update(dt);
-  draw();
+  try{if(st.running)update(dt)}catch(e){fatal(e)}
+  try{draw()}catch(e){if(!window.__drawErr){window.__drawErr=e;try{console.error(e)}catch(x){}}}
   requestAnimationFrame(frame)}
+function fatal(e){try{console.error(e)}catch(x){}window.__lastErr=e;try{st.running=false;rlEl.classList.remove('on');setMode('result');
+  screen('<h2>Бой прервался</h2><p style="font-size:13px;opacity:.8">Что-то пошло не так, но прогресс сохранён. Нажми «На главную».</p><p style="font-size:11px;opacity:.55;word-break:break-all">'+String((e&&e.message)||e).slice(0,160)+'</p><button class="b" id="fatBtn">На главную</button>');
+  document.getElementById('fatBtn').onclick=function(){goHome()}}catch(x){}}
 
 function update(dt){
   var dp=dragonPos();
@@ -1185,11 +1188,11 @@ function statsTable(){
   var ids=Object.keys(st.rs||{}).filter(function(id){return st.rs[id].dmg>0}).sort(function(a,b){return st.rs[b].dmg-st.rs[a].dmg});
   if(!ids.length)return '';
   var tot=ids.reduce(function(s,id){return s+st.rs[id].dmg},0)||1;
-  return '<div class="sec">УРОН ЗА РАУНД</div>'+ids.map(function(id){var d=st.rs[id].dmg,pc=Math.round(d/tot*100),nm=id==='dragon'?'🐉 Огонь дракона':'<img class="ic" style="border-radius:4px" alt="" src="'+SKIMG[id]+'"> '+BYID[id].n;
+  return '<div class="sec">УРОН ЗА РАУНД</div>'+ids.map(function(id){var d=st.rs[id].dmg,pc=Math.round(d/tot*100),nm=id==='dragon'?'🐉 Огонь дракона':'<img class="ic" style="border-radius:4px" alt="" src="'+(SKIMG[id]||SKIMG.shield)+'"> '+(id==='wall'?'Стена шипов':(BYID[id]?BYID[id].n:id));
     return '<div class="srow"><div class="sn"><span>'+nm+'</span><b>'+pc+'%</b></div><div class="sb"><i style="width:'+pc+'%"></i></div></div>'}).join('')}
 function end(win){
   st.running=false;setMode('result');rlEl.classList.remove('on');st.hand=[];renderSkills();
-  if(st.camp){campEnd(win);return}if(st.rv){rvEnd(win);return}if(st.tp){tpEnd(win);return}var bonus=win?gAllow(6+st.lives):0;P.gold+=bonus;if(win){P.round++;P.best=Math.max(P.best||0,P.round);qEv('win',1);if(st.lives>=MAXL())qEv('perfect',1)}save();hud();showResult(win,bonus)}
+  if(st.camp){campEnd(win);return}if(st.rv){rvEnd(win);return}if(st.tp){tpEnd(win);return}var bonus=win?gAllow(6+st.lives):0;P.gold+=bonus;if(win){P.round++;P.best=Math.max(P.best||0,P.round);qEv('win',1);if(st.lives>=MAXL())qEv('perfect',1)}save();hud();try{showResult(win,bonus)}catch(e){fatal(e)}}
 var resetArm=false;
 var BIMG={"lair": "assets/dfd7833316.webp", "forge": "assets/c724c4f06d.webp", "treasury": "assets/cd8ec20da7.webp", "tower": "assets/bd6da9fdea.webp", "spring": "assets/1583a5e1d6.webp", "market": "assets/65c4752789.webp", "arena": "assets/165840824f.webp"}
 var BLD=[{id:'lair',n:'Логово',x:0,y:-0.95,w:28},{id:'forge',n:'Кузница',x:0.8,y:-0.55,w:25},{id:'spring',n:'Источник',x:1,y:0.2,w:24},{id:'arena',n:'Арена',x:0.62,y:0.98,w:27},{id:'market',n:'Рынок',x:-0.62,y:0.98,w:26},{id:'treasury',n:'Сокровищница',s:'Казна',x:-1,y:0.2,w:24},{id:'tower',n:'Алтарь дракона',s:'Алтарь',x:-0.8,y:-0.55,w:23}];
