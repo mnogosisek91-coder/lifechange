@@ -1492,7 +1492,7 @@ function showShop(reward){
   setMode('shop');var sl=spLeft();
   var cards=Object.keys(CH).map(function(k){var c=CH[k],cost=chCost(k),dead=false;
     return '<div class="cc"><div class="ci">'+c.ic+'<button class="ib" data-i="'+k+'" aria-label="Шансы выпадения">i</button></div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span>'+(dead?'<small style="color:#ffd166">Все заклинания уже открыты — сундук не нужен</small>':(k!=='wood'&&sl.lk>0&&sl.lk<=2?'<small style="color:#ffd166">Осталось открыть заклинаний: '+sl.lk+'</small>':''))+'</div><button data-k="'+k+'"'+((P[c.cur]<cost||dead)?' disabled':'')+'>'+(dead?'Максимум':cost+' '+CUR[c.cur])+'</button></div>'}).join('');
-  var ex=[{ic:'💎',n:'Обмен самоцвета',d:'1 💎 → 120 🪙 золота',k:'g2c',cost:1,cur:'gems'},{ic:'🔥',n:'Тепло для дракона',d:'4 💎 → 3 🔥 тепла: от него растёт дракон',k:'g2h',cost:4,cur:'gems'}].filter(function(c){return !(PLATST&&c.k==='g2h')}).map(function(c){
+  var ex=[{ic:'💎',n:'Обмен самоцвета',d:'1 💎 → 200 🪙 золота',k:'g2c',cost:1,cur:'gems'},{ic:'🔥',n:'Тепло для дракона',d:'4 💎 → 3 🔥 тепла: от него растёт дракон',k:'g2h',cost:4,cur:'gems'}].filter(function(c){return !(PLATST&&c.k==='g2h')}).map(function(c){
     return '<div class="cc"><div class="ci">'+c.ic+'</div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span></div><button data-x="'+c.k+'"'+(P[c.cur]<c.cost?' disabled':'')+'>'+c.cost+' '+CUR[c.cur]+'</button></div>'}).join('');
   screen('<div class="hdr"><h2>Магазин</h2></div>'+resRow()+
     '<div id="rwBox" style="min-height:8px">'+(reward||'')+'</div>'+
@@ -1501,7 +1501,7 @@ function showShop(reward){
   [].forEach.call(ovbox.querySelectorAll('button.ib'),function(b){b.onclick=function(e){e.stopPropagation();showOdds(b.dataset.i)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-k]'),function(b){b.onclick=function(){buyChest(b.dataset.k)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-x]'),function(b){b.onclick=function(){
-    if(b.dataset.x==='g2c'&&P.gems>=1){P.gems-=1;P.gold+=120}else if(b.dataset.x==='g2h'&&P.gems>=4){P.gems-=4;P.heat=(P.heat||0)+3}else return;save();hud();showShop('<div class="reveal" style="justify-content:center"><b>Обмен выполнен</b></div>')}})}
+    if(b.dataset.x==='g2c'&&P.gems>=1){P.gems-=1;P.gold+=200}else if(b.dataset.x==='g2h'&&P.gems>=4){P.gems-=4;P.heat=(P.heat||0)+3}else return;save();hud();showShop('<div class="reveal" style="justify-content:center"><b>Обмен выполнен</b></div>')}})}
 function buyChest(k){
   var c=CH[k],cost=chCost(k);if(P[c.cur]<cost)return;
   P[c.cur]-=cost;if(k==='wood')P.chests++;
