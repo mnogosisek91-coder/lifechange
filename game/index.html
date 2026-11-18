@@ -901,9 +901,9 @@ var st={running:false,en:[],fx:[],pa:[],part:[],bolts:[],rings:[],later:[],em:[]
 
 var SPCH={fire:3,bolt:3,poison:3,blind:3,wind:3,flash:2,shield:2,ice:2,heal:2,drain:2,warcry:2,curse:2,bloodveil:2,stealth:2,meteor:2,beam:2,endure:1,stoneskin:1,moonfrost:1,starfall:2,timestop:1};
 var CHP={1:30,2:20,3:12};function chPrice(id){return CHP[SPCH[id]||2]||20}
-var BKS=[{id:'u',n:'Урон',e:'🔥',c:'#d8512a',l:['fire','bolt','meteor','beam','stealth','starfall']},
+var BKS=[{id:'u',n:'Урон',e:'🔥',c:'#d8512a',l:['fire','bolt','meteor','beam','starfall']},
  {id:'c',n:'Контроль',e:'🌀',c:'#6b5be6',l:['flash','blind','ice','wind','poison','moonfrost']},
- {id:'d',n:'Защита',e:'🛡️',c:'#2f8fd1',l:['shield','bloodveil','endure','curse','stoneskin']},
+ {id:'d',n:'Защита',e:'🛡️',c:'#2f8fd1',l:['shield','stealth','bloodveil','endure','curse','stoneskin']},
  {id:'s',n:'Поддержка',e:'💚',c:'#2fa866',l:['heal','warcry','drain','timestop']}];
 var BKIMG={u:"assets/7cddba9831.webp",c:"assets/06754729f5.webp",d:"assets/657f908bd1.webp",s:"assets/b97a1d1704.webp"};
 function limOut(){return false}
