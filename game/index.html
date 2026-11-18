@@ -981,7 +981,7 @@ function screen(html,page){ov.dataset.bg=mode;ovbox.innerHTML=html;ov.classList.
 function hideScreen(){ov.classList.remove('on');ov.classList.remove('page');[].forEach.call(navEl.children,function(x){x.classList.toggle('on',x.dataset.m===mode)})}
 function resRow(){return '<div class="res" id="resrow"><span>🪙 '+P.gold+'</span><span>🔥 '+(P.heat||0)+'</span><span>💎 '+P.gems+'</span></div>'}
 function sIcon(id){return '<img alt="" src="'+SKIMG[id]+'">'}
-function woodCost(){return Math.round((40+8*Math.min(P.chests,10))*(1-BT('market',bLv('market'))/100))}
+function woodCost(){return Math.round(500*(1-BT('market',bLv('market'))/100))}
 function statsTable(){
   var ids=Object.keys(st.rs||{}).filter(function(id){return st.rs[id].dmg>0}).sort(function(a,b){return st.rs[b].dmg-st.rs[a].dmg});
   if(!ids.length)return '';
@@ -1351,14 +1351,14 @@ function showResult(win,bonus){
   document.getElementById('shopBtn').onclick=function(){showShop()};
   document.getElementById('menuBtn').onclick=goHome}
 function showCollection(){showDragon('z')}
-var CH={wood:{ic:IC('chestW'),n:'Деревянный сундук',d:'1 награда: новое заклинание, самоцвет или золото',cur:'gold'},
-        silver:{ic:IC('chestS'),n:'Серебряный сундук',d:'Гарантированно новое заклинание + бонус',cur:'gold',cost:300},
-        royal:{ic:IC('chestR'),n:'Королевский сундук',d:'2 новых заклинания + золото',cur:'gems',cost:2}};
+var CH={wood:{ic:IC('chestW'),n:'Деревянный сундук',d:'1 награда: заклинание, опыт дракона, самоцвет или золото',cur:'gold'},
+        silver:{ic:IC('chestS'),n:'Серебряный сундук',d:'1 награда: заклинание, опыт дракона или золото',cur:'gold',cost:1000},
+        royal:{ic:IC('chestR'),n:'Королевский сундук',d:'2 награды: заклинание, опыт дракона или золото + подарок в золоте',cur:'gems',cost:2}};
 
 var ODDS={
- wood:{note:'Первый деревянный сундук всегда даёт новое заклинание. Улучшать заклинания можно только вручную: нажми на заклинание в разделе «Дракон».',g:[['Одна награда',[['book','Новое заклинание',38],['spark','Искры, 1–3',48],['gem','Самоцвет, 1',3],['coin','Золото, 30–69',11]]]]},
- silver:{note:'Если все заклинания уже открыты, сундук не продаётся.',g:[['Награда 1',[['book','Новое заклинание',100]]],['Награда 2',[['spark','Искры, 1–2',50],['coin','Золото, 30–69',50]]]]},
- royal:{note:'Если все заклинания уже открыты, сундук не продаётся.',g:[['Награда 1',[['book','Новое заклинание',100]]],['Награда 2',[['book','Новое заклинание',100]]],['Всегда в подарок',[['spark','Искры, 2',100]]]]}};
+ wood:{note:'Первый деревянный сундук всегда даёт новое заклинание. Если все заклинания уже открыты, вместо них выпадает золото. Опыт добавляется к шкале уровня дракона, но сам уровень повысить не может.',g:[['Одна награда',[['book','Новое заклинание',30],['coin','Золото, 200–600',40],['dragon','Опыт дракона, небольшая прибавка',15],['gem','Самоцвет, 1',3],['coin','Золото, 150–250',12]]]]},
+ silver:{note:'Если все заклинания уже открыты, вместо них выпадают опыт и золото. Опыт добавляется к шкале уровня дракона, но сам уровень повысить не может.',g:[['Одна награда',[['book','Новое заклинание',55],['dragon','Опыт дракона, небольшая прибавка',30],['coin','Золото, 600–1400',15]]]]},
+ royal:{note:'Если все заклинания уже открыты, вместо них выпадают опыт и золото. Опыт добавляется к шкале уровня дракона, но сам уровень повысить не может.',g:[['Награда 1',[['book','Новое заклинание',60],['dragon','Опыт дракона, прибавка',30],['coin','Золото, 800–1600',10]]],['Награда 2',[['book','Новое заклинание',40],['dragon','Опыт дракона, прибавка',35],['coin','Золото, 800–1600',25]]],['Всегда в подарок',[['coin','Золото, 400',100]]]]}};
 function showOdds(k){var o=ODDS[k],c=CH[k],old=document.getElementById('ipop');if(old)old.remove();
   var h='<div class="ipc"><h3>'+c.n+'</h3><div class="ipn">Шанс выпадения</div>'+o.g.map(function(g){return '<div class="ipg">'+g[0]+'</div>'+g[1].map(function(r){return '<div class="ipr"><span>'+(r[0]==='up'?'⬆':IC(r[0]))+' '+r[1]+'</span><b>'+r[2]+'%</b></div>'}).join('')}).join('')+'<div class="ipn" style="margin-top:8px">'+o.note+'</div><button class="b" id="ipx">Понятно</button></div>';
   var d=document.createElement('div');d.id='ipop';d.innerHTML=h;d.onclick=function(e){if(e.target===d)d.remove()};ov.appendChild(d);document.getElementById('ipx').onclick=function(){d.remove()}}
@@ -1367,8 +1367,8 @@ function chCost(k){return k==='wood'?woodCost():CH[k].cost}
 function spLeft(){var lk=SK.filter(function(s){return P.unlocked.indexOf(s.id)<0}).length;return {lk:lk,up:0,none:lk===0}}
 function showShop(reward){
   setMode('shop');var sl=spLeft();
-  var cards=Object.keys(CH).map(function(k){var c=CH[k],cost=chCost(k),dead=sl.none&&k!=='wood';
-    return '<div class="cc"><div class="ci">'+c.ic+'<button class="ib" data-i="'+k+'" aria-label="Шансы выпадения">i</button></div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span>'+(dead?'<small style="color:#ffd166">Все заклинания уже открыты — сундук не нужен</small>':(k!=='wood'&&sl.lk<=2?'<small style="color:#ffd166">Осталось открыть заклинаний: '+sl.lk+'</small>':''))+'</div><button data-k="'+k+'"'+((P[c.cur]<cost||dead)?' disabled':'')+'>'+(dead?'Максимум':cost+' '+CUR[c.cur])+'</button></div>'}).join('');
+  var cards=Object.keys(CH).map(function(k){var c=CH[k],cost=chCost(k),dead=false;
+    return '<div class="cc"><div class="ci">'+c.ic+'<button class="ib" data-i="'+k+'" aria-label="Шансы выпадения">i</button></div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span>'+(dead?'<small style="color:#ffd166">Все заклинания уже открыты — сундук не нужен</small>':(k!=='wood'&&sl.lk>0&&sl.lk<=2?'<small style="color:#ffd166">Осталось открыть заклинаний: '+sl.lk+'</small>':''))+'</div><button data-k="'+k+'"'+((P[c.cur]<cost||dead)?' disabled':'')+'>'+(dead?'Максимум':cost+' '+CUR[c.cur])+'</button></div>'}).join('');
   var ex=[{ic:'💎',n:'Обмен самоцвета',d:'1 💎 → 120 🪙 золота',k:'g2c',cost:1,cur:'gems'},{ic:'🔥',n:'Тепло для дракона',d:'2 💎 → 3 🔥 тепла: от него растёт дракон',k:'g2h',cost:2,cur:'gems'}].filter(function(c){return !(PLATST&&c.k==='g2h')}).map(function(c){
     return '<div class="cc"><div class="ci">'+c.ic+'</div><div class="ct"><b>'+c.n+'</b><span>'+c.d+'</span></div><button data-x="'+c.k+'"'+(P[c.cur]<c.cost?' disabled':'')+'>'+c.cost+' '+CUR[c.cur]+'</button></div>'}).join('');
   screen('<div class="hdr"><h2>Магазин</h2></div>'+resRow()+
@@ -1380,7 +1380,7 @@ function showShop(reward){
   [].forEach.call(ovbox.querySelectorAll('button[data-x]'),function(b){b.onclick=function(){
     if(b.dataset.x==='g2c'&&P.gems>=1){P.gems-=1;P.gold+=120}else if(b.dataset.x==='g2h'&&P.gems>=2){P.gems-=2;P.heat=(P.heat||0)+3}else return;save();hud();showShop('<div class="reveal" style="justify-content:center"><b>Обмен выполнен</b></div>')}})}
 function buyChest(k){
-  var c=CH[k],cost=chCost(k);if(P[c.cur]<cost)return;if(k!=='wood'&&spLeft().none)return;
+  var c=CH[k],cost=chCost(k);if(P[c.cur]<cost)return;
   P[c.cur]-=cost;if(k==='wood')P.chests++;
   var rw=rollChest(k);qEv('chest',1);save();hud();
   var box=document.getElementById('rwBox');[].forEach.call(ovbox.querySelectorAll('button'),function(b){b.disabled=true});
@@ -1390,18 +1390,23 @@ if(!RELEASE)window.__roll=function(k){return rollChest(k)};
 function rollChest(k){
   function locked(){return SK.filter(function(s){return P.unlocked.indexOf(s.id)<0})}
   function unlock(){var l=locked(),s=l[Math.floor(Math.random()*l.length)];P.unlocked.push(s.id);return {icon:sIcon(s.id),t:'Новое заклинание: '+s.n,s:s.d}}
-  function spark(n){var g=n*40;P.gold+=g;return {icon:'<div class="big">🪙</div>',t:'+'+g+' золота',s:'Неплохая добавка'}}
-  function gem(){if(!gemEarn(1))return gold();P.gems+=1;return {icon:'<div class="big">💎</div>',t:'+1 самоцвет',s:'Редкая находка'}}
-  function gold(){var g=30+Math.floor(Math.random()*40);P.gold+=g;return {icon:'<div class="big">🪙</div>',t:'+'+g+' золота',s:'Почти вернулось'}}
-  function sOrU(){if(locked().length)return unlock();return gold()}
+  function gm(a,b,sub){var g=a+Math.floor(Math.random()*(b-a+1));P.gold+=g;return {icon:'<div class="big">🪙</div>',t:'+'+g+' золота',s:sub||'Неплохая добавка'}}
+  function gem(){if(!gemEarn(1))return gm(150,250,'Почти вернулось');P.gems+=1;return {icon:'<div class="big">💎</div>',t:'+1 самоцвет',s:'Редкая находка'}}
+  function xp(f,a,b){var d=dLevel();if(d.l>=DLMAX)return gm(a,b);var rem=d.n-d.x,n=Math.min(Math.round(xpNeed(d.l)*f),rem-1);if(n<10)return gm(a,b);P.xp=(P.xp||0)+n;return {icon:'<div class="big">'+IC('dragon')+'</div>',t:'+'+n+' опыта дракона',s:'До следующего уровня ещё '+(rem-n)}}
+  function spOr(fa,a,b){return locked().length?unlock():xp(fa,a,b)}
   if(k==='wood'){var roll=Math.random();
     if(P.chests===1&&locked().length)return [unlock()];
-    if(roll<.38&&locked().length)return [unlock()];
-    if(roll<.86)return [spark(1+Math.floor(Math.random()*3))];
-    if(roll<.89)return [gem()];
-    return [gold()]}
-  if(k==='silver')return [sOrU(),Math.random()<.5?spark(1+Math.floor(Math.random()*2)):gold()];
-  var rr=[sOrU(),sOrU(),spark(2)];return rr}
+    if(roll<.30&&locked().length)return [unlock()];
+    if(roll<.70)return [gm(200,600)];
+    if(roll<.85)return [xp(.06,200,600)];
+    if(roll<.88)return [gem()];
+    return [gm(150,250,'Почти вернулось')]}
+  if(k==='silver'){var r1=Math.random();
+    if(r1<.55)return [spOr(.10,600,1400)];if(r1<.85)return [xp(.10,600,1400)];return [gm(600,1400)]}
+  var q1=Math.random(),b1,q2=Math.random(),b2;
+  if(q1<.6)b1=spOr(.15,800,1600);else if(q1<.9)b1=xp(.15,800,1600);else b1=gm(800,1600);
+  if(q2<.4)b2=spOr(.12,800,1600);else if(q2<.75)b2=xp(.12,800,1600);else b2=gm(800,1600);
+  return [b1,b2,gm(400,400,'Подарок королевского сундука')]}
 
 /* ---- отрисовка ---- */
 function drawHome(){
