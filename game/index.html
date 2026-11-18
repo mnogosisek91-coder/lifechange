@@ -1795,7 +1795,7 @@ function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementB
   if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
   e.classList.add('on')}
 function myNick(){return (PLATST&&PLATST.name)||'Дракон'}
-function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet',name:st.name||''};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit();socPlat();clSync()}
+function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet',name:st.name||''};document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit();socPlat();clSync();gfCheck()}
 /* Общий кошелёк с платформой: самоцветы = баланс платформы, тепло из игры уходит дракону (до 2 в день) */
 var kpBusy=0,kpT=0;
 window.kpSoon=function(){if(!PLATST||kpT)return;kpT=setTimeout(function(){kpT=0;kpSync()},900)};
@@ -1819,7 +1819,7 @@ var KPROLE=null,mTab='u',mQ='';
 function mEsc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
 function modInit(){if(!PLATST||!plCl)return;plCl.rpc('mod_me').then(function(q){var d=q&&q.data;if(!d||q.error)return;KPROLE=(d.admin||d.moderator)?{admin:!!d.admin}:null;modBtn()}).catch(function(){})}
 function modBtn(){var b=document.getElementById('modbtn');if(b){b.style.display=(KPROLE&&mode==='home')?'block':'none';b.onclick=function(){showMod()}}}
-function modErr(e){var m=(e&&e.message)||'ошибка';return m==='not_mod'||m==='not_admin'?'Нет прав':m==='protected'?'Этого человека трогать нельзя':m==='self'?'К себе применить нельзя':m}
+function modErr(e){var m=(e&&e.message)||'ошибка';return m==='not_mod'||m==='not_admin'?'Нет прав':m==='protected'?'Этого человека трогать нельзя':m==='self'?'К себе применить нельзя':m==='bad_amount'?'Неверная сумма':m==='no_user'?'Игрок не найден':m}
 function showMod(tab){if(!KPROLE)return;if(tab)mTab=tab;
   var T=[['u','Игроки'],['c','Жалобы']];if(KPROLE.admin)T.push(['t','Тест']);
   screen('<div class="hdr"><h2>🛡 Модерация</h2></div><p class="qinfo" style="text-align:center;margin:2px 0 6px">'+(KPROLE.admin?'Роль: админ. Можно выдавать модераторов.':'Роль: модератор.')+'</p><div class="qseg">'+T.map(function(t){return '<button data-t="'+t[0]+'"'+(mTab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div><div id="modBody" class="cards"><p class="qinfo" style="text-align:center">Загрузка…</p></div><button class="g" id="modClose">Закрыть</button>',true);
@@ -1848,6 +1848,7 @@ function modLoad(){var bd=document.getElementById('modBody');if(!bd)return;var t
       var a=q.data||[];if(!a.length)return L.innerHTML='<p class="qinfo" style="text-align:center">Игроков не нашли</p>';
       L.innerHTML=a.map(function(u){var bd2=(u.online?'<span class="mbd g">онлайн</span>':'')+(u.is_admin?'<span class="mbd a">админ</span>':'')+(u.is_moderator?'<span class="mbd m">модератор</span>':'')+(u.banned?'<span class="mbd x">бан</span>':'');
         var acts='';if(KPROLE.admin&&!u.is_admin)acts+='<button class="gr" data-a="mod" data-id="'+u.id+'" data-on="'+(u.is_moderator?0:1)+'">'+(u.is_moderator?'Снять модератора':'Сделать модератором')+'</button>';
+        if(KPROLE.admin)acts+='<button class="gr" data-a="gift" data-id="'+u.id+'">🎁 Подарок</button>';
         if(!u.is_admin&&(KPROLE.admin||!u.is_moderator))acts+=u.banned?'<button class="gr" data-a="unban" data-id="'+u.id+'">Снять бан</button>':'<button class="red" data-a="ban" data-id="'+u.id+'">Бан</button>';
         return '<div class="cc mrow"><div class="ct"><b>'+mEsc(u.name||'Без имени')+'</b><span>'+bd2+'ур. '+mEsc(u.level)+(u.email?' · '+mEsc(u.email):'')+'</span></div><div class="mact">'+acts+'</div></div>'}).join('');
       [].forEach.call(L.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){modUserAct(b)}})}).catch(function(){modMsg('Нет связи')})
@@ -1856,17 +1857,29 @@ function modLoad(){var bd=document.getElementById('modBody');if(!bd)return;var t
       bd.innerHTML=a.map(function(c){return '<div class="cc mrow"><div class="ct"><b>'+mEsc(c.from_name)+' → '+mEsc(c.target_name)+'</b><span>'+mEsc(c.body)+'</span>'+(c.status==='closed'?'<span style="opacity:.6">закрыта</span>':'')+'</div><div class="mact">'+(c.status==='new'?(c.msg_id?'<button class="gr" data-a="dm" data-id="'+c.msg_id+'">Удалить сообщение</button>':'')+(!c.protected&&!c.banned?'<button class="red" data-a="ban" data-id="'+c.target_user+'">Бан автору</button>':'')+'<button class="gr" data-a="cl" data-id="'+c.id+'">Закрыть жалобу</button>':'')+'</div></div>'}).join('');
       [].forEach.call(bd.querySelectorAll('button[data-a]'),function(b){b.onclick=function(){var a=b.dataset.a;if(a==='ban')return modUserAct(b);modDo(a==='dm'?'mod_chat_delete':'mod_complaint_close',a==='dm'?{p_id:+b.dataset.id}:{p_id:+b.dataset.id}).then(function(ok){if(ok)modLoad()})}})}).catch(function(){modMsg('Нет связи')})}}
 function modUserAct(b){var a=b.dataset.a,id=b.dataset.id;
+  if(a==='gift'){var bx=b.parentNode,inp='style="flex:1;min-width:0;border-radius:10px;border:1px solid #3a4478;background:#121936;color:#fff;padding:9px;font-size:14px"';
+    bx.innerHTML='<div style="display:flex;gap:6px;width:100%"><input id="gG" type="number" min="0" inputmode="numeric" placeholder="Золото" '+inp+'><input id="gX" type="number" min="0" inputmode="numeric" placeholder="Опыт" '+inp+'></div><button class="gr" data-g="ok">Отправить</button><button class="gr" data-g="x">Отмена</button>';
+    [].forEach.call(bx.querySelectorAll('button'),function(c){c.onclick=function(){if(c.dataset.g==='x')return modLoad();var g=Math.floor(+document.getElementById('gG').value||0),x=Math.floor(+document.getElementById('gX').value||0);
+      modDo('mod_gift',{p_user:id,p_gold:g,p_xp:x,p_note:''}).then(function(ok){if(ok)bx.innerHTML='<span style="color:#7be08a;font-weight:700">Отправлено: '+(g?g+' золота ':'')+(x?x+' опыта':'')+'</span>'})}});return}
   if(a==='mod')return modDo('mod_set_moderator',{p_user:id,p_on:b.dataset.on==='1'}).then(function(ok){if(ok)modLoad()});
   if(a==='unban')return modDo('mod_unban',{p_user:id}).then(function(ok){if(ok)modLoad()});
   if(a==='ban'){var box=b.parentNode;box.innerHTML='<span style="font-size:12px;opacity:.8;width:100%;text-align:right">На сколько банить?</span>'+[['1 ч',1],['24 ч',24],['7 дн',168],['Навсегда',0]].map(function(x){return '<button class="red" data-h="'+x[1]+'">'+x[0]+'</button>'}).join('')+'<button class="gr" data-h="x">Отмена</button>';
     [].forEach.call(box.querySelectorAll('button'),function(c){c.onclick=function(){if(c.dataset.h==='x')return modLoad();modDo('mod_ban',{p_user:id,p_hours:+c.dataset.h,p_reason:'Нарушение правил'}).then(function(ok){modLoad()})}})}}
+/* Подарки от админа: золото и опыт */
+var gfBusy=0;
+function gfCheck(){if(!PLATST||!plCl||gfBusy)return;gfBusy=1;plCl.rpc('g_gifts_get').then(function(q){gfBusy=0;var a=q&&q.data;if(!a||q.error||!a.length)return;P.gdone=P.gdone||[];var g=0,x=0,notes=[],ids=[];
+  a.forEach(function(f){ids.push(f.id);if(P.gdone.indexOf(f.id)<0){g+=f.gold;x+=f.xp;P.gdone.push(f.id);if(f.note)notes.push(f.note)}});if(P.gdone.length>60)P.gdone=P.gdone.slice(-60);
+  if(g||x){P.gold+=g;P.xp=(P.xp||0)+x;var o=P.giftMsg||{g:0,x:0,n:''};P.giftMsg={g:o.g+g,x:o.x+x,n:[o.n].concat(notes).filter(Boolean).join(' · ')}}
+  save();try{hud()}catch(e){}plCl.rpc('g_gifts_ack',{p_ids:ids}).then(function(){},function(){});gfShow()}).catch(function(){gfBusy=0})}
+function gfShow(){var m=P.giftMsg;if(!m||mode!=='home'||ov.classList.contains('on'))return;P.giftMsg=null;save();
+  screen('<h2>Подарок</h2><p>Администрация LifeChange дарит тебе:</p><p style="font-size:18px;margin:8px 0;line-height:1.6">'+(m.g?'+'+m.g+' золота<br>':'')+(m.x?'+'+m.x+' опыта дракона':'')+'</p>'+(m.n?'<p style="opacity:.8">«'+mEsc(m.n)+'»</p>':'')+'<button class="b" id="gfOk">Спасибо!</button>');document.getElementById('gfOk').onclick=hideScreen}
 /* Настоящие игроки, онлайн и чат (сервер: g_ping, g_players_list, chat_get, chat_send) */
 var socTm=0,socBan=false,chMsgs={g:[],c:[]},chN=0;
 function socKey(){try{return pStage(dLevel().l)+'_'+(P.dcol||'violet')}catch(e){return 'baby_violet'}}
 function socPlat(){if(!PLATST)return;var h=document.getElementById('home');if(!h)return;
   if(!document.getElementById('onbtn')){var o=document.createElement('button');o.id='onbtn';o.innerHTML='<i></i>Онлайн <b>–</b>';o.onclick=rOnline;h.appendChild(o);var c=document.createElement('button');c.id='chbtn';c.textContent='💬 Чат';c.onclick=function(){rChat()};h.appendChild(c)}
   socPing();if(!socTm)socTm=setInterval(function(){if(!document.hidden)socPing()},45000)}
-var socLast=0;function socPing(){if(!PLATST||!plCl)return;var nw=Date.now();if(nw-socLast<5000)return;socLast=nw;plCl.rpc('g_ping',{p_level:dLevel().l,p_dk:socKey()}).then(function(q){var d=q&&q.data;if(!d||q.error)return;socBan=!!d.banned;var e=document.getElementById('onbtn');if(e&&typeof d.online==='number')e.querySelector('b').textContent=d.online}).catch(function(){})}
+var socLast=0;function socPing(){if(!PLATST||!plCl)return;var nw=Date.now();if(nw-socLast<5000)return;socLast=nw;plCl.rpc('g_ping',{p_level:dLevel().l,p_dk:socKey()}).then(function(q){var d=q&&q.data;if(!d||q.error)return;gfCheck();gfShow();socBan=!!d.banned;var e=document.getElementById('onbtn');if(e&&typeof d.online==='number')e.querySelector('b').textContent=d.online}).catch(function(){})}
 function socAgo(s){return s<120?'в сети':s<3600?'был(а) '+Math.floor(s/60)+' мин назад':s<86400?'был(а) '+Math.floor(s/3600)+' ч назад':'был(а) '+Math.floor(s/86400)+' дн назад'}
 function rOnline(){var L=document.getElementById('onl')||mkLay('onl');
   L.innerHTML='<div class="lh"><b id="onT">🟢 Игроки</b><button id="onX">Закрыть</button></div><div class="lb" id="onB"><p class="qinfo" style="text-align:center">Загрузка…</p></div>';L.classList.add('on');
