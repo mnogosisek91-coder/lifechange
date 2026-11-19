@@ -450,7 +450,15 @@ var BYID={};SK.forEach(function(s){BYID[s.id]=s});
 var EM={fire:'🔥',bolt:'⚡',poison:'☠️',flash:'✨',blind:'🌀',shield:'🛡️',ice:'❄️',meteor:'☄️',wind:'🌪️',heal:'💚',stealth:'👻',drain:'🩸',warcry:'📣',curse:'👁️',bloodveil:'💞',beam:'🌟',endure:'🛡️'};
 
 /* ---- прогресс (сохраняется в браузере) ---- */
-var KEY='ldd_demo_v1';
+var KEY0='ldd_demo_v1',KEY=KEY0;try{var cur0=localStorage.getItem('ldd_cur');if(cur0)KEY=KEY0+'_'+cur0}catch(e){}
+/* У каждого аккаунта LifeChange своё сохранение. Первый вошедший забирает старое общее, остальные начинают с нуля */
+var acctReload=function(){location.reload()};
+function acctSwitch(uid){try{uid=String(uid||'').replace(/[^a-zA-Z0-9-]/g,'');if(!uid)return false;
+  var cur=localStorage.getItem('ldd_cur'),own=localStorage.getItem('ldd_owner'),nk=KEY0+'_'+uid;
+  if(cur===uid)return false;
+  if(localStorage.getItem(nk)){localStorage.setItem('ldd_cur',uid);acctReload();return true}
+  if(!own){localStorage.setItem('ldd_owner',uid);localStorage.setItem('ldd_cur',uid);KEY=nk;try{localStorage.setItem(nk,JSON.stringify(P))}catch(e){}return false}
+  localStorage.setItem('ldd_cur',uid);acctReload();return true}catch(e){return false}}
 function defP(){return {gold:0,heat:0,sparks:0,gems:0,unlocked:['bolt','heal'],lv:{},chests:0,round:0,best:0,b:{lair:1},clan:null,tc:Date.now()}}
 function load(){try{var s=localStorage.getItem(KEY);if(s){var o=Object.assign(defP(),JSON.parse(s));if(o.sparks){o.gold=(o.gold||0)+o.sparks*40;o.sparks=0}return o}}catch(e){}return defP()}
 function eggUpd(){var e=document.getElementById('egg');if(e)e.classList.toggle('on',!!P.egg)}
@@ -1833,7 +1841,10 @@ function pfReal(n,p){if(!PLATST||!plCl||!CLS())return;var nm=p.me?myNick():n;
     if(!p.me){var st=document.getElementById('pfStats');if(st)st.innerHTML=d.card?pfStatsHtml(d.card):'<p class="qinfo" style="text-align:center;margin:14px 0">Игрок ещё не обновил игру. Характеристики появятся, когда он зайдёт в неё снова.</p>';var h=document.querySelector('#pf .pfh span');if(h)h.textContent='Ур. '+d.level;var im=document.querySelector('#pf .pfh img');if(im)im.src=dragSrc(d.dk);
       var ps=document.querySelector('#pf .pfs');if(ps)ps.innerHTML=(d.cn?(UIIMG[d.ce]?IC(d.ce)+' ':'🛡️ ')+sEsc(d.cn):'Без клана')+' · '+(d.card?lgIc(leagueOf(d.card.pw).k)+leagueOf(d.card.pw).n+' · ':'')+socAgo(d.ago)+(d.adm?' <em class="modb adm">ADMIN</em>':d.mod?' <em class="modb">MOD</em>':'')}
     bioShow(W,d.bio,p.me);
-    if(d.cn&&d.ca){W.insertAdjacentHTML('beforeend','<div class="pbio"><b>О КЛАНЕ «'+sEsc(d.cn).toUpperCase()+'»</b>'+sEsc(d.ca)+'</div>')}}).catch(function(){})}
+    if(d.cn&&d.ca){W.insertAdjacentHTML('beforeend','<div class="pbio"><b>О КЛАНЕ «'+sEsc(d.cn).toUpperCase()+'»</b>'+sEsc(d.ca)+'</div>')}
+    if(!p.me&&KPROLE&&!(d.adm&&!KPROLE.admin)){var mb=function(txt,fn){var b=document.createElement('button');b.className='g';b.style.cssText='width:100%;margin-top:6px';b.textContent=txt;var arm=0;b.onclick=function(){if(!arm){arm=1;b.textContent='Точно убрать? Нажми ещё раз';return}b.disabled=true;plCl.rpc(fn,{p_name:nm}).then(function(q){if(q&&q.error){b.disabled=false;arm=0;b.textContent=q.error.message==='protected'?'Этого игрока трогать нельзя':'Не получилось, попробуй ещё раз';return}showProfile(n)}).catch(function(){b.disabled=false;arm=0;b.textContent='Нет связи'})};W.appendChild(b)};
+      if(d.bio)mb('🧹 Убрать «О себе» (модерация)','mod_clear_bio');if(d.ca)mb('🧹 Убрать «О клане» (модерация)','mod_clear_clan_about')}
+  }).catch(function(){})}
 var FR={inc:[],fr:[],out:[]},frShown={};
 function frIs(n){return FR.fr.some(function(x){return x.name===n})}
 function frLoad(cb){if(!PLATST||!plCl)return;plCl.rpc('g_friends_get').then(function(q){var d=q&&q.data;if(q&&!q.error&&d){FR={inc:d.inc||[],fr:d.fr||[],out:d.out||[]};frPrompt()}if(cb)cb()}).catch(function(){})}
@@ -2018,7 +2029,7 @@ function chDraw(tab,d){var b=document.getElementById('chb');if(!b)return;var a=c
   b.scrollTop=atEnd?b.scrollHeight:old}
 function platInit(){if(!PLAT_ON)return;var hx=document.getElementById('hexit');if(hx){hx.style.display='';hx.onclick=function(){location.href='/'}}plGate('check');
   function go(){try{plCl=plCl||window.supabase.createClient(PL_URL,PL_KEY)}catch(e){return plGate('err')}
-    plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');
+    plCl.auth.getSession().then(function(r){var ss=r&&r.data&&r.data.session;if(!ss)return plGate('login');if(acctSwitch(ss.user&&ss.user.id))return;
       return plCl.rpc('pet_get').then(function(q){if(q.error||!q.data)return plGate('err');var st=q.data;if(!st.hatched)return plGate('egg');plOk(st)})}).catch(function(){plGate('err')})}
   if(window.supabase&&window.supabase.createClient)return go();
   var sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';sc.onload=go;sc.onerror=function(){plGate('err')};document.head.appendChild(sc)}
