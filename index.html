@@ -5086,7 +5086,7 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     + '.ny-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:#0a1128;overflow:hidden}'
     + '.ny-pic{position:absolute;inset:0;background:url(' + BG_WIDE + ') center bottom/cover no-repeat;will-change:transform}'
     + '.ny-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,28,.5) 0%,rgba(6,10,28,.32) 45%,rgba(6,10,28,.46) 100%)}'
-    + '@media (orientation:portrait){body[data-ny] #tab-home{padding-top:42vw}.ny-pic{background:url(' + BG_TALL + ') center var(--nyo,130px)/100% auto no-repeat,linear-gradient(180deg,#0a1128,#1e3557) top/100% var(--nyo,130px) no-repeat,#0a1128}.ny-bg::after{background:linear-gradient(180deg,rgba(10,17,40,.25) 0,rgba(10,17,40,.25) var(--nyo,130px),rgba(10,17,40,.05) calc(var(--nyo,130px) + 14vw),rgba(10,17,40,.05) calc(var(--nyo,130px) + 98vw),#0a1128 calc(var(--nyo,130px) + 118vw))}}'
+    + '@media (orientation:portrait){.ny-pic{background:url(' + BG_TALL + ') center var(--nyo,96px)/100% auto no-repeat,linear-gradient(180deg,#0a1128,#1e3557) top/100% var(--nyo,96px) no-repeat,#0a1128}.ny-bg::after{background:linear-gradient(180deg,rgba(10,17,40,.25) 0,rgba(10,17,40,.25) var(--nyo,96px),rgba(10,17,40,.05) calc(var(--nyo,96px) + 14vw),rgba(10,17,40,.05) calc(var(--nyo,96px) + 98vw),#0a1128 calc(var(--nyo,96px) + 118vw))}}'
     + '.ny-banner{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 14px;color:#f0f9ff;font-size:.92rem;text-align:center;background:linear-gradient(90deg,#0b1d3a,#14532d 55%,#0b1d3a);border-bottom:1px solid rgba(251,191,36,.55);position:relative;z-index:5}'
     + '.ny-banner svg{width:22px;height:22px;flex:none;filter:drop-shadow(0 0 5px rgba(186,230,253,.9))}'
     + '.ny-banner b{color:#fde68a;font-variant-numeric:tabular-nums}'
@@ -5102,6 +5102,9 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
   const bg = document.createElement('div'); bg.className = 'ny-bg'; bg.innerHTML = '<div class="ny-pic"></div>'; const pic = bg.firstChild; document.body.insertBefore(bg, document.body.firstChild);
   [BG_WIDE, BG_TALL, IMG_FLAKE].forEach(s => { const i = new Image(); i.src = s; });
 
+  // картинка начинается ровно под шапкой, контент не сдвигаем (как на осеннем фоне)
+  { const hd = document.querySelector('header'), setO = () => { const h = hd ? Math.round(hd.getBoundingClientRect().bottom) : 96; document.documentElement.style.setProperty('--nyo', Math.max(0, h) + 'px'); };
+    setO(); addEventListener('resize', setO); addEventListener('scroll', setO, { passive: true }); setTimeout(setO, 800); setTimeout(setO, 2500); if(window.ResizeObserver && hd) new ResizeObserver(setO).observe(hd); }
   // ---------- лёд на «Мне плохо», снеговик на чате, санки с пингвинами ----------
   const IMG_SLED = 'assets/ny/ny-sled.ca8f09ba.webp', IMG_SNOWMAN = 'assets/ny/ny-snowman.2ee58450.webp';
   [IMG_SLED, IMG_SNOWMAN].forEach(s0 => { const i = new Image(); i.src = s0; });
