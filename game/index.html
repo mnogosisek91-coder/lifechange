@@ -1236,7 +1236,7 @@ function update(dt){
 }
 function fK(n){n=Math.floor(+n||0);if(n<1000)return ''+n;var d=n<1e6?1e3:n<1e9?1e6:1e9,u=n<1e6?'K':n<1e9?'M':'B',k=n/d;return (k<10?Math.floor(k*10)/10:Math.floor(k))+u}
 function hud(){qBadge();trNav();
-  if(mode!=='battle'&&mode!=='result'){document.getElementById('hlogo').style.display='';document.getElementById('rd').textContent='Хранитель привычек';document.getElementById('lv').textContent='🔥 '+fK(P.heat||0)+'  💎 '+fK(P.gems);document.getElementById('cur').textContent='🪙 '+fK(P.gold);return}
+  if(mode!=='battle'&&mode!=='result'){document.getElementById('hlogo').style.display='';document.getElementById('rd').textContent='Хранитель привычек';document.getElementById('lv').textContent='💎 '+fK(P.gems);document.getElementById('cur').textContent='🪙 '+fK(P.gold);return}
   document.getElementById('hlogo').style.display='none';
   document.getElementById('rd').textContent=st.camp?'Глава '+st.camp.ch+' · '+st.camp.lv:(st.rv?'Дуэль':st.tp?'Искушение':'Раунд '+(P.round+1));
   document.getElementById('hp').style.width=Math.max(0,st.duel?st.dhp/st.dmax*100:st.lives/MAXL()*100)+'%';
@@ -1829,7 +1829,7 @@ function pProf(n){var c=P.clan;
   while(eq.length<Math.min(3,ARTS.length)&&i++<30){var q=ARTS[Math.floor(r()*ARTS.length)];if(eq.indexOf(q)<0)eq.push(q)}
   return {n:n,lv:L,key:pStage(L)+'_'+col,s:s,h:h,a:a,pw:L*5+100+s*60+h*50+a*40,clan:m?c.n:(r()<.6?TR_C[Math.floor(r()*TR_C.length)]:null),lg:leagueOf(L*5+100+s*60+h*50+a*40).n,lk:leagueOf(L*5+100+s*60+h*50+a*40).k,best:Math.floor(r()*L*3),eq:eq}}
 function mkLay(id,cls){var d=document.createElement('div');d.id=id;d.className='lay '+(cls||'');document.getElementById('fieldbox').appendChild(d);return d}
-function closeLays(){['pf','cht','onl','tav','frl','brd'].forEach(function(i){var e=document.getElementById(i);if(e)e.classList.remove('on')});clearInterval(chTm)}
+function closeLays(){['pf','cht','onl','tav','frl','brd','adv'].forEach(function(i){var e=document.getElementById(i);if(e)e.classList.remove('on')});clearInterval(chTm)}
 function bioErr(e){var m=(e&&e.message)||'';return {no_links:'Ссылки и @ники писать нельзя',banned:'Тебе закрыт доступ к тексту',too_fast:'Подожди несколько секунд',not_auth:'Войди в LifeChange',no_player:'Зайди в игру заново и повтори'}[m]||'Не удалось сохранить, попробуй позже'}
 function aboutEdit(W,title,txt,ph,save,done,cancel){W.innerHTML='<div class="pbio"><b>'+title+'</b><textarea id="abT" maxlength="140" placeholder="'+ph+'">'+sEsc(txt||'')+'</textarea><small id="abC">'+(txt||'').length+' / 140 · без ссылок и @ников</small><p id="abE" class="qinfo" style="color:#ffb4b4;margin:4px 0 0;min-height:14px"></p><div class="pe"><button class="g" id="abNo">Отмена</button><button class="b" id="abOk">Сохранить</button></div></div>';
   var t=document.getElementById('abT'),busy=0;t.oninput=function(){document.getElementById('abC').textContent=t.value.length+' / 140 · без ссылок и @ников'};document.getElementById('abNo').onclick=cancel;
@@ -1880,24 +1880,24 @@ function onList(){var b=Math.floor(Date.now()/300000),r=tRng('on'+b),n=12+Math.f
   return ['Ты'].concat(out)}
 /* Таверна: общий зал, онлайн, друзья, клановый чат, доска заданий */
 var TVIMG='assets/d7359f65a3.webp';
-var TVI={"chat": "assets/f0986979e6.webp", "online": "assets/fc8a768383.webp", "friends": "assets/53c783e67f.webp", "cchat": "assets/bd692f4ca7.webp", "board": "assets/390deb87a2.webp", "h1": "assets/3c508a045e.webp", "h3": "assets/2a118dd9c6.webp", "h5": "assets/e41e13c84c.webp", "h7": "assets/86ca09a928.webp", "sq": "assets/b4562e0d00.webp", "seek": "assets/fcf5ed631b.webp", "recruit": "assets/eb5c2075e6.webp", "pfriends": "assets/eb3ec057b3.webp"};function tvI(k,w){return '<img class="tvi" alt="" src="'+TVI[k]+'"'+(w?' style="width:'+w+'px;height:'+w+'px;vertical-align:-4px"':'')+'>'}
+var TVI={"chat": "assets/f0986979e6.webp", "online": "assets/fc8a768383.webp", "friends": "assets/53c783e67f.webp", "cchat": "assets/bd692f4ca7.webp", "board": "assets/390deb87a2.webp", "h1": "assets/3c508a045e.webp", "h3": "assets/2a118dd9c6.webp", "h5": "assets/e41e13c84c.webp", "h7": "assets/86ca09a928.webp", "sq": "assets/b4562e0d00.webp", "seek": "assets/fcf5ed631b.webp", "recruit": "assets/eb5c2075e6.webp", "pfriends": "assets/eb3ec057b3.webp","adv":"assets/5240f85fcb.webp"};function tvI(k,w){return '<img class="tvi" alt="" src="'+TVI[k]+'"'+(w?' style="width:'+w+'px;height:'+w+'px;vertical-align:-4px"':'')+'>'}
 var TVBLD='assets/289f8c3c2e.webp';function tvBtnH(n){return '<img alt="" src="'+TVBLD+'"><span class="tvl"><i></i>Таверна <b>'+n+'</b></span><em id="tvb"></em>'}
 function tvBadge(){var e=document.getElementById('tvb');if(!e)return;var n=(FR.inc||[]).length;e.style.display=n?'block':'none';e.textContent=n||''}
 function tvOnlN(){var e=document.getElementById('onbtn'),b=e&&e.querySelector('b');return b?b.textContent:'–'}
 function showTavern(){var L=document.getElementById('tav')||mkLay('tav','l0'),real=RELEASE&&PLATST&&plCl,inc=(FR.inc||[]).length,fo=(FR.fr||[]).filter(function(x){return x.online}).length,fn=real?(FR.fr||[]).length:(P.fr||[]).length;
   var rows=[['g',tvI('chat'),'Общий зал','Поболтать со всеми хранителями',0],['o',tvI('online'),'Кто в игре',(tvOnlN()==='–'||tvOnlN()==='0'?'Посмотреть, кто сейчас в игре':'Сейчас онлайн: '+tvOnlN()),0],['f',tvI('friends'),'Друзья',(fn?fn+(fn%10===1&&fn%100!==11?' друг':fn%10>=2&&fn%10<=4&&(fn%100<10||fn%100>=20)?' друга':' друзей')+(real?', онлайн '+fo:''):'Пока никого')+(inc?' · запросов: '+inc:''),0],
-    ['c',tvI('cchat'),'Клановый чат',P.clan?'Только для своих':'Откроется, когда вступишь в клан',!P.clan],['b',tvI('board'),'Доска заданий','Задания за привычки, цель клана и объявления игроков',0]];
+    ['c',tvI('cchat'),'Клановый чат',P.clan?'Только для своих':'Откроется, когда вступишь в клан',!P.clan],['b',tvI('board'),'Доска заданий','Задания за привычки, цель клана и объявления игроков',0],['a',tvI('adv'),'Авантюристы','Нанимай героев в походы за добычей',0]];
   L.innerHTML='<div class="lh"><b>🍵 Таверна</b><button id="tvX">Закрыть</button></div><div class="lb"><div class="tvh">'+(TVIMG?'<img alt="" src="'+TVIMG+'">':'')+'<b>Добро пожаловать, хранитель</b><span>Присаживайся у огня: здесь новости, друзья и задания.</span></div>'+
-    rows.map(function(r){return '<div class="cc tvc'+(r[4]?' off':'')+'" data-tv="'+r[0]+'"><div class="ci">'+r[1]+'</div><div class="ct"><b>'+r[2]+(r[0]==='f'&&inc?' <em style="background:#ff5a4a;color:#fff;border-radius:8px;padding:1px 6px;font-size:11px;font-style:normal">'+inc+'</em>':'')+'</b><span>'+r[3]+'</span></div><span class="go">›</span></div>'}).join('')+'</div>';
+    rows.map(function(r){return '<div class="cc tvc'+(r[4]?' off':'')+'" data-tv="'+r[0]+'"><div class="ci">'+r[1]+'</div><div class="ct"><b>'+r[2]+(r[0]==='a'?' <em style="background:#e9b949;color:#2a1a00;border-radius:8px;padding:1px 7px;font-size:10px;font-style:normal;font-weight:800">СКОРО</em>':'')+(r[0]==='f'&&inc?' <em style="background:#ff5a4a;color:#fff;border-radius:8px;padding:1px 6px;font-size:11px;font-style:normal">'+inc+'</em>':'')+'</b><span>'+r[3]+'</span></div><span class="go">›</span></div>'}).join('')+'</div>';
   L.classList.add('on');document.getElementById('tvX').onclick=function(){L.classList.remove('on')};
   [].forEach.call(L.querySelectorAll('[data-tv]'),function(x){x.onclick=function(){var k=x.dataset.tv;
     if(k==='g')return RELEASE?rChat('g'):showChat('g');if(k==='o')return RELEASE?rOnline():showOnline();if(k==='f')return showFriends();
     if(k==='c'){if(!P.clan)return;return RELEASE?rChat('c'):showChat('c')}
-    if(k==='b')return showBoard()}});
+    if(k==='b')return showBoard();if(k==='a')return advSoon()}});
   if(real)frLoad(function(){if(L.classList.contains('on')&&!document.getElementById('frl')?.classList.contains('on'))showTavern()})}
 
 var BD=null,BDtab='h',BDd={t:0,d:3,s:2,tot:180,cl:{},posts:[{id:1,name:'Дилшод',level:12,kind:'recruit',body:'Клан «Тихая Гавань» ищет активных игроков, пишите в чат',ago:3600,mine:false},{id:2,name:'Нодира',level:8,kind:'seek',body:'Ищу дружный клан, играю каждый день',ago:90000,mine:false}]},BDk={seek:['seek','Ищу клан'],recruit:['recruit','Набор в клан'],friends:['pfriends','Ищу друзей']},BDpk='seek';
-var BDT=[['h_one','Сделай отметку на платформе','Хотя бы 1 отметка сегодня',1,'today',150,100,'Сегодня'],['h_three','Три отметки за день','3 отметки сегодня',3,'today',400,250,'Сегодня'],['w_days5','Пять дней с отметками','Дней с отметками на этой неделе',5,'days',2000,1500,'Неделя'],['w_streak7','Серия 7 дней','Дней подряд с отметками',7,'streak',3500,2500,'Неделя']];
+var BDT=[['h_one','Сдай отчёт на платформе','Хотя бы 1 отчёт сегодня',1,'today',150,100,'Сегодня'],['h_three','Три отчёта за день','3 отчёта сегодня',3,'today',400,250,'Сегодня'],['w_days5','Пять дней с отчётами','Дней с отчётами на этой неделе',5,'days',2000,1500,'Неделя'],['w_streak7','Серия 7 дней','Дней подряд с отчётами',7,'streak',3500,2500,'Неделя']];
 function brdReal(){return !!(RELEASE&&PLATST&&plCl)}
 function brdAgo(s){return s<3600?Math.max(1,Math.round(s/60))+' мин назад':s<86400?Math.round(s/3600)+' ч назад':Math.round(s/86400)+' дн назад'}
 function brdLoad(cb){if(brdReal()){plCl.rpc('g_board_get').then(function(q){if(q&&!q.error&&q.data)BD=q.data;cb()}).catch(function(){cb()})}
@@ -1909,9 +1909,9 @@ function showBoard(){var L=document.getElementById('brd')||mkLay('brd','l2'),rea
     H+='<div class="qseg">'+tabs.map(function(t){return '<button data-bt="'+t[0]+'"'+(BDtab===t[0]?' class="on"':'')+'>'+t[1]+'</button>'}).join('')+'</div>';
     function row(ic,title,sub,pr,n,g,x,key,per){var done=pr>=n,c=cl.indexOf(key)>=0,pc=Math.min(100,Math.round(pr/n*100));
       return '<div class="cc qrow'+(done&&!c?' done':'')+'"><div class="ci">'+ic+'</div><div class="ct"><b>'+title+'</b><span>'+sub+' · '+per+'</span><span>Награда: '+IC('coin')+' '+g+' · опыт '+x+'</span><div class="qb"><i style="width:'+pc+'%"></i></div><small>'+Math.min(pr,n)+' / '+n+'</small></div><button data-bc="'+key+'"'+(done&&!c?'':' disabled')+'>'+(c?'Получено':'Забрать')+'</button></div>'}
-    if(BDtab==='h'){H+='<div class="qinfo">Задания считаются по твоим отметкам на платформе LifeChange. Сделал отметку — возвращайся за наградой.'+(real?'':'<br><b>Демо:</b> кнопки ниже имитируют отметки.')+'</div>';
+    if(BDtab==='h'){H+='<div class="qinfo">Задания считаются по твоим отчётам на платформе LifeChange. Сдал отчёт — возвращайся за наградой.'+(real?'':'<br><b>Демо:</b> кнопки ниже имитируют отчёты.')+'</div>';
       H+=BDT.map(function(t,i){return row(tvI(['h1','h3','h5','h7'][i]),t[1],t[2],hb[t[4]]||0,t[3],t[5],t[6],t[0],t[7])}).join('');
-      if(!real)H+='<div class="fqr" style="margin:8px 0"><button class="g" data-bd="r">+1 отметка</button><button class="g" data-bd="d">Новый день</button></div>'}
+      if(!real)H+='<div class="fqr" style="margin:8px 0"><button class="g" data-bd="r">+1 отчёт</button><button class="g" data-bd="d">Новый день</button></div>'}
     else if(BDtab==='s'){if(!sq.clan)H+='<p class="qinfo" style="text-align:center;margin:20px 0">Это общее задание клана: вместе убить врагов за неделю. Вступи в клан, чтобы участвовать.</p><div class="fqr"><button class="b" data-bd="c">Найти клан</button></div>';
       else{H+='<div class="qinfo">Клан «'+sEsc(sq.name)+'». Нужно '+sq.goal+' убитых врагов всем кланом за неделю ('+sq.members+' игр. × 500) и вклад каждого не меньше '+sq.need+'.</div>';
         H+=row(tvI('sq'),'Недельная цель клана','Врагов убито кланом: '+sq.total+' из '+sq.goal+' · твой вклад '+sq.mine+' из '+sq.need,(sq.mine>=sq.need?sq.total:Math.min(sq.total,sq.goal-1)),sq.goal,1500,1000,'s_goal','Неделя');
@@ -1935,6 +1935,9 @@ function showBoard(){var L=document.getElementById('brd')||mkLay('brd','l2'),rea
     var del=document.getElementById('bdDel');if(del)del.onclick=function(){if(real)plCl.rpc('g_board_post_del').then(function(){brdLoad(draw)});else{BDd.posts=BDd.posts.filter(function(p){return !p.mine});brdLoad(draw)}};
     [].forEach.call(L.querySelectorAll('[data-bx]'),function(b){b.onclick=function(){var id=+b.dataset.bx;if(real)plCl.rpc('mod_board_delete',{p_id:id}).then(function(){brdLoad(draw)});else{BDd.posts=BDd.posts.filter(function(p){return p.id!==id});brdLoad(draw)}}})}
   draw();brdLoad(draw)}
+function advSoon(){var L=document.getElementById('adv')||mkLay('adv','l2');
+  L.innerHTML='<div class="lh"><b>Авантюристы</b><button id="advX">Назад</button></div><div class="lb"><div class="tvh" style="margin-top:10px"><div style="width:96px;margin:0 auto 8px">'+tvI('adv')+'</div><b>Скоро в Таверне</b><span>Нанимай авантюристов и отправляй их в походы за добычей. Пока ты занят привычками, авантюристы возвращаются с золотом и опытом, а иногда и с редкими находками: самоцветом, древним свитком или сокровищем.</span></div></div>';
+  L.classList.add('on');document.getElementById('advX').onclick=function(){L.classList.remove('on')}}
 function showFriends(){var L=document.getElementById('frl')||mkLay('frl'),real=RELEASE&&PLATST&&plCl;
   function draw(){var inc=FR.inc||[],fr=(FR.fr||[]).slice().sort(function(a,b){return (b.online-a.online)||(b.level-a.level)}),out=FR.out||[];
     var h=inc.map(function(r){return '<div class="onreq"><b>🤝 '+sEsc(r.name)+' (ур. '+r.level+') хочет дружить</b><div class="fqr"><button class="b" data-y="'+r.id+'">Принять</button><button class="g" data-n="'+r.id+'">Отклонить</button></div></div>'}).join('');if(real){
