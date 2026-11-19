@@ -4912,7 +4912,7 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
   const q = new URLSearchParams(location.search).get('season');
   const now = new Date(), md = String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
   const inRange = x => x.from <= x.to ? (md >= x.from && md <= x.to) : (md >= x.from || md <= x.to);
-  const S = q === 'off' ? null : (SEASONS.find(x => x.id === q) || SEASONS.find(inRange));
+  const S = q === 'off' || q === 'newyear' ? null : (SEASONS.find(x => x.id === q) || SEASONS.find(inRange));
   if(!S) return;
   [BG, IMG.witch, IMG.up, IMG.down, IMG.spider].forEach(i => { i.src = i._src; });
   document.body.dataset.season = S.id;
@@ -5066,6 +5066,121 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     hdr.parentNode.insertBefore(b, hdr.nextSibling);
     try { UZ_EXACT[S.banner[0]] = S.banner[1]; } catch(e) {}
   }
+})();
+</script>
+<script>
+// ===================== Новый год: фон, снег, лёд, снеговик (с 19 ноября по 10 января) =====================
+// Проверка вручную: ?season=newyear, выключить: ?season=off
+(function(){
+  const q = new URLSearchParams(location.search).get('season');
+  const now = new Date(), md = String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  const inRange = md >= '11-19' || md <= '01-10';
+  if(q === 'off' || (q !== 'newyear' && !inRange)) return;
+  const IMG_FLAKE = 'assets/ny/ny-snowflake.2b410fc0.webp';
+  const BG_WIDE = 'assets/bg/bg-newyear-wide.9d2c724c.webp', BG_TALL = 'assets/bg/bg-newyear-tall.9ebe7883.webp';
+  document.body.dataset.ny = '1';
+  const SNOWFLAKE = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#e0f2fe" stroke-width="1.8" stroke-linecap="round"><path d="M12 2v20M3.3 7l17.4 10M3.3 17L20.7 7M12 5l-2.2-2M12 5l2.2-2M12 19l-2.2 2M12 19l2.2 2"/></svg>';
+  const st = document.createElement('style');
+  st.textContent = ':root{--gold-color:#fbbf24}'
+    + 'body[data-ny]{background-color:#0a1128}'
+    + '.ny-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background:#0a1128;overflow:hidden}'
+    + '.ny-pic{position:absolute;inset:0;background:url(' + BG_WIDE + ') center bottom/cover no-repeat;will-change:transform}'
+    + '.ny-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,10,28,.5) 0%,rgba(6,10,28,.32) 45%,rgba(6,10,28,.46) 100%)}'
+    + '@media (orientation:portrait){body[data-ny] #tab-home{padding-top:42vw}.ny-pic{background:url(' + BG_TALL + ') center var(--nyo,130px)/100% auto no-repeat,linear-gradient(180deg,#0a1128,#1e3557) top/100% var(--nyo,130px) no-repeat,#0a1128}.ny-bg::after{background:linear-gradient(180deg,rgba(10,17,40,.25) 0,rgba(10,17,40,.25) var(--nyo,130px),rgba(10,17,40,.05) calc(var(--nyo,130px) + 14vw),rgba(10,17,40,.05) calc(var(--nyo,130px) + 98vw),#0a1128 calc(var(--nyo,130px) + 118vw))}}'
+    + '.ny-banner{display:flex;align-items:center;justify-content:center;gap:10px;padding:8px 14px;color:#f0f9ff;font-size:.92rem;text-align:center;background:linear-gradient(90deg,#0b1d3a,#14532d 55%,#0b1d3a);border-bottom:1px solid rgba(251,191,36,.55);position:relative;z-index:5}'
+    + '.ny-banner svg{width:22px;height:22px;flex:none;filter:drop-shadow(0 0 5px rgba(186,230,253,.9))}'
+    + '.ny-banner b{color:#fde68a;font-variant-numeric:tabular-nums}'
+    + '.ny-banner button{background:none;border:none;color:#bae6fd;font-size:1.1rem;cursor:pointer;flex:none}'
+    + 'body[data-ny] h1{background:linear-gradient(180deg,#ffffff,#fde68a);-webkit-background-clip:text;background-clip:text;color:transparent}'
+    + 'body[data-ny] .page-banner{background:rgba(8,14,36,.3)!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;box-shadow:none!important}body[data-ny] .page-banner::before{display:none}'
+    + 'body[data-ny] .hero-section h1{filter:drop-shadow(0 2px 8px rgba(0,0,0,.95))}body[data-ny] .hero-section p{text-shadow:0 2px 10px rgba(0,0,0,.9),0 0 3px rgba(0,0,0,.8)}'
+    + 'body[data-ny] .card,body[data-ny] .pcard{border-color:rgba(125,211,252,.3)}'
+    + 'body[data-ny] .logo::after{content:"";display:inline-block;width:28px;height:28px;margin-left:8px;vertical-align:middle;background:url(' + IMG_FLAKE + ') center/contain no-repeat;filter:drop-shadow(0 0 5px rgba(186,230,253,.8))}'
+    + 'body[data-ny] #tab-home{position:relative}.ny-count{text-align:center;padding:6px 0 10px;pointer-events:none}.ny-cl{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:#e0f2fe;text-shadow:0 1px 6px rgba(0,0,0,.9),0 0 12px rgba(125,211,252,.6)}.ny-cn{display:flex;justify-content:center;gap:14px;margin-top:2px}.ny-cn span{display:flex;align-items:baseline;gap:4px}.ny-cn b{font-size:2rem;font-weight:800;line-height:1;font-variant-numeric:tabular-nums;color:#fde68a;text-shadow:0 2px 8px rgba(0,0,0,.85),0 0 16px rgba(251,191,36,.55)}.ny-cn i{font-style:normal;font-size:.8rem;color:#e0f2fe;text-shadow:0 1px 5px rgba(0,0,0,.9)}'
+    + '.ny-snow{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:60}';
+  document.head.appendChild(st);
+  const bg = document.createElement('div'); bg.className = 'ny-bg'; bg.innerHTML = '<div class="ny-pic"></div>'; const pic = bg.firstChild; document.body.insertBefore(bg, document.body.firstChild);
+  [BG_WIDE, BG_TALL, IMG_FLAKE].forEach(s => { const i = new Image(); i.src = s; });
+
+  // ---------- лёд на «Мне плохо», снеговик на чате, санки с пингвинами ----------
+  const IMG_SLED = 'assets/ny/ny-sled.ca8f09ba.webp', IMG_SNOWMAN = 'assets/ny/ny-snowman.2ee58450.webp';
+  [IMG_SLED, IMG_SNOWMAN].forEach(s0 => { const i = new Image(); i.src = s0; });
+  const st2 = document.createElement('style');
+  st2.textContent = '.support-widget-btn[onclick*="crisisModal"]{overflow:visible!important;background:linear-gradient(180deg,rgba(186,230,253,.5),rgba(186,230,253,0) 65%),linear-gradient(#4a52c4,#33308a)!important;border:1px solid rgba(224,242,254,.85)!important;box-shadow:0 4px 12px rgba(56,189,248,.35),inset 0 0 10px rgba(224,242,254,.65),inset 0 2px 0 rgba(255,255,255,.7)!important}'
+    + '.support-widget-btn[onclick*="crisisModal"]::before{content:"";position:absolute;left:16px;right:16px;bottom:calc(100% - 2px);height:11px;pointer-events:none;'
+    + 'background:radial-gradient(circle at 8% 90%,#fff 5px,transparent 5.5px),radial-gradient(circle at 20% 95%,#f0f9ff 6px,transparent 6.5px),radial-gradient(circle at 34% 85%,#fff 5px,transparent 5.5px),radial-gradient(circle at 48% 95%,#f0f9ff 6px,transparent 6.5px),radial-gradient(circle at 63% 88%,#fff 5px,transparent 5.5px),radial-gradient(circle at 78% 95%,#f0f9ff 6px,transparent 6.5px),radial-gradient(circle at 92% 88%,#fff 5px,transparent 5.5px),linear-gradient(#fff,#f0f9ff) 0 100%/100% 3px no-repeat;filter:drop-shadow(0 1px 1px rgba(30,58,138,.35));border-radius:6px 6px 0 0}'
+    + '.support-widget-btn[onclick*="crisisModal"]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%) -120% 0/60% 100% no-repeat;animation:nyShine 7s ease-in-out infinite}'
+    + '@keyframes nyShine{0%,70%{background-position:-120% 0}100%{background-position:220% 0}}'
+    + '.support-widget-btn:not([onclick*="crisisModal"]){overflow:visible!important}'
+    + '.support-widget-btn:not([onclick*="crisisModal"])::before{content:"";position:absolute;left:50%;bottom:calc(100% - 2px);width:42px;height:60px;margin-left:-21px;pointer-events:none;background:url(' + IMG_SNOWMAN + ') center bottom/contain no-repeat;transform-origin:50% 100%;animation:nyWave 5s ease-in-out infinite;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}'
+    + '@keyframes nyWave{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2.5deg)}}'
+    + '.ny-sled{position:fixed;left:0;top:0;width:68px;pointer-events:none;z-index:998;opacity:0;will-change:transform,opacity;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}';
+  document.head.appendChild(st2);
+  // лёд продолжается в сторону, куда едут санки: огибает правый край плашки и заканчивается сосульками
+  (function iceWrap() {
+    const btn = document.querySelector('.support-widget-btn[onclick*="crisisModal"]'); if(!btn || btn._ice) return;
+    const NS = 'http://www.w3.org/2000/svg', sv = document.createElementNS(NS, 'svg');
+    sv.setAttribute('aria-hidden', 'true'); sv.style.cssText = 'position:absolute;left:0;top:0;overflow:visible;pointer-events:none;z-index:3;filter:drop-shadow(0 1px 1px rgba(30,58,138,.4))';
+    btn.appendChild(sv); btn._ice = sv;
+    const draw = () => {
+      const w = btn.offsetWidth, h = btn.offsetHeight; if(!w || !h) return;
+      const r = h / 2, R = r + 1.5, cx = w - r, cy = r, A = a => [cx + R * Math.cos(a * Math.PI / 180), cy + R * Math.sin(a * Math.PI / 180)];
+      const e = A(62), f = n => n.toFixed(1);
+      let ici = ''; [[24, 9], [40, 13], [57, 16]].forEach(([ang, len]) => { const [px, py] = A(ang); ici += '<path d="M' + f(px - 3.2) + ' ' + f(py - 2) + 'H' + f(px + 3.2) + 'L' + f(px) + ' ' + f(py + len) + 'Z" fill="url(#nyIg2)"/>'; });
+      sv.setAttribute('width', w); sv.setAttribute('height', h);
+      sv.innerHTML = '<defs><linearGradient id="nyIg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#9fd8fb"/></linearGradient><linearGradient id="nyIg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#8ed0f5"/></linearGradient></defs>'
+        + '<path d="M' + f(cx - 8) + ' ' + f(cy - R) + 'H' + f(cx) + 'A' + f(R) + ' ' + f(R) + ' 0 0 1 ' + f(e[0]) + ' ' + f(e[1]) + '" fill="none" stroke="url(#nyIg)" stroke-width="5" stroke-linecap="round"/>' + ici;
+    };
+    draw(); if(window.ResizeObserver) new ResizeObserver(draw).observe(btn); addEventListener('resize', draw);
+  })();
+  const sled = document.createElement('img'); sled.className = 'ny-sled'; sled.alt = ''; sled.src = IMG_SLED; document.body.appendChild(sled);
+  function runSled() {
+    const btn = document.querySelector('.support-widget-btn[onclick*="crisisModal"]');
+    const r = btn && btn.getBoundingClientRect();
+    if(!r || r.width < 20 || r.top < 0 || document.hidden || Array.from(document.querySelectorAll('.modal')).some(m => getComputedStyle(m).display !== 'none')) return;
+    const w = 68, h = w * 194 / 240, y0 = r.top - h + 9, x0 = r.left - w - 6, x1 = r.right - w * .55;
+    const k = [
+      { transform: 'translate(' + x0 + 'px,' + (y0 - 4) + 'px) rotate(-3deg)', opacity: 0, offset: 0 },
+      { transform: 'translate(' + (x0 + 24) + 'px,' + y0 + 'px) rotate(-1deg)', opacity: 1, offset: .08 },
+      { transform: 'translate(' + (x1 - 12) + 'px,' + (y0 - 1) + 'px) rotate(1deg)', opacity: 1, offset: .62 },
+      { transform: 'translate(' + (x1 + 22) + 'px,' + (y0 + 4) + 'px) rotate(14deg)', opacity: 1, offset: .76 },
+      { transform: 'translate(' + (x1 + 50) + 'px,' + (y0 + 34) + 'px) rotate(26deg)', opacity: 0, offset: 1 }
+    ];
+    try { sled.animate(k, { duration: 3600, easing: 'cubic-bezier(.45,.05,.7,.9)', fill: 'none' }); } catch(e) {}
+  }
+  window.__nySled = runSled;
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches) { setTimeout(function loop() { runSled(); setTimeout(loop, 11000 + Math.random() * 9000); }, 3500); }
+
+  // ---------- снег ----------
+  const cv = document.createElement('canvas'); cv.className = 'ny-snow'; document.body.appendChild(cv);
+  const cx = cv.getContext('2d'); let W = 0, H = 0; const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const fit = () => { W = innerWidth; H = innerHeight; cv.width = W * DPR; cv.height = H * DPR; cx.setTransform(DPR, 0, 0, DPR, 0, 0); };
+  fit(); addEventListener('resize', fit);
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const N = innerWidth < 600 ? 70 : 120;
+  const HALO = document.createElement('canvas'); HALO.width = HALO.height = 32; { const g = HALO.getContext('2d'), gr = g.createRadialGradient(16, 16, 0, 16, 16, 16); gr.addColorStop(0, 'rgba(255,255,255,.55)'); gr.addColorStop(.4, 'rgba(255,255,255,.16)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); g.fillStyle = gr; g.fillRect(0, 0, 32, 32); }
+  const flakes = Array.from({ length: N }, () => { const z = Math.random(); return { x: rnd(0, 1), y: rnd(0, 1), z, r: 1 + z * 2.6, v: 14 + z * 46, ph: rnd(0, 6.3), sw: 8 + z * 22, a: .35 + z * .55 }; });
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let last = 0, T0 = performance.now();
+  function frame(now) {
+    if(document.hidden) { requestAnimationFrame(frame); return; }
+    if(now - last < 33) { requestAnimationFrame(frame); return; }
+    const dt = Math.min(.1, (now - last) / 1000); last = now; const t = (now - T0) / 1000;
+    cx.clearRect(0, 0, W, H);
+    // фон «дышит» так же, как осенний: плавный зум и лёгкий дрейф
+    pic.style.transform = 'translate(' + (Math.sin(t * .12) * 8).toFixed(2) + 'px,' + (Math.sin(t * .2) * 4).toFixed(2) + 'px) scale(' + (1.016 + Math.sin(t * .18) * .015).toFixed(4) + ')';
+    const wind = Math.sin(t * .15) * 14;
+    for(const f of flakes) {
+      if(!still) { f.y += f.v * dt / H; f.x += (wind * (.4 + f.z) * dt) / W; if(f.y > 1.02) { f.y = -.02; f.x = rnd(0, 1); } if(f.x > 1.02) f.x = -.02; if(f.x < -.02) f.x = 1.02; }
+      const x = f.x * W + Math.sin(t * .8 + f.ph) * f.sw, y = f.y * H;
+      cx.globalAlpha = f.a; cx.fillStyle = '#fff'; cx.beginPath(); cx.arc(x, y, f.r, 0, 6.3); cx.fill();
+      if(f.z > .75) { cx.globalAlpha = f.a * .5; const g = f.r * 4; cx.drawImage(HALO, x - g, y - g, g * 2, g * 2); }
+    }
+    cx.globalAlpha = 1;
+    if(!still) requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
 })();
 </script>
 <script>
