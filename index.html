@@ -896,6 +896,7 @@
 #chalMine details.mine-more>summary::-webkit-details-marker{display:none}
 #chalMine details.mine-more>summary::after{content:"▾";transition:transform .2s}
 #chalMine details.mine-more[open]>summary::after{transform:rotate(180deg)}</style>
+<style id="lcNoTap">*,*::before,*::after{-webkit-tap-highlight-color:rgba(0,0,0,0)!important}a,button,.nav-link,.bn-btn,.logo,.support-widget-btn,[onclick],[role=button]{outline:none!important;-webkit-touch-callout:none}</style>
 </head>
 <body>
 <style id="lcStreakCss">.streak-card{display:flex;align-items:center;gap:14px;border-color:rgba(251,146,60,.45);background:linear-gradient(135deg,rgba(30,27,60,.9),rgba(45,26,40,.85))}.streak-card .sk-ic .ic{width:58px;height:58px;margin:0;vertical-align:0;filter:drop-shadow(0 0 12px rgba(251,146,60,.5))}.sk-n{font-size:1.1rem;color:#ffd9a0;font-weight:700}.sk-n b{font-size:2.1rem;line-height:1;font-weight:800}.sk-sub{color:var(--text-secondary);font-size:.85rem;margin-top:2px}</style><style id="lcHdrCss2">.points-badge{background:linear-gradient(135deg,#2a1f5c,#1b1442)!important;border:1.5px solid #e9b949;color:#f6dc9a!important;box-shadow:0 0 10px rgba(233,185,73,.25)}
@@ -5137,10 +5138,11 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
     + '.support-widget-btn[onclick*="crisisModal"]::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.55) 45%,transparent 60%) -120% 0/60% 100% no-repeat;animation:nyShine 7s ease-in-out infinite}'
     + '@keyframes nyShine{0%,70%{background-position:-120% 0}100%{background-position:220% 0}}'
     + '.support-widget-btn:not([onclick*="crisisModal"]){overflow:visible!important}'
-    + '.support-widget-btn:not([onclick*="crisisModal"])::before{content:"";position:absolute;left:50%;bottom:calc(100% - 2px);width:42px;height:60px;margin-left:-21px;pointer-events:none;background:url(' + IMG_SNOWMAN + ') center bottom/contain no-repeat;transform-origin:50% 100%;animation:nyWave 5s ease-in-out infinite;filter:drop-shadow(0 3px 3px rgba(0,0,0,.4))}'
+    + '.support-widget-btn:not([onclick*="crisisModal"])::before{content:"";position:absolute;left:50%;bottom:calc(100% - 2px);width:42px;height:60px;margin-left:-21px;pointer-events:none;background:url(' + IMG_SNOWMAN + ') center bottom/contain no-repeat;transform-origin:50% 100%;animation:nyWave 5s ease-in-out infinite;filter:drop-shadow(0 0 3px rgba(186,230,253,.95)) drop-shadow(0 3px 3px rgba(0,0,0,.4)) saturate(.9) brightness(1.06)}'
     + '@keyframes nyWave{0%,100%{transform:rotate(-2deg)}50%{transform:rotate(2.5deg)}}'
     + '.ny-sled{position:fixed;left:0;top:0;width:68px;pointer-events:none;z-index:998;opacity:0;will-change:transform,opacity;filter:drop-shadow(0 3px 3px rgba(0,0,0,.45))}';
   document.head.appendChild(st2);
+  { const th = document.createElement('style'); th.textContent = '*,*::before,*::after{-webkit-tap-highlight-color:transparent!important}a,button,.nav-link,.bn-btn,.logo,.support-widget-btn,[onclick],[role=button]{-webkit-tap-highlight-color:transparent!important;outline:none!important;-webkit-touch-callout:none}a:focus,button:focus,.nav-link:focus,.bn-btn:focus,.logo:focus,[onclick]:focus{outline:none!important}'; document.head.appendChild(th); }
   // лёд продолжается в сторону, куда едут санки: огибает правый край плашки и заканчивается сосульками
   (function iceWrap() {
     const btn = document.querySelector('.support-widget-btn[onclick*="crisisModal"]'); if(!btn || btn._ice) return;
@@ -5155,6 +5157,22 @@ try { CH_GROUPS.D.push('c33_title'); } catch(e) {}
       sv.setAttribute('width', w); sv.setAttribute('height', h);
       sv.innerHTML = '<defs><linearGradient id="nyIg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#9fd8fb"/></linearGradient><linearGradient id="nyIg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#8ed0f5"/></linearGradient></defs>'
         + '<path d="M' + f(cx - 8) + ' ' + f(cy - R) + 'H' + f(cx) + 'A' + f(R) + ' ' + f(R) + ' 0 0 1 ' + f(e[0]) + ' ' + f(e[1]) + '" fill="none" stroke="url(#nyIg)" stroke-width="5" stroke-linecap="round"/>' + ici;
+    };
+    draw(); if(window.ResizeObserver) new ResizeObserver(draw).observe(btn); addEventListener('resize', draw);
+  })();
+  // та же заморозка на плашке чата: ледяная кромка, снежная шапка под снеговиком, сосульки
+  (function iceChat() {
+    const btn = document.querySelector('.support-widget-btn[onclick*="openChat"]'); if(!btn || btn._ice) return;
+    const NS = 'http://www.w3.org/2000/svg', sv = document.createElementNS(NS, 'svg');
+    sv.setAttribute('aria-hidden', 'true'); sv.style.cssText = 'position:absolute;left:0;top:0;overflow:visible;pointer-events:none;z-index:3;filter:drop-shadow(0 1px 1px rgba(30,58,138,.4))';
+    btn.appendChild(sv); btn._ice = sv;
+    const draw = () => {
+      const w = btn.offsetWidth, h = btn.offsetHeight; if(!w || !h) return;
+      const f = n => n.toFixed(1);
+      sv.setAttribute('width', w); sv.setAttribute('height', h);
+      sv.innerHTML = '<defs><linearGradient id="nyIg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset=".5" stop-color="#bae6fd" stop-opacity=".12"/><stop offset="1" stop-color="#bae6fd" stop-opacity=".22"/></linearGradient></defs>'
+        + '<rect x="1.5" y="1.5" width="' + f(w - 3) + '" height="' + f(h - 3) + '" rx="13" fill="url(#nyIg3)" stroke="rgba(224,242,254,.92)" stroke-width="1.8"/>'
+        + '<path d="M' + f(w * .22) + ' 2.5H' + f(w * .78) + '" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".9"/>';
     };
     draw(); if(window.ResizeObserver) new ResizeObserver(draw).observe(btn); addEventListener('resize', draw);
   })();
