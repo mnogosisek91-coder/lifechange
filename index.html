@@ -17,18 +17,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>LifeChange — Платформа Дисциплины & Челленджей</title>
-    <meta name="description" content="Более 30 челленджей для полезных привычек и дисциплины: задания каждый день, искры за отчёты и реальные призы. Поддержка психолога. Проект SuLen, Узбекистан.">
-    <link rel="canonical" href="https://lifechange.uz/">
-    <meta property="og:url" content="https://lifechange.uz/">
-    <meta property="og:site_name" content="LifeChange">
-    <meta property="og:locale" content="ru_RU">
-    <meta property="og:locale:alternate" content="uz_UZ">
-    <script type="application/ld+json">
-    {"@context":"https://schema.org","@graph":[
-      {"@type":"Organization","@id":"https://lifechange.uz/#org","name":"LifeChange","alternateName":"LifeChange by SuLen","url":"https://lifechange.uz/","logo":"https://lifechange.uz/icon-512.png","email":"lifechangee@mail.ru","sameAs":["https://www.instagram.com/lifechange.uz/","https://t.me/lifechange_discipline"]},
-      {"@type":"WebSite","@id":"https://lifechange.uz/#site","name":"LifeChange","url":"https://lifechange.uz/","inLanguage":["ru","uz"],"publisher":{"@id":"https://lifechange.uz/#org"}}
-    ]}
-    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -2300,6 +2288,7 @@
               <div class="rem-row" style="margin-top:10px"><input type="time" id="remTime" value="20:00"><button class="btn btn-outline" style="width:auto" onclick="enableReminder()">🔔 Включить в браузере</button><button class="btn btn-outline" style="width:auto" onclick="downloadICS()">📅 В календарь</button></div>
               <p class="note" style="margin-top:8px">Напоминание в браузере работает, пока приложение открыто. Чтобы оно приходило на закрытый телефон, добавьте его в календарь.</p>
             </details>
+            <button class="btn btn-outline" type="button" id="chalDropBtn" style="margin-top:14px;display:none" onclick="dropChallenge(currentChallenge)">Завершить челлендж</button>
         </div>
     </div>
 
@@ -2370,7 +2359,7 @@
         let currentChallenge = null; const reportedToday = new Set(); let streakCountedToday = false;
         let currentDailyDay = 1;
         let userPlan = 'free', planUntil = 0;
-        const activeChallenges = new Set(), usedFiles = new Set(), usedCodes = new Set(), watchedVideos = new Set(), readNotifs = new Set(); let surveyDone = false;
+        const activeChallenges = new Set(), usedFiles = new Set(), usedCodes = new Set(), watchedVideos = new Set(), readNotifs = new Set(), droppedCh = new Set(); let surveyDone = false;
         const TODAY = (() => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); })();
         let user = null, histDays = new Set(), dailyCount = 0, lastClaim = '';
         let checkins = {}, usedHashes = [], remTime = '', remFired = '', pendingChallenge = null, checkinSkipped = false, pendingHash = null;
@@ -3036,8 +3025,8 @@ function paintLb() {
             const box = document.getElementById('chalMine'); if(!box) return;
             const esc2 = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
             const seen = {}, act = [], add = k => { if(!seen[k] && CHALLENGES[k]) { seen[k] = 1; act.push(k); } };
-            activeChallenges.forEach(add);
-            try { const rb = (stats && stats.rep_by) || {}; Object.keys(rb).forEach(k => { const c = CHALLENGES[k]; if(rb[k] > 0 && c && !(c.days && rb[k] >= c.days)) add(k); }); } catch(e) {}
+            activeChallenges.forEach(k => { if(!droppedCh.has(k)) add(k); });
+            try { const rb = (stats && stats.rep_by) || {}; Object.keys(rb).forEach(k => { const c = CHALLENGES[k]; if(rb[k] > 0 && c && !droppedCh.has(k) && !(c.days && rb[k] >= c.days)) add(k); }); } catch(e) {}
             if(!act.length) { box.style.display = 'none'; return; }
             try { Object.assign(UZ_EXACT, { 'Мои активные челленджи': 'Mening faol chellenjlarim', 'Ещё': 'Yana', 'челлендж': 'chellenj', 'челленджа': 'chellenj', 'челленджей': 'chellenj' }); } catch(e) {}
             act.sort((a, b) => (reportedToday.has(a) ? 1 : 0) - (reportedToday.has(b) ? 1 : 0));
@@ -3046,7 +3035,7 @@ function paintLb() {
                 const c = CHALLENGES[k]; let n = 0; try { n = (stats.rep_by && stats.rep_by[k]) || 0; } catch(e) {}
                 const N = c.days || 0, el = document.querySelector('[data-i18n="' + k + '"]'), ttl = (el && el.textContent.trim()) || c.title || k;
                 const rep = reportedToday.has(k), fin = N && n >= N, pct = N ? Math.min(100, Math.round(n / N * 100)) : 0;
-                rows.push('<div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0"><b>' + esc2(ttl) + '</b><div style="color:var(--text-secondary);font-size:.85rem">' + (N ? ('Пройдено ' + n + ' из ' + N + ' дн.') : ('Дней с отчётом: ' + n)) + '</div></div>' +
+                rows.push('<div style="padding:10px 0;border-top:1px solid rgba(255,255,255,.08)"><div style="display:flex;align-items:center;gap:10px"><div style="flex:1;min-width:0"><b>' + esc2(ttl) + '</b><div style="color:var(--text-secondary);font-size:.85rem">' + (N ? ('Пройдено ' + n + ' из ' + N + ' дн.') : ('Дней с отчётом: ' + n)) + '</div>' + ((fin || /^r\d_title$/.test(k)) ? '' : '<a href="#" onclick="dropChallenge(\'' + k + '\');return false" style="display:inline-block;margin-top:4px;color:var(--text-secondary);font-size:.8rem;text-decoration:underline">' + trAny('Завершить челлендж') + '</a>') + '</div>' +
                     (fin ? '<span style="flex:none;font-size:.85rem;white-space:nowrap">🏆 Пройден</span>' : rep ? '<span style="flex:none;font-size:.85rem;white-space:nowrap">✅ Отчёт сдан</span>' : '<button class="btn" type="button" style="flex:none;width:auto;padding:8px 14px" onclick="openChallengeModal(\'' + k + '\')">Сдать отчёт</button>') + '</div>' +
                     (N ? '<div style="height:8px;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden;margin-top:8px"><i style="display:block;height:100%;width:' + pct + '%;background:linear-gradient(90deg,#f59e0b,#fcd34d)"></i></div>' : '') + '</div>');
             });
@@ -3064,6 +3053,7 @@ function paintLb() {
                 const k = b.getAttribute('onclick').match(/'(.+?)'/)[1];
                 const locked = userPlan === 'free' && groupTaken(k);
                 let started = activeChallenges.has(k); try { if(!started && stats && stats.rep_by && stats.rep_by[k] > 0) started = true; } catch(e) {}
+                if(droppedCh.has(k)) started = false;
                 b.textContent = locked ? '🔒 Доступно в PRO' : (started ? 'Продолжить челлендж' : 'Начать челлендж');
                 b.classList.toggle('btn-outline', locked);
             });
@@ -3400,7 +3390,7 @@ function applyState(st) {
   syncUI(); renderDailyRewards(); initHabitGrid(); renderMood(); renderPartners(); refreshLocks(); tickTimer();
 }
 async function hydrate() {
-  try { applyState(await rpc('get_state')); loadLeaderboard(); }
+  try { try { const d = await rpc('challenge_dropped'); if(Array.isArray(d)) { droppedCh.clear(); d.forEach(x => droppedCh.add(x)); dropSave(); } else dropLoad(); } catch(e) { dropLoad(); } applyState(await rpc('get_state')); loadLeaderboard(); }
   catch(e) { if(!/not_auth/.test(String(e && e.message))) console.warn('hydrate', e); }
 }
 if(sb) {
@@ -8746,6 +8736,38 @@ Object.assign(EN_EXACT, {"Изменить цель…": "Change goal…", "🔑
   window.lcChatCheck=check;
 })();
 
+</script>
+
+<script>
+// ===================== Завершить челлендж (в любой момент) =====================
+try { Object.assign(UZ_EXACT, {
+  'Завершить челлендж': 'Chellenjni yakunlash', 'Завершить': 'Yakunlash', 'Челлендж завершён': 'Chellenj yakunlandi',
+  'Завершить этот челлендж? Он пропадёт из активных. Искры и пройденные дни останутся, а если захочешь вернуться, продолжишь с того же места.': "Bu chellenjni yakunlaysizmi? U faollar ro'yxatidan yo'qoladi. Uchqunlar va o'tilgan kunlar saqlanadi, qaytmoqchi bo'lsangiz xuddi shu joydan davom etasiz."
+}); } catch(e) {}
+function dropKey() { return 'lc_dropped_' + (typeof sbUid !== 'undefined' && sbUid ? sbUid : ''); }
+function dropSave() { try { localStorage.setItem(dropKey(), JSON.stringify([...droppedCh])); } catch(e) {} }
+function dropLoad() { try { droppedCh.clear(); JSON.parse(localStorage.getItem(dropKey()) || '[]').forEach(x => droppedCh.add(x)); } catch(e) {} }
+function chalStarted(k) { if(droppedCh.has(k)) return false; let s = activeChallenges.has(k); try { if(!s && stats && stats.rep_by && stats.rep_by[k] > 0) s = true; } catch(e) {} return s; }
+async function dropChallenge(k) {
+  if(!k || /^r\d_title$/.test(String(k))) return;
+  const ok = await lcConfirm(trAny('Завершить этот челлендж? Он пропадёт из активных. Искры и пройденные дни останутся, а если захочешь вернуться, продолжишь с того же места.'), { ok: trAny('Завершить'), danger: true });
+  if(!ok) return;
+  let r = null; try { r = await rpc('challenge_drop', { p_challenge: k }); } catch(e) {}
+  droppedCh.add(k); dropSave();
+  if(r && Array.isArray(r.free)) { activeChallenges.clear(); if(userPlan === 'free') r.free.forEach(x => activeChallenges.add(x)); }
+  else activeChallenges.delete(k);
+  try { closeModal('challengeModal'); } catch(e) {}
+  try { reportedToday.size; refreshLocks(); syncUI(); } catch(e) {}
+  toast(trAny('Челлендж завершён'));
+}
+{ const _ocd = openChallengeModal;
+  openChallengeModal = function(k) {
+    if(droppedCh.has(k) && !(userPlan === 'free' && groupTaken(k))) { droppedCh.delete(k); dropSave(); try { rpc('challenge_resume', { p_challenge: k }).catch(() => {}); } catch(e) {} try { refreshLocks(); } catch(e) {} }
+    const r = _ocd.apply(this, arguments);
+    try { const b = document.getElementById('chalDropBtn'); if(b) b.style.display = (/^r\d_title$/.test(String(k)) || !chalStarted(k)) ? 'none' : ''; } catch(e) {}
+    return r;
+  };
+}
 </script>
 </body>
 </html>
