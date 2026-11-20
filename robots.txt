@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /notifications
+Disallow: /telegram-auth
+
+Sitemap: https://lifechange.uz/sitemap.xml
