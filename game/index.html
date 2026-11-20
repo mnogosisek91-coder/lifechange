@@ -251,7 +251,115 @@ table.st td{padding:3px;text-align:right;border-top:1px solid #2c3562}
 #skills .sk{animation:none}#skills .sk .co{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(40,60,140,.6);border-radius:0 0 10px 10px;text-decoration:none}
 #skills .sk .ct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-style:normal;font-weight:900;font-size:15px;color:#f6dc9a;text-shadow:0 1px 3px #000}
 #skills{position:relative}#skills .gbar{position:absolute;left:0;top:-5px;height:3px;border-radius:2px;background:#ffd166;box-shadow:0 0 6px #ffd166;pointer-events:none;transition:width .1s linear;width:0}#skills .sk.gcd{opacity:.8}#skills .sk.gcd .ct{font-size:13px;color:#cfe3ff}#skills .sk.off{filter:grayscale(1) brightness(.65);border-color:#666;box-shadow:none}#skills .sk.off .ct{font-size:12px;color:#d6c3ff;filter:none}
-button.b .ic,.cc button .ic,button.g .ic{filter:drop-shadow(0 0 1px #3a2200) drop-shadow(0 0 1px #3a2200) drop-shadow(0 1px 1px rgba(40,20,0,.8))!important}.mrow{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;position:relative}.mrow .ct{flex:1 1 100%!important;min-width:0}.mrow .mact{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;position:static}.mrow .mact button{position:static;flex:0 0 auto}.mrow .ct>span{display:block;line-height:1.8}.mrow .ct .mbd{display:inline-block}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}.gi{min-width:0;overflow-wrap:anywhere}@media (max-width:340px){#hud{font-size:11px;gap:5px;padding:8px 8px}#hud #htitle,#hud b{min-width:0}}.modb{font-style:normal;font-size:9px;font-weight:900;letter-spacing:.5px;border-radius:5px;padding:1px 5px;margin-left:5px;background:#4aa86a;color:#fff;vertical-align:1px}.modb.adm{background:#f5a524;color:#2a1a00}#tip{position:fixed;inset:0;z-index:9990;display:none}#tip.on{display:block}#tip .tbk{position:absolute;inset:0;background:rgba(5,8,22,.72)}#tip .trg{position:absolute;border-radius:16px;border:2px solid #ffd166;box-shadow:0 0 0 9999px rgba(5,8,22,.74),0 0 18px 2px rgba(255,209,102,.7);pointer-events:none;animation:tpl 1.4s ease-in-out infinite;display:none}@keyframes tpl{50%{box-shadow:0 0 0 9999px rgba(5,8,22,.74),0 0 30px 6px rgba(255,209,102,.95)}}#tip .tcd{position:absolute;left:50%;transform:translateX(-50%);width:min(92vw,360px);box-sizing:border-box;padding:16px 16px 14px;border-radius:18px;background:linear-gradient(#2a1f5c,#17133a);border:1.5px solid #e9b949;color:#f1ecff;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:left}#tip .tt{font-weight:800;font-size:17px;color:#ffd98a;margin-bottom:6px}#tip .tx{font-size:14px;line-height:1.45;opacity:.95}#tip .tf{display:flex;align-items:center;gap:8px;margin-top:12px}#tip .td{flex:1;font-size:12px;opacity:.65}#tip .tf button{border:0;border-radius:12px;padding:9px 16px;font-weight:800;font-size:14px;cursor:pointer}#tip #tSk{background:transparent;color:#b8b3d8;font-weight:600;padding:9px 6px;font-size:12px}#tip #tNx{background:linear-gradient(#ffd98a,#e9a93a);color:#2a1a05}</style></head><body>
+button.b .ic,.cc button .ic,button.g .ic{filter:drop-shadow(0 0 1px #3a2200) drop-shadow(0 0 1px #3a2200) drop-shadow(0 1px 1px rgba(40,20,0,.8))!important}.mrow{display:flex;flex-wrap:wrap;align-items:flex-start;gap:8px;position:relative}.mrow .ct{flex:1 1 100%!important;min-width:0}.mrow .mact{flex:1 1 100%;display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-start;position:static}.mrow .mact button{position:static;flex:0 0 auto}.mrow .ct>span{display:block;line-height:1.8}.mrow .ct .mbd{display:inline-block}.grid{grid-template-columns:repeat(5,minmax(0,1fr))}.gi{min-width:0;overflow-wrap:anywhere}@media (max-width:340px){#hud{font-size:11px;gap:5px;padding:8px 8px}#hud #htitle,#hud b{min-width:0}}.modb{font-style:normal;font-size:9px;font-weight:900;letter-spacing:.5px;border-radius:5px;padding:1px 5px;margin-left:5px;background:#4aa86a;color:#fff;vertical-align:1px}.modb.adm{background:#f5a524;color:#2a1a00}#tip{position:fixed;inset:0;z-index:9990;display:none}#tip.on{display:block}#tip .tbk{position:absolute;inset:0;background:rgba(5,8,22,.72)}#tip .trg{position:absolute;border-radius:16px;border:2px solid #ffd166;box-shadow:0 0 0 9999px rgba(5,8,22,.74),0 0 18px 2px rgba(255,209,102,.7);pointer-events:none;animation:tpl 1.4s ease-in-out infinite;display:none}@keyframes tpl{50%{box-shadow:0 0 0 9999px rgba(5,8,22,.74),0 0 30px 6px rgba(255,209,102,.95)}}#tip .tcd{position:absolute;left:50%;transform:translateX(-50%);width:min(92vw,360px);box-sizing:border-box;padding:16px 16px 14px;border-radius:18px;background:linear-gradient(#2a1f5c,#17133a);border:1.5px solid #e9b949;color:#f1ecff;box-shadow:0 12px 40px rgba(0,0,0,.6);text-align:left}#tip .tt{font-weight:800;font-size:17px;color:#ffd98a;margin-bottom:6px}#tip .tx{font-size:14px;line-height:1.45;opacity:.95}#tip .tf{display:flex;align-items:center;gap:8px;margin-top:12px}#tip .td{flex:1;font-size:12px;opacity:.65}#tip .tf button{border:0;border-radius:12px;padding:9px 16px;font-weight:800;font-size:14px;cursor:pointer}#tip #tSk{background:transparent;color:#b8b3d8;font-weight:600;padding:9px 6px;font-size:12px}#tip #tNx{background:linear-gradient(#ffd98a,#e9a93a);color:#2a1a05}#adv .sub{font-size:12px;color:var(--mut);margin:0 0 10px}
+#adv .tabs{display:flex;gap:8px;margin:10px 0 12px}
+#adv .tabs button{flex:1;padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-weight:800;font-size:14px}
+#adv .tabs button.on{background:linear-gradient(#ffd166,#f5a524);color:#2a1a00;border-color:var(--gold)}
+#adv .loc{position:relative;background:linear-gradient(160deg,#1a2250,#0f1530);border:1px solid var(--gold2);border-radius:18px;padding:12px;margin-bottom:12px;display:grid;grid-template-columns:42% 1fr;gap:10px;align-items:center;overflow:hidden;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#adv .loc .pic{display:flex;align-items:center;justify-content:center;min-width:0}
+#adv .loc .pic img{width:100%;max-height:150px;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+#adv .loc .inf{min-width:0}
+#adv .loc b{display:block;font-size:16px;color:var(--gold)}
+#adv .loc p{margin:3px 0 8px;font-size:12px;color:var(--mut);line-height:1.35}
+#adv .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}
+#adv .chip{font-size:11px;font-weight:700;background:#0b1028;border:1px solid var(--line);border-radius:999px;padding:3px 8px;color:var(--tx)}
+#adv .chip.lock{color:var(--bad);border-color:#7a3340}
+#adv .btn{width:100%;border:0;border-radius:12px;padding:11px;font-weight:900;font-size:14px;background:linear-gradient(#ffd166,#f5a524);color:#2a1a00}
+#adv .btn.alt{background:var(--card2);color:var(--tx);border:1px solid var(--line)}
+#adv .btn:disabled{opacity:.45}
+#adv .btn.go{background:linear-gradient(#5be3a8,#1fae7a);color:#04271a}
+#adv .run{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+#adv .run .av{width:46px;height:46px;border-radius:50%;border:2px solid var(--gold2);overflow:hidden;background:#0b1028;flex:none}
+#adv .run .av img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+#adv .run small{display:block;color:var(--mut);font-size:11px}
+#adv .bar{height:8px;border-radius:6px;background:#0b1028;overflow:hidden;border:1px solid var(--line);margin-top:4px}
+#adv .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd166,#f5a524);width:0}
+#adv .sq{display:grid;gap:10px}
+#adv .ad{display:grid;grid-template-columns:128px minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
+#adv .ad.l5{border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.25)}
+#adv .ad .im{height:170px;display:flex;align-items:flex-end;justify-content:center}
+#adv .ad .im img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
+#adv .ad b{font-size:15px;color:var(--gold)}
+#adv .ad .rc{font-size:12px;color:var(--mut)}
+#adv .stars{color:var(--gold);letter-spacing:2px;font-size:14px;margin:2px 0}
+#adv .stars s{color:#3a4478;text-decoration:none}
+#adv .pw{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#adv .st{font-size:11px;color:var(--mut)}
+#adv .sheet h2{margin:0 0 4px;font-size:18px;color:var(--gold)}
+#adv .pick{display:grid;grid-template-columns:54px 1fr auto;gap:10px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:14px;padding:8px;margin:8px 0;width:100%;color:var(--tx);text-align:left}
+#adv .pick.sel{border-color:var(--gold);background:var(--card2)}
+#adv .pick:disabled{opacity:.4}
+#adv .pick .th{width:54px;height:54px;border-radius:50%;overflow:hidden;border:2px solid var(--gold2);background:#0b1028}
+#adv .pick .th img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+#adv .pick b{display:block;font-size:14px}
+#adv .pick small{color:var(--mut);font-size:11px}
+#adv .pick em{font-style:normal;font-size:12px;font-weight:800;color:var(--gold)}
+#adv .loot{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:12px 0}
+#adv .slot{width:76px;text-align:center;background:var(--card);border:1px solid var(--gold2);border-radius:14px;padding:8px 4px;animation:ad_pop .4s both}
+#adv .slot div{font-size:30px}
+#adv .slot span{display:block;font-size:11px;color:var(--mut);margin-top:2px}
+#adv .slot b{display:block;font-size:13px;color:var(--gold)}
+@keyframes ad_pop{from{transform:scale(.4);opacity:0}to{transform:none;opacity:1}}
+#adv .note{font-size:11px;color:var(--mut);text-align:center;margin:8px 0 0;line-height:1.4}
+#adv .hide{display:none}
+#adv .exp{display:flex;align-items:center;gap:8px;background:#0b1028;border:1px solid var(--line);border-radius:12px;padding:6px 8px;margin-bottom:6px}
+#adv .exp .av{width:38px;height:38px;border-radius:50%;border:2px solid var(--gold2);overflow:hidden;flex:none;background:#0b1028}
+#adv .exp .av img{width:100%;height:100%;object-fit:cover;object-position:50% 12%}
+#adv .exp .m{flex:1;min-width:0;font-size:12px;font-weight:800}
+#adv .exp .m small{display:block;color:var(--mut);font-weight:600;font-size:11px}
+#adv .exp .btn{width:auto;padding:7px 10px;font-size:12px}
+#adv .sum{font-size:12px;color:var(--mut);margin:0 0 10px}
+#adv .drops{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 8px;font-size:11px;color:var(--mut)}
+#adv .drops img{width:28px;height:28px;border-radius:50%}
+#adv .inv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+#adv .inv div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:6px 4px;text-align:center;font-size:10px;color:var(--mut)}
+#adv .inv img{width:36px;height:36px;display:block;margin:0 auto 2px}
+#adv .inv b{display:block;font-size:14px;color:var(--gold)}
+#adv .art{background:linear-gradient(160deg,#1a2250,#0f1530);border:1px solid var(--gold2);border-radius:18px;padding:12px;margin-bottom:12px}
+#adv .art .top{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+#adv .art .top img{width:120px;height:120px;object-fit:contain;flex:none;filter:drop-shadow(0 4px 6px rgba(0,0,0,.5))}
+#adv .art .top b{display:block;color:var(--gold);font-size:16px}
+#adv .art .top span{font-size:12px;color:var(--ok);font-weight:800}
+#adv .need{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+#adv .need div{display:flex;align-items:center;gap:4px;background:#0b1028;border:1px solid var(--line);border-radius:999px;padding:2px 8px 2px 3px;font-size:12px;font-weight:800}
+#adv .need img{width:24px;height:24px;border-radius:50%}
+#adv .need .ok{color:var(--ok);border-color:#1f6b52}
+#adv .need .no{color:var(--bad);border-color:#7a3340}
+#adv .sub{color:#b9c0ea}
+#adv .loc,#adv .art,#adv .ad{background:linear-gradient(#2a1f5c,#1b1442);border:2px solid rgba(233,185,73,.85);border-radius:14px;box-shadow:0 6px 18px rgba(0,0,0,.35)}
+#adv .ad{border-color:rgba(233,185,73,.55)}
+#adv .ad.l5{border-color:#ffd166}
+#adv .loc b,#adv .art .top b,#adv .ad b{color:#f6dc9a}
+#adv .loc p{color:#b9c0ea}
+#adv .tabs button{border:1px solid #2c3562;background:#1b2350;color:#aab;border-radius:12px}
+#adv .tabs button.on{background:linear-gradient(135deg,#f6dc9a,#e9b949);color:#1b1442;border-color:#e9b949}
+#adv .btn{background:linear-gradient(135deg,#f6dc9a,#e9b949);color:#1b1442;border-radius:12px}
+#adv .btn.alt{background:linear-gradient(135deg,#1e2347,#171b3a);border:1px solid #5b5fc7;color:#f8fafc}
+#adv .btn.go{background:linear-gradient(135deg,#f6dc9a,#e9b949);color:#1b1442;box-shadow:0 0 14px rgba(233,185,73,.55);animation:ad_glow 1.6s infinite}
+@keyframes ad_glow{50%{box-shadow:0 0 4px rgba(233,185,73,.2)}}
+#adv .chip,#adv .exp,#adv .need div,#adv .inv div,#adv .demo{background:rgba(10,8,24,.55)}
+#adv .sheet h2{color:#f6dc9a}
+#adv .slot,#adv .pick{background:#1b1442}
+#adv .inv b,#adv .stars,#adv .pick em,#adv .slot b{color:#f6dc9a}
+#adv .price{display:flex;gap:10px;margin:8px 0 6px;font-weight:800;font-size:13px}
+#adv .price span{display:flex;align-items:center;gap:4px;color:#f6dc9a}
+#adv .price span.no{color:var(--bad)}
+#adv .price img{width:20px;height:20px}
+#adv .ad .btn{margin-top:2px;padding:9px}
+#adv .loc,#adv .art,#adv .ad{background:linear-gradient(rgba(42,31,92,.42),rgba(27,20,66,.52));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
+#adv .loc p,#adv .ad .rc,#adv .ad .st,#adv .loc .drops{text-shadow:0 1px 3px rgba(0,0,0,.8)}
+#adv .art.leg{border-color:#ffd166;box-shadow:0 0 18px rgba(255,209,102,.35),0 6px 18px rgba(0,0,0,.35)}
+#adv .art.leg .top b{font-size:17px}
+#adv{--card:#121936;--card2:#1a2250;--line:#3a4478;--gold:#f6dc9a;--gold2:#e9b949;--tx:#e8ebff;--mut:#9aa3d6;--ok:#34d399;--bad:#ff6b6b;background:linear-gradient(rgba(13,18,38,.62),rgba(14,18,40,.8)),var(--bg-adv,linear-gradient(#0d1226,#141a33)) center/cover}
+#adv .lb{padding-top:10px}
+#adv .ov{position:absolute;inset:0;background:rgba(5,8,20,.72);display:none;align-items:flex-end;justify-content:center;z-index:5}
+#adv .ov.on{display:flex}
+#adv .sheet{width:100%;max-width:520px;max-height:88%;overflow:auto;background:linear-gradient(#241a55,#150f38);border:2px solid rgba(233,185,73,.85);border-bottom:0;border-radius:22px 22px 0 0;padding:16px 14px max(18px,env(safe-area-inset-bottom,0px))}
+#adv .sheet h2{margin:0 0 4px;font-size:18px;color:#f6dc9a}
+#adv .sub{font-size:12px;color:#b9c0ea;margin:0 0 10px}
+#adv button{font-family:inherit}
+#adv .hide{display:none!important}
+</style></head><body>
 <div id="splash"><img alt="" src="assets/2692e8dba5.webp"><b>Хранитель привычек</b><i></i></div>
 <div id="app">
   <div id="egg"><div class="eg">🥚</div><h2>Дракон ещё в яйце</h2><p>Игра откроется, когда дракон вылупится. Продолжай выполнять привычки — яйцо согревается с каждым днём.</p><button id="eggT">Вылупить (тест)</button></div>
@@ -472,7 +580,7 @@ function acctSwitch(uid){try{uid=String(uid||'').replace(/[^a-zA-Z0-9-]/g,'');if
   if(localStorage.getItem(nk)){localStorage.setItem('ldd_cur',uid);acctReload();return true}
   if(!own){localStorage.setItem('ldd_owner',uid);localStorage.setItem('ldd_cur',uid);KEY=nk;try{localStorage.setItem(nk,JSON.stringify(P))}catch(e){}return false}
   localStorage.setItem('ldd_cur',uid);acctReload();return true}catch(e){return false}}
-function defP(){return {gold:0,heat:0,sparks:0,gems:0,unlocked:['bolt','heal'],lv:{},chests:0,round:0,best:0,b:{lair:1},clan:null,tc:Date.now()}}
+function defP(){return {gold:0,heat:0,sparks:0,gems:0,unlocked:['bolt','heal'],lv:{},chests:0,round:0,best:0,b:{lair:1},clan:null,tc:Date.now(),adv:{own:{1:1},run:[],inv:{},craft:{},done:{},uid:1}}}
 function load(){try{var s=localStorage.getItem(KEY);if(s){var o=Object.assign(defP(),JSON.parse(s));if(o.sparks){o.gold=(o.gold||0)+o.sparks*40;o.sparks=0}return o}}catch(e){}return defP()}
 function eggUpd(){var e=document.getElementById('egg');if(e)e.classList.toggle('on',!!P.egg)}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}if(window.kpSoon)window.kpSoon()}
@@ -1015,7 +1123,7 @@ function dsL(k){var d=P.ds||{};return d[k]||0}
 function dsE(k){return dsEl(k,dsL(k))}
 function shT(){if(P.shF===undefined){artMig();var t=0;ARTS.forEach(function(a){var o=(P.art||{})[a.id],N=shN(a);if(o){t+=N;for(var q=1;q<o.l;q++)t+=q*N}t+=(P.sh||{})[a.id]||0;});P.shF=t}return P.shF}
 function dsArm(){return Math.min(.6,(.04*dsE('a')+.005*shT()+.015*bLv('lair')+A('arm'))*(1+(skinB().arm||0)))}
-function dmg(e,n,col,src){if(e.boss&&hasP('p_gravity'))n*=1.15;if(src==='dragon'&&hasP('p_rime')&&Math.random()<.12){e.slow=Math.max(e.slow,3);burst(e.x,e.y-20,'i',6)}n*=1+.05*bLv('tower')+.04*bLv('lair')+.06*dsL('s')+A('dmg');if(e.boss)n*=1+A('boss');if(st.duel&&st.dhp<st.dmax*.5)n*=1+.15*PS('rage');if(src==='dragon'){n*=1+.1*PS('fire');if(PS('crit')&&Math.random()<.08*PS('crit')){n*=2+.3*PS('critdmg');col='#ffe066'}}if(e.frost>0)n*=1.4;if(e.rvSh>0)n*=.35;if(e.curse>0)n*=1.3;if(st.warcry>0)n*=1.3;var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.hit=0.12;e.last=src||e.last;
+function dmg(e,n,col,src){if(e.boss&&hasP('p_gravity'))n*=1.15;if(src==='dragon'&&hasP('p_rime')&&Math.random()<.12){e.slow=Math.max(e.slow,3);burst(e.x,e.y-20,'i',6)}n*=1+.05*bLv('tower')+.04*bLv('lair')+.06*dsL('s')+A('dmg');if(src!=='dragon')n*=1+advB('spell');if(e.boss)n*=1+A('boss');if(st.duel&&st.dhp<st.dmax*.5)n*=1+.15*PS('rage');if(src==='dragon'){n*=1+.1*PS('fire');if(PS('crit')&&Math.random()<.08*PS('crit')){n*=2+.3*PS('critdmg');col='#ffe066'}}if(e.frost>0)n*=1.4;if(e.rvSh>0)n*=.35;if(e.curse>0)n*=1.3;if(st.warcry>0)n*=1.3;var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.hit=0.12;e.last=src||e.last;
   if(src)stat(st.rs,src).dmg+=real
   st.fx.push({x:e.x,y:e.y-e.d.r,t:0,txt:Math.round(n),col:col||'#fff'})}
 function tick(e,n,src){var real=Math.min(n,Math.max(0,e.hp));e.hp-=n;e.last=src;stat(st.rs,src).dmg+=real}
@@ -1171,9 +1279,16 @@ function fatal(e){try{console.error(e)}catch(x){}window.__lastErr=e;try{st.runni
   screen('<h2>Бой прервался</h2><p style="font-size:13px;opacity:.8">Что-то пошло не так, но прогресс сохранён. Нажми «На главную».</p><p style="font-size:11px;opacity:.55;word-break:break-all">'+String((e&&e.message)||e).slice(0,160)+'</p><button class="b" id="fatBtn">На главную</button>');
   document.getElementById('fatBtn').onclick=function(){goHome()}}catch(x){}}
 
+function scVolley(dp){
+  var ox=dp.x+W*.05,oy=dp.y+H*.012,dur=1.05,mr=W*1.4,sp=mr/dur;st.waves=st.waves||[];
+  st.rings.push({x:ox,y:oy,t:0,life:.4,maxR:46,col:'255,190,70',w:7});burst(ox,oy,'f',22);
+  st.later.push({t:.3,fn:function(){st.waves.push({x:ox,y:oy,t:0,dur:dur,maxR:mr});st.shake=.5;st.flashB=.1;st.fx.push({x:W/2,y:H*.3,t:0,txt:'Огненный залп!',col:'#ffb24a',big:1,sz:30})}});
+  st.en.forEach(function(e){var d=Math.hypot(e.x-ox,e.y-oy);st.later.push({t:.3+Math.min(.95,d/sp),fn:function(){if(e.hp>0&&st.running){dmg(e,60+P.round*10,'#ffb24a','scepter');burst(e.x,e.y-20,'f',18);st.rings.push({x:e.x,y:e.y-10,t:0,life:.4,maxR:52,col:'255,150,50',w:5})}}})})}
 function update(dt){
   var dp=dragonPos();
   st.t+=dt;
+  if(advB('scepter')&&!st.duel){st.vT=(st.vT===undefined?0:st.vT)+dt;if(st.vT>=(st.vN?12:4.2)){st.vT=0;st.vN=1;scVolley(dp)}}
+  if(st.waves)st.waves=st.waves.filter(function(w){w.t+=dt;var k=Math.min(1,w.t/w.dur),r=w.maxR*(1-Math.pow(1-k,1.6));for(var i=0;i<7;i++){var an=-.5+Math.random()*2.4;emit(w.x+Math.cos(an)*r,w.y+Math.sin(an)*r,{c:'f',vx:Math.cos(an)*60,vy:Math.sin(an)*60-20,life:.45,s:9,grow:.7,g:-40})}return w.t<w.dur});
   // спавн
   if(st.duel){if(!st.en.length){st.dwait-=dt;if(st.dwait<=0){duelNext();st.dwait=1}}}
   else if(st.t<st.cfg.dur){st.nextSpawn-=dt;if(st.nextSpawn<=0){st.nextSpawn=st.cfg.gap*(0.8+Math.random()*0.5);
@@ -1289,7 +1404,7 @@ var BDESC={
  market:function(l){return 'Сундуки за золото дешевле на '+BT('market',l)+'%'},
  arena:function(l){return 'Золото за врагов +'+BT('arena',l)+'%'}};
 function bLv(id){if(id==='lair')return (P.b&&P.b.lair)||0;return (P.clan&&P.clan.b&&P.clan.b[id])||0}
-function MAXL(){if((mode==='battle'||mode==='result')&&st&&st.cfg&&st.cfg.lives)return st.cfg.lives;return 10+BT('spring',bLv('spring'))}
+function MAXL(){var m=((mode==='battle'||mode==='result')&&st&&st.cfg&&st.cfg.lives)?st.cfg.lives:10+BT('spring',bLv('spring'));return (st&&st.duel&&st.running)?m:Math.round(m*(1+advB('hp')))}
 function bCap(id){return 10}
 var LCOST=[29600,41400,58000,81200,113600],CCOST=[81600,114200,159800,223800,313400];
 function bCost(id,l){if(id==='lair'&&l>=5)return LCOST[l-5];return 10*(id==='lair'?Math.round(90*Math.pow(2.2,l)):Math.round(50*Math.pow(1.9,l)))}
@@ -1560,7 +1675,7 @@ function slotsN(){var l=dLevel().l;return SLOTLV.filter(function(v){return l>=v}
 function giveXP(n){if(n<=0){st.lastXp=null;return}n=Math.round(n*1.25*(1+.1*PS('wis')));var b=dLevel().l;P.xp=(P.xp||0)+n;var a=dLevel().l;st.lastPity=artPity();save();st.lastXp={n:n,up:a>b?a:0,slot:slotsN()>SLOTLV.filter(function(v){return b>=v}).length}}
 function artPity(){artMig();var need=Math.min(ARTS.length,Math.floor(dLevel().l*ARTS.length/60)),out=[];while(artHave()<need){var m=ARTS.filter(function(a){return !P.art[a.id]});if(!m.length)break;m.sort(function(x,y){return (P.sh[y.id]||0)/shN(y)-(P.sh[x.id]||0)/shN(x)});var top=m.filter(function(z){return (P.sh[z.id]||0)===(P.sh[m[0].id]||0)}),a=top[Math.floor(Math.random()*top.length)];artAsm(a);out.push(a)}return out}
 function xpRow(){var x=st.lastXp;if(!x)return '';var pt=(st.lastPity||[]).map(function(a){return '<div class="artdrop">'+artIc(a,1)+'<div><b>Дракон нашёл артефакт!</b><span>'+a.n+' · '+RAR[a.r]+'</span><small>'+a.t(1)+'</small></div></div>'}).join('');return '<div class="xprow">'+IC('dragon')+' Опыт дракона: <b>+'+x.n+'</b>'+(x.up?' · <b>уровень '+x.up+'!</b>':'')+(x.slot?'<br><b>Новый слот артефактов!</b>':'')+'</div>'+pt}
-function A(k){var t=0;(P.eq||[]).forEach(function(id){var a=ABYID[id],o=(P.art||{})[id];if(a&&o&&a.b[k])t+=a.b[k]*o.l});return t+((k==='hp'||k==='dmg')?(skinB()[k]||0):0)}
+function A(k){var t=0;(P.eq||[]).forEach(function(id){var a=ABYID[id],o=(P.art||{})[id];if(a&&o&&a.b[k])t+=a.b[k]*o.l});return t+((k==='hp'||k==='dmg')?(skinB()[k]||0):0)+((k==='gold'||k==='hp')?advB(k):0)}
 var SHN={1:6,2:9,3:12};
 var SHGEO={"fang": [3, 2], "scale": [3, 2], "heart": [3, 2], "clover": [3, 2], "sand": [3, 2], "stone": [3, 2], "amulet": [3, 3], "clock": [3, 3], "spear": [3, 3], "seal": [3, 3], "feather": [4, 3], "eye": [4, 3], "crown": [4, 3]},SHATL={"fang":"assets/215931613f.webp","scale":"assets/6766d1b348.webp","heart":"assets/ca0ba6e1c2.webp","clover":"assets/c0bba8935f.webp","sand":"assets/3aa8b8347f.webp","stone":"assets/adf486e685.webp","amulet":"assets/fcde1c6c13.webp","clock":"assets/98615c92d6.webp","spear":"assets/e3f6c1504f.webp","seal":"assets/756110cca8.webp","feather":"assets/bc0502e233.webp","eye":"assets/7af16433dc.webp","crown":"assets/5013d183ee.webp"};
 (function(){var st=document.createElement('style');st.textContent='.shp{display:inline-block;background-repeat:no-repeat;flex:none}.shp.no{filter:brightness(0);opacity:.28}.shgrid{display:grid;gap:4px;justify-content:center;margin:8px 0}.shgrid .shp{border-radius:6px;background-color:rgba(255,255,255,.05)}.artdrop .shrow{display:flex;gap:2px;flex:none}'+Object.keys(SHATL).map(function(k){return '.sh_'+k+'{background-image:url('+SHATL[k]+')}'}).join('');document.head.appendChild(st)})();
@@ -1741,7 +1856,7 @@ function drawHome(){
 }
 
 /* ---- фоны: свои картинки кладутся сюда (data:image/webp;base64,...). Пусто = рисуется заготовка ---- */
-var BGIMG={bag:'assets/b892c1f2a2.webp',dragon:'assets/4ade60afaa.webp',tempt:'assets/74769f141c.webp',def:'assets/372b4aaca4.webp',events:'assets/e49da5fd0c.webp',shop:'assets/625774b0c0.webp',tasks:'assets/fc25985ad1.webp',clan:'assets/c7f91f5a4f.webp'};
+var BGIMG={adv:'assets/2f8002351d.webp',bag:'assets/b892c1f2a2.webp',dragon:'assets/4ade60afaa.webp',tempt:'assets/74769f141c.webp',def:'assets/372b4aaca4.webp',events:'assets/e49da5fd0c.webp',shop:'assets/625774b0c0.webp',tasks:'assets/fc25985ad1.webp',clan:'assets/c7f91f5a4f.webp'};
 (function(){for(var k in BGIMG)if(BGIMG[k])document.documentElement.style.setProperty('--bg-'+k,'url("'+BGIMG[k]+'")')})();
 var BGPIC={};for(var bk0 in BGIMG)if(BGIMG[bk0])BGPIC[bk0]=img(BGIMG[bk0]);
 function drawAtmo(kind){var t=Date.now()/1000,g=ctx.createLinearGradient(0,0,0,H);
@@ -1810,6 +1925,9 @@ function draw(){
   ctx.globalCompositeOperation='lighter';
   st.rings.forEach(function(r){var k=r.t/r.life,rad=r.maxR*(1-Math.pow(1-k,2));ctx.strokeStyle='rgba('+r.col+','+(1-k)+')';ctx.lineWidth=r.w*(1-k)+1;ctx.beginPath();ctx.arc(r.x,r.y,rad,0,7);ctx.stroke();
     if(r.rays){ctx.globalAlpha=.16*(1-k);ctx.fillStyle='rgba(255,250,210,1)';for(var i=0;i<12;i++){var an=i*Math.PI/6+k*.5;ctx.beginPath();ctx.moveTo(r.x,r.y);ctx.arc(r.x,r.y,rad,an-.11,an+.11);ctx.closePath();ctx.fill()}ctx.globalAlpha=1}});
+  (st.waves||[]).forEach(function(w){var k=Math.min(1,w.t/w.dur),r=w.maxR*(1-Math.pow(1-k,1.6)),a=1-k*.7;ctx.save();
+    var g=ctx.createRadialGradient(w.x,w.y,Math.max(0,r-130),w.x,w.y,r+16);g.addColorStop(0,'rgba(150,25,10,0)');g.addColorStop(.4,'rgba(230,70,15,'+(.5*a)+')');g.addColorStop(.75,'rgba(255,150,40,'+(.85*a)+')');g.addColorStop(.93,'rgba(255,225,130,'+(.95*a)+')');g.addColorStop(1,'rgba(255,245,200,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.moveTo(w.x,w.y);ctx.arc(w.x,w.y,r+16,-.55,2.0);ctx.closePath();ctx.fill();ctx.restore()});
   st.mets.forEach(function(mt){var k=Math.min(1,mt.t/mt.dur),mx=mt.x1+(mt.x2-mt.x1)*k,my=mt.y1+(mt.y2-mt.y1)*k;
     var g=ctx.createRadialGradient(mx,my,0,mx,my,20);g.addColorStop(0,'rgba(255,250,200,1)');g.addColorStop(.4,'rgba(255,150,40,.9)');g.addColorStop(1,'rgba(255,80,20,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(mx,my,20,0,7);ctx.fill();
     ctx.strokeStyle='rgba(255,170,60,.5)';ctx.lineWidth=6;ctx.beginPath();ctx.moveTo(mx,my);ctx.lineTo(mx+(mt.x1-mt.x2)*.12,my+(mt.y1-mt.y2)*.12);ctx.stroke()});
@@ -1941,14 +2059,14 @@ function showProfile(n){var p=pProf(n);if(p.me&&PLATST&&CLS())tipSeq('prof');var
   if(!p.me){dmProfBtns(n);frBtn(n);if(PLATST&&plCl&&CLS())frLoad(function(){frBtn(n)})}}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-pn]');if(t){e.stopPropagation();showProfile(t.dataset.pn)}});
 
-/* Сумка: сюда складываются предметы, облики и материалы. Новые вещи добавляются в INV_CAT и выдаются через invAdd(ключ, число). */
-var INV_T=[['s','Облики'],['i','Предметы'],['m','Материалы']],BGT='i',
- INV_CAT={chest_wood:{n:'Деревянный сундук',cat:'i',ic:'📦',d:'Откроется в Казне'}};
+/* Сумка: облики и аксессуары. Новые вещи добавляются в INV_CAT (cat: 's' облики, 'a' аксессуары) и выдаются через invAdd(ключ, число). */
+var INV_T=[['s','Облики'],['a','Аксессуары']],BGT='s',
+ INV_CAT={};
 function invAdd(k,n){P.inv=P.inv||{};P.inv[k]=(P.inv[k]||0)+(n||1);save()}
-function invAll(){var o=[],inv=P.inv||{};if((P.chests||0)>0)o.push({k:'chest',n:'Сундуки',cat:'i',c:P.chests,ic:'📦'});Object.keys(inv).forEach(function(k){var d=INV_CAT[k];if(d&&inv[k]>0)o.push({k:k,n:d.n,cat:d.cat,c:inv[k],ic:d.ic})});return o}
+function invAll(){var o=[],inv=P.inv||{};Object.keys(inv).forEach(function(k){var d=INV_CAT[k];if(d&&inv[k]>0)o.push({k:k,n:d.n,cat:d.cat,c:inv[k],ic:d.ic})});return o}
 function showBag(tab){BGT=tab||BGT;var L=document.getElementById('bag')||mkLay('bag','l2');dmTop(L);var all=invAll(),cur=all.filter(function(x){return x.cat===BGT});
-  var emp={s:'Здесь будут облики дракона и героя.',i:'Здесь будут предметы: ключи, свитки и награды.',m:'Здесь будут материалы для улучшений.'}[BGT];
-  L.innerHTML='<div class="lh"><b>'+tvI('bag',26)+' Сумка</b><button id="bgX">Закрыть</button></div><div class="lb"><div class="bgt">'+INV_T.map(function(t){return '<button data-bt="'+t[0]+'"'+(BGT===t[0]?' class="on"':'')+'>'+tvI({s:'inv_s',i:'inv_i',m:'inv_m'}[t[0]],26)+'<br>'+t[1]+'</button>'}).join('')+'</div>'+(cur.length?'<div class="bgg">'+cur.map(function(x){return '<div class="bgc"><i>'+x.ic+'</i>'+sEsc(x.n)+(x.c>1?'<b>×'+x.c+'</b>':'')+'</div>'}).join('')+'</div>':'<p class="qinfo" style="text-align:center;margin:30px 0">'+emp+'</p>')+'</div>';
+  var emp={s:'Здесь будут облики дракона и героя.',a:'Здесь будут аксессуары: очки, короны, шапки.'}[BGT];
+  L.innerHTML='<div class="lh"><b>'+tvI('bag',26)+' Сумка</b><button id="bgX">Закрыть</button></div><div class="lb"><div class="bgt">'+INV_T.map(function(t){return '<button data-bt="'+t[0]+'"'+(BGT===t[0]?' class="on"':'')+'>'+tvI({s:'inv_s',a:'inv_a'}[t[0]],26)+'<br>'+t[1]+'</button>'}).join('')+'</div>'+(cur.length?'<div class="bgg">'+cur.map(function(x){return '<div class="bgc"><i>'+x.ic+'</i>'+sEsc(x.n)+(x.c>1?'<b>×'+x.c+'</b>':'')+'</div>'}).join('')+'</div>':'<p class="qinfo" style="text-align:center;margin:30px 0">'+emp+'</p>')+'</div>';
   L.classList.add('on');document.getElementById('bgX').onclick=function(){L.classList.remove('on')};
   [].forEach.call(L.querySelectorAll('[data-bt]'),function(b){b.onclick=function(){showBag(b.dataset.bt)}})}
 function bagBtn(h){if(!h||document.getElementById('bagbtn'))return;var b=document.createElement('button');b.id='bagbtn';b.innerHTML='<img class="bgi" alt="" src="'+TVI.bag+'"><span class="tvl">Сумка</span>';b.onclick=function(){showBag()};h.appendChild(b)}
@@ -1963,6 +2081,7 @@ TVI.dm='assets/bc041e12ca.webp';
 TVI.bag='assets/ecbfa43b5c.webp';
 TVI.inv_s='assets/a44613cb67.webp';
 TVI.inv_i='assets/60a240e3e8.webp';
+TVI.inv_a='assets/dce24083a2.webp';
 TVI.inv_m='assets/9e07be1125.webp';
 TVI.bl='assets/48440c4b0d.webp';
 TVI.apps='assets/2379aaa67f.webp';
@@ -1980,7 +2099,7 @@ function showTavern(nl){var L=document.getElementById('tav')||mkLay('tav','l0'),
   [].forEach.call(L.querySelectorAll('[data-tv]'),function(x){x.onclick=function(){var k=x.dataset.tv;
     if(k==='g')return RELEASE?rChat('g'):showChat('g');if(k==='o')return RELEASE?rOnline():showOnline();if(k==='f')return showFriends();
     if(k==='c'){if(!P.clan)return;return RELEASE?rChat('c'):showChat('c')}
-    if(k==='d')return showDMs();if(k==='b')return showBoard();if(k==='a')return advSoon()}});
+    if(k==='d')return showDMs();if(k==='b')return showBoard();if(k==='a')return advOpen()}});
   if(real&&nl!==true)dmUnLoad(function(ch){if(ch&&L.classList.contains('on')&&!document.getElementById('dml')?.classList.contains('on'))showTavern(true)});
   if(real&&nl!==true)frLoad(function(){if(L.classList.contains('on')&&!document.getElementById('frl')?.classList.contains('on'))showTavern(true)})}
 
@@ -2023,9 +2142,117 @@ function showBoard(){var L=document.getElementById('brd')||mkLay('brd','l2'),rea
     var del=document.getElementById('bdDel');if(del)del.onclick=function(){if(real)plCl.rpc('g_board_post_del').then(function(){brdLoad(draw)});else{BDd.posts=BDd.posts.filter(function(p){return !p.mine});brdLoad(draw)}};
     [].forEach.call(L.querySelectorAll('[data-bx]'),function(b){b.onclick=function(){var id=+b.dataset.bx;if(real)plCl.rpc('mod_board_delete',{p_id:id}).then(function(){brdLoad(draw)});else{BDd.posts=BDd.posts.filter(function(p){return p.id!==id});brdLoad(draw)}}})}
   draw();brdLoad(draw)}
-function advSoon(){var L=document.getElementById('adv')||mkLay('adv','l2');
-  L.innerHTML='<div class="lh"><b>Авантюристы</b><button id="advX">Назад</button></div><div class="lb"><div class="tvh" style="margin-top:10px"><div style="width:96px;margin:0 auto 8px">'+tvI('adv')+'</div><b>Скоро в Таверне</b><span>Нанимай авантюристов и отправляй их в походы за добычей. Пока ты занят привычками, авантюристы возвращаются с золотом и опытом, а иногда и с редкими находками: самоцветом, древним свитком или сокровищем.</span></div></div>';
-  L.classList.add('on');document.getElementById('advX').onclick=function(){L.classList.remove('on')}}
+/* ===== Авантюристы: походы, отряд, кузница артефактов ===== */
+var ADI={"mine":"assets/72ae9abbba.webp","dragon":"assets/8778b721d1.webp","temple":"assets/48ac2fe34d.webp","a1":"assets/7a45081378.webp","a2":"assets/08b3f73372.webp","a3":"assets/a789f80eac.webp","a4":"assets/40a96ecd62.webp","a5":"assets/0445746212.webp","coin":"assets/3546b9783a.webp","gem":"assets/9d36ccdde1.webp","ore":"assets/8baf477a33.webp","scale":"assets/4601d79f50.webp","relic":"assets/c8fbdb9ea7.webp","emerald":"assets/111c645726.webp","ruby":"assets/937b7ae883.webp","moon":"assets/dcf5593510.webp","bp_amulet":"assets/b06bd635fe.webp","bp_staff":"assets/12ce1cc742.webp","bp_heart":"assets/fbfd1c8ebc.webp","bp_scepter":"assets/98d356d94a.webp","amulet":"assets/5bd80b6534.webp","staff":"assets/356c564bed.webp","heart":"assets/6c9816f85c.webp","scepter":"assets/fb9d67793a.webp"};
+var AD_LIST=[
+ {id:1,n:'Лео',r:'Человек · новобранец',lv:1,img:'a1',g:0,m:0,note:'Берёт то, что лежит на виду.'},
+ {id:2,n:'Элара',r:'Эльф · следопыт',lv:2,img:'a2',g:2000,m:0,note:'Находит тропы, где другие теряются.'},
+ {id:3,n:'Торгрим',r:'Дварф · воин',lv:3,img:'a3',g:8000,m:0,note:'Прёт напролом и выносит больше.'},
+ {id:4,n:'Горрак',r:'Минотавр · страж',lv:4,img:'a4',g:25000,m:5,note:'Не боится ни шахт, ни драконов.'},
+ {id:5,n:'СуЛен',r:'Драконорождённый · легенда',lv:5,img:'a5',g:80000,m:10,note:'Возвращается только с лучшим.'}];
+var AD_LOC=[
+ {id:'mine',n:'Заброшенные шахты',img:'mine',h:1,d:'Старые штольни гномов. Руда и осколки, шанс найти что-то ценное.'},
+ {id:'dragon',n:'Драконьи горы',img:'dragon',h:4,d:'Логово древнего дракона. Здесь долго идти, но добыча богаче.'},
+ {id:'temple',n:'Забытый храм',img:'temple',h:12,d:'Древние руны и порталы. Самый долгий поход и самая редкая добыча.'}];
+var AD_MAT={ore:'Железная руда',scale:'Драконья чешуя',relic:'Реликвия',emerald:'Изумруд удачи',ruby:'Сердце-рубин',moon:'Лунный кристалл',bp_amulet:'Чертёж: Амулет удачи',bp_staff:'Чертёж: Посох Хранителя',bp_heart:'Чертёж: Сердце дракона',bp_scepter:'Чертёж: Скипетр Хранителя драконов'};
+var AD_DROP={mine:['ore','emerald'],dragon:['scale','ruby'],temple:['relic','moon','bp_amulet']};
+var AD_ARTS=[
+ {id:'amulet',h:24,n:'Амулет удачи',b:'+10% золота за раунд',need:{bp_amulet:1,ore:30,scale:8,relic:4,emerald:12}},
+ {id:'staff',h:24,n:'Посох Хранителя',b:'+10% урона заклинаний',need:{bp_staff:1,ore:10,scale:8,relic:15,moon:12}},
+ {id:'heart',h:24,n:'Сердце дракона',b:'+15% жизней дракона',need:{bp_heart:1,ore:10,scale:30,relic:4,ruby:12}},
+ {id:'scepter',h:72,leg:1,n:'Скипетр Хранителя драконов',b:'Силы трёх артефактов ×2 и огненный залп каждые 12 секунд боя',need:{bp_scepter:1,amulet:1,staff:1,heart:1,ore:60,scale:60,relic:40,emerald:15,ruby:15,moon:15}}];
+var AD_SET={amulet:1,staff:1,heart:1};
+var AD_TIER={1:['Скромная','1-2 находки'],2:['Неплохая','1-2 находки'],3:['Хорошая','2-3 находки'],4:['Богатая','2-3 находки'],5:['Легендарная','3-4 находки']};
+function advS(){var a=P.adv;if(!a||typeof a!=='object')a=P.adv={};a.own=a.own||{1:1};a.run=a.run||[];a.inv=a.inv||{};a.craft=a.craft||{};a.done=a.done||{};a.uid=a.uid||1;return a}
+/* бонусы в бою: gold, spell, hp (доли), scepter (0/1) */
+function advB(k){var s=P.adv;if(!s||!s.done)return 0;if(k==='scepter')return s.done.scepter?1:0;
+  var v={gold:.1,spell:.1,hp:.15}[k],a={gold:'amulet',spell:'staff',hp:'heart'}[k];if(!v)return 0;
+  return s.done.scepter?v*2:(s.done[a]?v:0)}
+var adCur=null,adSel=null,adTab=1;
+function adE(i){return document.getElementById(i)}
+function adNf(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' ')}
+function adFmt(s){s=Math.max(0,Math.ceil(s));var h=Math.floor(s/3600),m=Math.floor(s%3600/60),c=s%60;return (h?h+':'+('0'+m).slice(-2):m)+':'+('0'+c).slice(-2)}
+function adStars(n){var o='';for(var i=1;i<=5;i++)o+=i<=n?'★':'<s>★</s>';return '<div class="stars">'+o+'</div>'}
+function adById(i){return AD_LIST.filter(function(a){return a.id===i})[0]}
+function adBusy(id){return advS().run.some(function(r){return r.adv===id})}
+function adFree(){var S=advS();return AD_LIST.filter(function(a){return S.own[a.id]&&!adBusy(a.id)}).length}
+function adOwnN(){var S=advS();return AD_LIST.filter(function(a){return S.own[a.id]}).length}
+function adHave(k){var S=advS();return AD_SET[k]?(S.done[k]?1:0):(S.inv[k]||0)}
+function adCan(A){for(var k in A.need)if(adHave(k)<A.need[k])return false;return true}
+function adSum(){var e=adE('adSum');if(!e)return;var S=advS(),n=adOwnN()-adFree(),d=S.run.filter(function(r){return r.done}).length;e.textContent='В походе: '+n+' из '+adOwnN()+(d?' · ждут добычу: '+d:'')}
+function adLoc(){var S=advS(),h='';
+  AD_LOC.forEach(function(L){
+    var rows='';
+    S.run.filter(function(r){return r.loc===L.id}).forEach(function(r){var a=adById(r.adv);
+      rows+=r.done?'<div class="exp"><div class="av"><img src="'+ADI[a.img]+'" alt=""></div><div class="m" style="color:var(--ok)">'+a.n+' вернулся<small>Добыча ждёт</small></div><button class="btn go" data-take="'+r.id+'">Забрать</button></div>'
+      :'<div class="exp"><div class="av"><img src="'+ADI[a.img]+'" alt=""></div><div class="m">'+a.n+'<small>осталось <span data-t="'+r.id+'">–</span></small><div class="bar"><i data-b="'+r.id+'"></i></div></div></div>'});
+    h+='<div class="loc"><div class="pic"><img src="'+ADI[L.img]+'" alt="'+L.n+'"></div><div class="inf"><b>'+L.n+'</b><p>'+L.d+'</p><div class="chips"><span class="chip">⏱ '+L.h+' ч</span></div><div class="drops">Находят:'+AD_DROP[L.id].map(function(k){return '<img src="'+ADI[k]+'" title="'+AD_MAT[k]+'" alt="">'}).join('')+(L.id==='temple'?' <span>+ чертежи</span>':'')+'</div></div><div style="grid-column:1/-1">'+rows+'<button class="btn" data-send="'+L.id+'"'+(adFree()?'':' disabled')+'>'+(adFree()?'Отправить авантюриста':'Все авантюристы в походе')+'</button></div></div>'});
+  adE('adV1').innerHTML=h;adSum();
+  [].forEach.call(adE('adV1').querySelectorAll('[data-send]'),function(b){b.onclick=function(){adSend(b.dataset.send)}});
+  [].forEach.call(adE('adV1').querySelectorAll('[data-take]'),function(b){b.onclick=function(){adTake(+b.dataset.take)}});
+  adTick()}
+function adSquad(){var S=advS(),h='<div class="sq">';
+  AD_LIST.forEach(function(a){
+    var has=S.own[a.id],r=S.run.filter(function(x){return x.adv===a.id})[0],T=AD_TIER[a.lv],L=r&&AD_LOC.filter(function(l){return l.id===r.loc})[0];
+    var st=has?(r?'<span class="chip" style="color:var(--gold)">'+(r.done?'Вернулся':'В походе')+': '+L.n+'</span>':'<span class="chip" style="color:var(--ok)">Свободен</span>'):'';
+    var buy='';
+    if(!has){var okg=P.gold>=a.g,okm=P.gems>=a.m;
+      buy='<div class="price"><span class="'+(okg?'':'no')+'"><img src="'+ADI.coin+'" alt="">'+(a.g?adNf(a.g):'Бесплатно')+'</span>'+(a.m?'<span class="'+(okm?'':'no')+'"><img src="'+ADI.gem+'" alt="">'+a.m+'</span>':'')+'</div><button class="btn" data-hire="'+a.id+'"'+(okg&&okm?'':' disabled')+'>Нанять</button>'}
+    h+='<div class="ad'+(a.lv===5?' l5':'')+(has?'':' lock')+'"><div class="im"><img src="'+ADI[a.img]+'" alt="'+a.n+'"></div><div><b>'+a.n+'</b> <span class="st">ур. '+a.lv+'</span><div class="rc">'+a.r+'</div>'+adStars(a.lv)+'<div class="st">'+a.note+'</div><div class="pw"><span class="chip">Добыча: '+T[0]+'</span><span class="chip">'+T[1]+'</span>'+st+'</div>'+buy+'</div></div>'});
+  adE('adV2').innerHTML=h+'</div>';
+  [].forEach.call(adE('adV2').querySelectorAll('[data-hire]'),function(b){b.onclick=function(){var a=adById(+b.dataset.hire),S=advS();if(S.own[a.id]||P.gold<a.g||P.gems<a.m)return;P.gold-=a.g;P.gems-=a.m;S.own[a.id]=1;save();hud();adSquad();adLoc()}})}
+function adSend(id){adCur=AD_LOC.filter(function(l){return l.id===id})[0];adSel=null;adSheet();adE('adOv').classList.add('on')}
+function adSheet(){var L=adCur,S=advS(),h='<h2>'+L.n+'</h2><div class="sub">Выбери, кого отправить. Чем сильнее авантюрист, тем богаче добыча. Других можно нанять во вкладке «Отряд». Поход займёт '+L.h+' ч.</div>';
+  AD_LIST.filter(function(a){return S.own[a.id]}).forEach(function(a){var b=adBusy(a.id),T=AD_TIER[a.lv];
+    h+='<button class="pick'+(adSel===a.id?' sel':'')+'" data-p="'+a.id+'"'+(b?' disabled':'')+'><div class="th"><img src="'+ADI[a.img]+'" alt=""></div><div><b>'+a.n+' · ур. '+a.lv+'</b><small>'+(b?'Уже в походе':T[0]+' добыча · '+T[1])+'</small></div><em>'+(b?'':'★'.repeat(a.lv))+'</em></button>'});
+  h+='<button class="btn" id="adGo" style="margin-top:6px"'+(adSel?'':' disabled')+'>Отправить в поход</button><button class="btn alt" id="adCx" style="margin-top:8px">Отмена</button>';
+  adE('adSheet').innerHTML=h;
+  [].forEach.call(adE('adSheet').querySelectorAll('[data-p]'),function(b){b.onclick=function(){adSel=+b.dataset.p;adSheet()}});
+  adE('adCx').onclick=adClose;
+  adE('adGo').onclick=function(){var S=advS();if(!adSel||adBusy(adSel)||!S.own[adSel])return;var t=L.h*3600*1000;S.run.push({id:S.uid++,loc:L.id,adv:adSel,end:Date.now()+t,total:t,done:false});save();adClose();adLoc();adSquad()}}
+function adClose(){var o=adE('adOv');if(o)o.classList.remove('on')}
+function adInc(k,n){var S=advS();S.inv[k]=(S.inv[k]||0)+n}
+function adTake(id){var S=advS(),r=S.run.filter(function(x){return x.id===id})[0];if(!r||!r.done)return;
+  var a=adById(r.adv),L=AD_LOC.filter(function(l){return l.id===r.loc})[0];
+  var FN={1:1,2:1,3:2,4:2,5:3},EX={1:.2,2:.5,3:.3,4:.6,5:.4},finds=FN[a.lv]+(Math.random()<EX[a.lv]?1:0),got={};
+  for(var i=0;i<finds;i++){var k;
+    if(L.id==='temple'&&Math.random()<0.04+a.lv*0.04){k=['bp_amulet','bp_staff','bp_heart'][Math.floor(Math.random()*3)];if(a.lv>=4&&Math.random()<0.3)k='bp_scepter';got[k]=(got[k]||0)+1;continue}
+    var sp=Math.random()<0.12+a.lv*0.04;k=AD_DROP[L.id][sp?1:0];
+    var q=1+((!sp&&a.lv>=3&&Math.random()<.35)||(sp&&a.lv===5&&Math.random()<.4)?1:0);got[k]=(got[k]||0)+q}
+  S.run=S.run.filter(function(x){return x.id!==id});
+  var h='<h2>'+a.n+' вернулся!</h2><div class="sub">'+L.n+' · добыча: '+AD_TIER[a.lv][0].toLowerCase()+'</div><div class="loot">',j=0;
+  for(var key in got){adInc(key,got[key]);h+='<div class="slot" style="animation-delay:'+(j++*.12)+'s"><img src="'+ADI[key]+'" style="width:52px;height:52px;border-radius:50%" alt=""><b>×'+got[key]+'</b><span>'+AD_MAT[key]+'</span></div>'}
+  save();
+  h+='</div><p class="note">Всё это уйдёт на склад. Из материалов в Кузнице делают артефакты.</p><button class="btn" id="adOk" style="margin-top:10px">Забрать</button>';
+  adE('adSheet').innerHTML=h;adE('adOv').classList.add('on');
+  adE('adOk').onclick=function(){adClose();adLoc();adSquad();adForge()}}
+function adForge(){var S=advS(),h='<div class="inv">';
+  ['ore','scale','relic','emerald','ruby','moon'].forEach(function(k){h+='<div><img src="'+ADI[k]+'" alt=""><b>'+(S.inv[k]||0)+'</b>'+AD_MAT[k]+'</div>'});
+  h+='</div>';
+  AD_ARTS.forEach(function(A){var cr=S.craft[A.id],dn=S.done[A.id],need='';
+    for(var k in A.need){var have=adHave(k),ok=have>=A.need[k];need+='<div class="'+(ok?'ok':'no')+'"><img src="'+ADI[k]+'" alt="">'+have+'/'+A.need[k]+'</div>'}
+    var ab=AD_SET[A.id]&&(S.done.scepter||S.craft.scepter);if(ab||dn)need='';
+    var act=ab?'<button class="btn alt" disabled>Вошёл в Скипетр Хранителя драконов</button>':dn?'<button class="btn alt" disabled>Создан · бонус активен</button>':cr?'<div class="bar"><i data-cb="'+A.id+'"></i></div><div class="st" style="margin-top:4px">Куём… осталось <span data-ct="'+A.id+'">–</span></div>':'<button class="btn" data-craft="'+A.id+'"'+(adCan(A)?'':' disabled')+'>Создать артефакт</button>';
+    h+='<div class="art'+(A.leg?' leg':'')+'"><div class="top"><img src="'+ADI[A.id]+'" alt=""><div><b>'+A.n+'</b><span>'+A.b+'</span><div class="st">Ковка: '+A.h+' ч</div></div></div><div class="need">'+need+'</div>'+act+'</div>'});
+  adE('adV3').innerHTML=h;
+  [].forEach.call(adE('adV3').querySelectorAll('[data-craft]'),function(b){b.onclick=function(){var S=advS(),A=AD_ARTS.filter(function(x){return x.id===b.dataset.craft})[0];if(S.craft[A.id]||S.done[A.id]||!adCan(A))return;for(var k in A.need){if(AD_SET[k])delete S.done[k];else S.inv[k]-=A.need[k]}var t=A.h*3600*1000;S.craft[A.id]={end:Date.now()+t,total:t};save();adForge()}})}
+/* глобальный тик: завершает походы и ковку даже при закрытом экране */
+function adTick(){var S=P.adv;if(!S||!S.run)return;var now=Date.now(),ch=false,Ly=adE('adv'),open=!!(Ly&&Ly.classList.contains('on')&&adE('adV1'));
+  S.run.forEach(function(r){if(r.done)return;var left=(r.end-now)/1000;
+    if(left<=0){r.done=true;ch=true;return}
+    if(open){var t=document.querySelector('#adv [data-t="'+r.id+'"]'),b=document.querySelector('#adv [data-b="'+r.id+'"]');if(t)t.textContent=adFmt(left);if(b)b.style.width=(100-left*1000/r.total*100)+'%'}});
+  var cd=false;AD_ARTS.forEach(function(A){var c=S.craft&&S.craft[A.id];if(!c)return;var left=(c.end-now)/1000;
+    if(left<=0){S.done[A.id]=1;delete S.craft[A.id];cd=true;return}
+    if(open){var t=document.querySelector('#adv [data-ct="'+A.id+'"]'),b=document.querySelector('#adv [data-cb="'+A.id+'"]');if(t)t.textContent=adFmt(left);if(b)b.style.width=(100-left*1000/c.total*100)+'%'}});
+  if(ch||cd){save();if(open){adE('adV1')&&adLoc();adE('adV2')&&adSquad();if(cd)adForge()}}}
+setInterval(adTick,1000);
+function adTab_(n){adTab=n;[1,2,3].forEach(function(i){adE('adV'+i).classList.toggle('hide',n!==i);adE('adT'+i).classList.toggle('on',n===i)});if(n===1)adLoc();if(n===2)adSquad();if(n===3)adForge()}
+function advOpen(){advS();var L=adE('adv')||mkLay('adv','l2');
+  L.innerHTML='<div class="lh"><b>Авантюристы</b><button id="advX">Назад</button></div><div class="lb"><p class="sub" style="margin:2px 0 8px">Отправляй героев в походы за материалами и куй из них артефакты, которые усиливают дракона.</p><div class="sum" id="adSum"></div><div class="tabs"><button id="adT1" class="on">Походы</button><button id="adT2">Отряд</button><button id="adT3">Кузница</button></div><div id="adV1"></div><div id="adV2" class="hide"></div><div id="adV3" class="hide"></div></div><div class="ov" id="adOv"><div class="sheet" id="adSheet"></div></div>';
+  L.classList.add('on');adE('advX').onclick=function(){L.classList.remove('on')};
+  adE('adOv').onclick=function(e){if(e.target===adE('adOv'))adClose()};
+  [1,2,3].forEach(function(i){adE('adT'+i).onclick=function(){adTab_(i)}});
+  adTab_(adTab||1);adTick()}
 function showFriends(){var L=document.getElementById('frl')||mkLay('frl'),real=RELEASE&&PLATST&&plCl;
   function draw(){var inc=FR.inc||[],fr=(FR.fr||[]).slice().sort(function(a,b){return (b.online-a.online)||(b.level-a.level)}),out=FR.out||[];
     var h=inc.map(function(r){return '<div class="onreq"><b>🤝 '+sEsc(r.name)+' (ур. '+r.level+') хочет дружить</b><div class="fqr"><button class="b" data-y="'+r.id+'">Принять</button><button class="g" data-n="'+r.id+'">Отклонить</button></div></div>'}).join('');if(real){
