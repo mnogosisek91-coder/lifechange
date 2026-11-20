@@ -1180,8 +1180,8 @@ function castSpell(id){
   }else if(id==='drain'){
     var da=en.slice().sort(function(a,b){return a.x-b.x}).slice(0,3),dg=0;
     da.forEach(function(e){var h0=e.hp;dmg(e,(45+rb*7)*m,'#ff5c7a','bolt');dg+=Math.max(0,h0-Math.max(0,e.hp));burst(e.x,e.y-20,'f',10);st.rings.push({x:e.x,y:e.y-10,t:0,life:.4,maxR:40,col:'255,90,120',w:4})});
-    var hl=Math.min(st.duel?st.dmax*.2*m:3,st.duel?dg*.5*m+st.dmax*.02:3);
-    if(da.length){if(st.duel){st.dhp=Math.min(st.dmax,st.dhp+hl);st.lives=Math.ceil(st.dhp/st.dmax*10)}else st.lives=Math.min(MAXL(),st.lives+1)}
+    var hl=Math.min(st.duel?st.dmax*.2*m:3,st.duel?dg*.5*m+st.dmax*.02:3)*(1+.02*bLv('spring'));
+    if(da.length){if(st.duel){st.dhp=Math.min(st.dmax,st.dhp+hl);st.lives=Math.ceil(st.dhp/st.dmax*10)}else st.lives=Math.min(MAXL(),st.lives+1+(Math.random()<.02*bLv('spring')?1:0))}
     st.em.push({type:'heal',t:0,dur:.7});st.fx.push({x:dp.x,y:dp.y-H*.1,t:0,txt:'+'+(st.duel?Math.round(hl):1),col:'#ff7a95'});
   }else if(id==='warcry'){
     st.warcry=8*dm;st.warcryMax=st.warcry;st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.5,col:'255,190,80',w:9});st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Боевой клич!',col:'#ffd166'});st.shake=.2;
@@ -1398,9 +1398,9 @@ var BTB={forge:[0,8,16,24,32,40,44,48,52,56,60],treasury:[0,20,40,60,80,100,108,
 var BDESC={
  lair:function(l){return 'Копит '+6*l+' 🪙 в час (до 6 ч) · урон +'+4*l+'% · здоровье +'+10*l+' · броня +'+(1.5*l)+'%'},
  tower:function(l){return 'Урон заклинаний +'+5*l+'%'},
- forge:function(l){return 'Улучшение заклинаний дешевле на '+BT('forge',l)+'%'},
+ forge:function(l){return 'Улучшение заклинаний дешевле на '+BT('forge',l)+'% (в профиле, на странице заклинания)'},
  treasury:function(l){return 'Доход Логова +'+BT('treasury',l)+'%'},
- spring:function(l){return 'Жизней в раунде: '+(10+BT('spring',l))},
+ spring:function(l){return 'Жизней в раунде: '+(10+BT('spring',l))+' · лечение заклинаний +'+2*l+'%'},
  market:function(l){return 'Сундуки за золото дешевле на '+BT('market',l)+'%'},
  arena:function(l){return 'Золото за врагов +'+BT('arena',l)+'%'}};
 function bLv(id){if(id==='lair')return (P.b&&P.b.lair)||0;return (P.clan&&P.clan.b&&P.clan.b[id])||0}
@@ -1524,7 +1524,7 @@ function clVaultBind(rerender){var kh=document.getElementById('kVh');if(kh)kh.on
 function clBuildBtn(id){var c=P.clan,l=c.b[id]||0;if(l>=10)return '<small style="color:#ffd166">Максимальный уровень</small>';var cost=clanCost(l);
   if(!clMgr())return '<small>Улучшение: '+cost+' 🪙 · строят лидер и старейшины</small>';return '<div class="kr"><button data-bu="'+id+'"'+(c.vault<cost?' disabled':'')+'>'+(l?'Улучшить':'Построить')+' — '+cost+' 🪙</button></div>'}
 function showClanBuilding(id){var b=BBY[id],l=bLv(id);
-  screen('<div class="bm"><img src="'+bImg(id)+'"><h2>'+b.n+' · ур. '+l+' / 10</h2><p style="margin:0;font-size:13px;opacity:.8">Общая постройка клана «'+P.clan.n+'»</p><p style="margin:6px 0">'+(l?'Сейчас: '+BDESC[id](l):'Пока не построено')+'</p>'+(l<10?'<p style="margin:0 0 6px;opacity:.8;font-size:13px">Дальше: '+BDESC[id](l+1)+'</p>':'')+'<p style="margin:4px 0;font-size:13px">Хранилище клана: <b>'+P.clan.vault+' 🪙</b></p>'+clBuildBtn(id)+(clMsg?'<p style="color:#ffd166;margin:8px 0 0">'+clMsg+'</p>':'')+(id==='forge'&&l>0?'<div class="fl"><div class="sec" style="margin:8px 0 0">УЛУЧШИТЬ ЗАКЛИНАНИЕ</div>'+P.unlocked.map(function(sid){var lv=lvl(sid),mx=lv>=SPMAX;return '<div class="cc"><div class="fi">'+sIcon(sid)+'</div><div class="ct"><b>'+BYID[sid].n+'</b><span>Уровень '+lv+(mx?' (макс.)':'')+'</span></div>'+(mx?'':'<button data-f="'+sid+'"'+(P.gold<fCost(sid)?' disabled':'')+'>'+fCost(sid)+' 🪙</button>')+'</div>'}).join('')+'</div>':'')+'<button class="b alt" id="kGo">В клан</button><button class="g" id="bX">Закрыть</button></div>');
+  screen('<div class="bm"><img src="'+bImg(id)+'"><h2>'+b.n+' · ур. '+l+' / 10</h2><p style="margin:0;font-size:13px;opacity:.8">Общая постройка клана «'+P.clan.n+'»</p><p style="margin:6px 0">'+(l?'Сейчас: '+BDESC[id](l):'Пока не построено')+'</p>'+(l<10?'<p style="margin:0 0 6px;opacity:.8;font-size:13px">Дальше: '+BDESC[id](l+1)+'</p>':'')+'<p style="margin:4px 0;font-size:13px">Хранилище клана: <b>'+P.clan.vault+' 🪙</b></p>'+clBuildBtn(id)+(clMsg?'<p style="color:#ffd166;margin:8px 0 0">'+clMsg+'</p>':'')+''+'<button class="b alt" id="kGo">В клан</button><button class="g" id="bX">Закрыть</button></div>');
   clVaultBind(function(){showClanBuilding(id)});[].forEach.call(ovbox.querySelectorAll('button[data-f]'),function(x){x.onclick=function(){var sid=x.dataset.f,cc=fCost(sid);if(P.gold<cc||lvl(sid)>=SPMAX)return;P.gold-=cc;P.lv[sid]=lvl(sid)+1;save();hud();showClanBuilding(id)}});
   document.getElementById('kGo').onclick=function(){showClan('b')};document.getElementById('bX').onclick=function(){clMsg='';hideScreen()}}
 function showClanNone(){if(CLS())return showClanNoneS();var inv=(P.cinv=P.cinv||[{id:3,n:'Тихая Гавань',e:'emb3',by:'Алишер'}]);P.apps=P.apps||{};
@@ -1556,9 +1556,9 @@ function clAboutBind(c){var b=document.getElementById('kAbEd');if(!b)return;b.on
   aboutEdit(h,'О КЛАНЕ',c.about,'Например: клан для тех, кто бросает вредные привычки. Заходим каждый день',function(v,ok,fail){plCl.rpc('gclan_about',{p_text:v}).then(function(q){if(q.error)return fail(q.error);ok(q.data)}).catch(function(){fail({})})},function(d){clSet(d);showClan(clTab)},function(){showClan(clTab)})}}
 var clBg=0;
 function showClan(tab){if(CLS()&&Date.now()-clSyncAt>15000&&clSyncAt&&!clBg){clBg=1;var j0=JSON.stringify(P.clan);clSync(function(){clBg=0;if(mode==='clan'&&ov.classList.contains('on')&&JSON.stringify(P.clan)!==j0){var ae=document.activeElement;if(!(ae&&/INPUT|TEXTAREA/.test(ae.tagName)))showClan(clTab)}})}
-  if(CLS()&&!clSyncAt){setMode('clan');hud();screen('<div class="hdr"><h2>Клан</h2></div>'+resRow(1)+'<p class="qinfo" style="text-align:center;margin:20px 0">Загрузка…</p>',true);return clSync(function(){clSyncAt=Date.now();showClan(tab)})}setMode('clan');hud();if(!P.clan){return showClanNone()}if(!CLS())clTick();clFix();clTab=tab||clTab||'m';if(clTab==='a'&&!clMgr())clTab='b';var c=P.clan,me=clMe(),mg=clMgr();
+  if(CLS()&&!clSyncAt){setMode('clan');hud();screen('<div class="hdr"><h2>Клан</h2></div>'+resRow(1)+'<p class="qinfo" style="text-align:center;margin:20px 0">Загрузка…</p>',true);return clSync(function(){clSyncAt=Date.now();showClan(tab)})}setMode('clan');hud();if(!P.clan){return showClanNone()}if(!CLS())clTick();clFix();clTab=tab||clTab||'m';if(clTab==='b'||(clTab==='a'&&!clMgr()))clTab='m';var c=P.clan,me=clMe(),mg=clMgr();
   var h='<div class="hdr"><h2>'+IC(c.e)+' '+c.n+'</h2></div>'+resRow(1)+clLvBox(c)+'<div class="cinfo"><small>'+clRk(me.r)+' · участников '+c.mem.length+' / '+CL_MAX+' · '+(c.open?'открытый':'набор по заявкам')+'</small></div>'+clAboutBox(c,mg)+
-    '<div class="kt"><button data-t="m" class="'+(clTab==='m'?'on':'')+'">Участники'+(mg&&c.apps.length?'<em class="kbd">'+c.apps.length+'</em>':'')+'</button><button data-t="b" class="'+(clTab==='b'?'on':'')+'">Постройки</button><button id="kChat">💬 Чат</button></div>'+(clMsg?'<p style="color:#ffd166;text-align:center;margin:4px 0">'+clMsg+'</p>':'');
+    '<div class="kt"><button data-t="m" class="'+(clTab==='m'?'on':'')+'">Участники'+(mg&&c.apps.length?'<em class="kbd">'+c.apps.length+'</em>':'')+'</button><button id="kChat">💬 Чат</button></div>'+(clMsg?'<p style="color:#ffd166;text-align:center;margin:4px 0">'+clMsg+'</p>':'');
   if(clTab==='b'){h+=clVaultBox()+(mg?'':'<p class="qinfo" style="text-align:center">Вкладывать может каждый, строят лидер и старейшины.</p>')+'<div class="cards">'+CL_B.map(function(id){var b=BBY[id],l=c.b[id]||0;return '<div class="cc" style="flex-wrap:wrap"><div class="ci"><img class="ic" alt="" src="'+bImg(id)+'" style="height:44px;width:auto"></div><div class="ct"><b>'+b.n+' · ур. '+l+' / 10</b><span>'+(l?BDESC[id](l):BDESC[id](1))+'</span></div><div style="width:100%">'+clBuildBtn(id)+'</div></div>'}).join('')+'</div>'}
   if(clTab==='m'){var mem=c.mem.slice().sort(function(a,b){return CL_RO[a.r]-CL_RO[b.r]||b.don-a.don});h+='<div class="cards"><div class="cc" style="flex-direction:column;align-items:stretch;gap:0;padding:4px 12px">'+mem.map(function(m,ix){var k=c.mem.indexOf(m),act=m.me?'<button data-lv="1" style="background:transparent;border:1px solid #6b3a44;color:#ff9a9a;font-size:12px;padding:6px 10px">Выйти</button>':'';
       if(clCanRank(me,m)){var ro=CL_RO[m.r],minUp=me.r==='leader'?1:2;act=(ro>minUp?'<button data-pu="'+k+'">↑</button>':'')+(ro<4?'<button data-pd="'+k+'" style="margin-left:4px">↓</button>':'')+'<button data-k="'+k+'" style="margin-left:6px;opacity:.7">✕</button>'}
@@ -1774,7 +1774,7 @@ function showDragon(tab){artMig();if(tab)dTab=tab;P.ds=P.ds||{s:0,h:0,a:0};P.art
   ov.dataset.bg='dragon';document.getElementById('dsX').onclick=hideScreen;[].forEach.call(navEl.children,function(x){x.classList.toggle('on',x.dataset.m==='dragon')});try{tipMode('dragon_'+dTab)}catch(e){}}
 function updateDPill(){if(RELEASE&&window.dsync)window.dsync();var el=document.getElementById('dpill');if(el)el.innerHTML=(PLATST&&PLATST.name?'<b>'+sEsc(PLATST.name)+'</b> · ':'')+'Ур. <b>'+dLevel().l+'</b>'}
 function layoutD(){var h=document.getElementById('home'),W=h.clientWidth,H=h.clientHeight,el=document.getElementById('dpill'),hs=document.getElementById('dhot');if(!el||!W||!H)return;
-  var sw=Math.min(W,H*.5625),dw=Math.min(sw*.9,sw*.82*(DNW/900)+sw*.1)*.68,dr=IMG.dragon,dh=dw*((dr.naturalHeight/dr.naturalWidth)||.5),feet=H*.48+dh/2;
+  var sw=Math.min(W,H*.5625),dw=Math.min(sw*.9,sw*.82*(DNW/900)+sw*.1)*.68,dr=IMG.dragon,dh=dw*((dr.naturalHeight/dr.naturalWidth)||.5),feet=H*.53+dh/2;
   el.style.top=(feet-dh-14)+'px';hs.style.cssText='left:'+(W/2-dw/2)+'px;top:'+(feet-dh)+'px;width:'+dw+'px;height:'+dh+'px'}
 function goHome(){
   hideScreen();setMode('home');hud();renderBuildings();}
@@ -1850,7 +1850,7 @@ function rollChest(k){
 
 /* ---- отрисовка ---- */
 function drawHome(){
-  var dr=IMG.dragon,tm=performance.now()/1000,sw=Math.min(W,H*.5625),dw=Math.min(sw*.9,sw*.82*(DNW/900)+sw*.1)*.68,dh=dw*((dr.naturalHeight/dr.naturalWidth)||.5),feet=H*.48+dh/2;
+  var dr=IMG.dragon,tm=performance.now()/1000,sw=Math.min(W,H*.5625),dw=Math.min(sw*.9,sw*.82*(DNW/900)+sw*.1)*.68,dh=dw*((dr.naturalHeight/dr.naturalWidth)||.5),feet=H*.53+dh/2;
   var sg=ctx.createRadialGradient(W/2,feet,10,W/2,feet,W*.5);sg.addColorStop(0,'rgba(255,214,120,.22)');sg.addColorStop(1,'rgba(255,214,120,0)');ctx.fillStyle=sg;ctx.fillRect(0,H*.3,W,H*.6);
   if(dr.complete&&dr.naturalWidth){var bob=Math.sin(tm*2.2)*4;ctx.drawImage(dr,W/2-dw/2,feet-dh+bob,dw,dh)}
 }
@@ -1961,7 +1961,7 @@ function pProf(n){var c=P.clan;
   while(eq.length<Math.min(3,ARTS.length)&&i++<30){var q=ARTS[Math.floor(r()*ARTS.length)];if(eq.indexOf(q)<0)eq.push(q)}
   return {n:n,lv:L,key:pStage(L)+'_'+col,s:s,h:h,a:a,pw:L*5+100+s*60+h*50+a*40,clan:m?c.n:(r()<.6?TR_C[Math.floor(r()*TR_C.length)]:null),lg:leagueOf(L*5+100+s*60+h*50+a*40).n,lk:leagueOf(L*5+100+s*60+h*50+a*40).k,best:Math.floor(r()*L*3),eq:eq}}
 function mkLay(id,cls){var d=document.createElement('div');d.id=id;d.className='lay '+(cls||'');document.getElementById('fieldbox').appendChild(d);return d}
-function closeLays(){['pf','cht','onl','tav','frl','brd','adv','dml','dmt','bag'].forEach(function(i){var e=document.getElementById(i);if(e)e.classList.remove('on')});clearInterval(chTm)}
+function closeLays(){['pf','cht','onl','tav','frl','brd','adv','lgs','dml','dmt','bag'].forEach(function(i){var e=document.getElementById(i);if(e)e.classList.remove('on')});clearInterval(chTm)}
 function bioErr(e){var m=(e&&e.message)||'';return {no_links:'Ссылки и @ники писать нельзя',banned:'Тебе закрыт доступ к тексту',too_fast:'Подожди несколько секунд',not_auth:'Войди в LifeChange',no_player:'Зайди в игру заново и повтори'}[m]||'Не удалось сохранить, попробуй позже'}
 function aboutEdit(W,title,txt,ph,save,done,cancel){W.innerHTML='<div class="pbio"><b>'+title+'</b><textarea id="abT" maxlength="140" placeholder="'+ph+'">'+sEsc(txt||'')+'</textarea><small id="abC">'+(txt||'').length+' / 140 · без ссылок и @ников</small><p id="abE" class="qinfo" style="color:#ffb4b4;margin:4px 0 0;min-height:14px"></p><div class="pe"><button class="g" id="abNo">Отмена</button><button class="b" id="abOk">Сохранить</button></div></div>';
   var t=document.getElementById('abT'),busy=0;t.oninput=function(){document.getElementById('abC').textContent=t.value.length+' / 140 · без ссылок и @ников'};document.getElementById('abNo').onclick=cancel;
@@ -2091,7 +2091,7 @@ function tvBadge(){var e=document.getElementById('tvb');if(!e)return;var n=(FR.i
 function tvOnlN(){var e=document.getElementById('onbtn'),b=e&&e.querySelector('b');return b?b.textContent:'–'}
 function showTavern(nl){var L=document.getElementById('tav')||mkLay('tav','l0'),osb=L.querySelector('.lb'),os=osb?osb.scrollTop:0,real=RELEASE&&PLATST&&plCl,inc=(FR.inc||[]).length,fo=(FR.fr||[]).filter(function(x){return x.online}).length,fn=real?(FR.fr||[]).length:(P.fr||[]).length;
   var rows=[['g',tvI('chat'),'Общий зал','Поболтать со всеми хранителями',0],['o',tvI('online'),'Кто в игре',(tvOnlN()==='–'||tvOnlN()==='0'?'Посмотреть, кто сейчас в игре':'Сейчас онлайн: '+tvOnlN()),0],['f',tvI('friends'),'Друзья',(fn?fn+(fn%10===1&&fn%100!==11?' друг':fn%10>=2&&fn%10<=4&&(fn%100<10||fn%100>=20)?' друга':' друзей')+(real?', онлайн '+fo:''):'Пока никого')+(inc?' · запросов: '+inc:''),0],['d',tvI('dm'),'Личные сообщения'+(dmUn()?'<em class="tvn">'+dmUn()+'</em>':''),dmUn()?'Новых: '+dmUn():'Писать игрокам напрямую',0],
-    ['b',tvI('board'),'Доска заданий','Задания за привычки, цель клана и объявления игроков',0],['a',tvI('adv'),'Авантюристы','Нанимай героев в походы за добычей',0]];
+    ['b',tvI('board'),'Доска заданий','Задания за привычки, цель клана и объявления игроков',0],['a',tvI('adv'),'Авантюристы','Нанимай героев в походы за добычей',0],['l',lgIc(Math.max(1,leagueOf(dsPower()).k)).replace('class="lgi"','class="tvi" style="width:100%;height:100%;object-fit:contain"'),'Лиги','Кто в какой лиге и сколько силы нужно',0]];
   L.innerHTML='<div class="lh"><b>🍵 Таверна</b><button id="tvX">Закрыть</button></div><div class="lb"><div class="tvh">'+'<b>Добро пожаловать, хранитель</b><span>Присаживайся у огня: здесь новости, друзья и задания.</span></div>'+
     rows.map(function(r){return '<div class="cc tvc'+(r[4]?' off':'')+'" data-tv="'+r[0]+'"><div class="ci">'+r[1]+'</div><div class="ct"><b>'+r[2]+(r[0]==='f'&&inc?' <em style="background:#ff5a4a;color:#fff;border-radius:8px;padding:1px 6px;font-size:11px;font-style:normal">'+inc+'</em>':'')+'</b><span>'+r[3]+'</span></div><span class="go">›</span></div>'}).join('')+'</div>';
   var nsb=L.querySelector('.lb');if(nsb&&os)nsb.scrollTop=os;
@@ -2099,7 +2099,7 @@ function showTavern(nl){var L=document.getElementById('tav')||mkLay('tav','l0'),
   [].forEach.call(L.querySelectorAll('[data-tv]'),function(x){x.onclick=function(){var k=x.dataset.tv;
     if(k==='g')return RELEASE?rChat('g'):showChat('g');if(k==='o')return RELEASE?rOnline():showOnline();if(k==='f')return showFriends();
     if(k==='c'){if(!P.clan)return;return RELEASE?rChat('c'):showChat('c')}
-    if(k==='d')return showDMs();if(k==='b')return showBoard();if(k==='a')return advOpen()}});
+    if(k==='d')return showDMs();if(k==='b')return showBoard();if(k==='a')return advOpen();if(k==='l')return showLeagues()}});
   if(real&&nl!==true)dmUnLoad(function(ch){if(ch&&L.classList.contains('on')&&!document.getElementById('dml')?.classList.contains('on'))showTavern(true)});
   if(real&&nl!==true)frLoad(function(){if(L.classList.contains('on')&&!document.getElementById('frl')?.classList.contains('on'))showTavern(true)})}
 
@@ -2253,6 +2253,21 @@ function advOpen(){advS();var L=adE('adv')||mkLay('adv','l2');
   adE('adOv').onclick=function(e){if(e.target===adE('adOv'))adClose()};
   [1,2,3].forEach(function(i){adE('adT'+i).onclick=function(){adTab_(i)}});
   adTab_(adTab||1);adTick()}
+function showLeagues(){var L=document.getElementById('lgs')||mkLay('lgs','l2'),real=RELEASE&&PLATST&&plCl,D=null,open=-1,err='';
+  function draw(){var pw=dsPower(),me=leagueOf(pw),nx=LG[me.k+1],cnt=D&&D.counts,list=(D&&D.list)||[];
+    var prog=nx?'<div class="bar" style="height:8px;border-radius:6px;background:#0b1028;overflow:hidden;border:1px solid #3a4478;margin:8px 0 4px"><i style="display:block;height:100%;width:'+Math.max(4,Math.min(100,Math.round((pw-LG[me.k].min)/(nx.min-LG[me.k].min)*100)))+'%;background:linear-gradient(90deg,#f6dc9a,#e9b949)"></i></div><span>До «'+nx.n+'» осталось '+(nx.min-pw)+' силы</span>':'<span>Ты в высшей лиге!</span>';
+    var h='<div class="lh"><b>Лиги</b><button id="lgsX">Назад</button></div><div class="lb"><div class="tvh"><div style="width:84px;margin:0 auto 6px">'+lgIc(me.k).replace('class="lgi"','class="lgi" style="width:100%;height:auto"')+'</div><b>'+me.n+'</b><span>Твоя боевая мощь: '+pw+'</span>'+prog+'</div>'+
+      '<p class="qinfo" style="margin:10px 0 6px;text-align:center">Лига зависит от боевой мощи дракона. Нажми на лигу, чтобы увидеть игроков.</p>';
+    for(var k=6;k>=0;k--){var pl=list.filter(function(u){return u.lk===this.k},{k:k});
+      h+='<div class="cc tvc" data-lg="'+k+'"><div class="ci">'+lgIc(k).replace('class="lgi"','class="lgi" style="width:100%;height:100%;object-fit:contain"')+'</div><div class="ct"><b>'+LG[k].n+(k===me.k?' · ты здесь':'')+'</b><span>от '+LG[k].min+' силы'+(cnt?' · игроков: '+cnt[k]:'')+'</span></div><span class="go">'+(open===k?'▾':'›')+'</span></div>';
+      if(open===k)h+='<div class="cc" style="flex-direction:column;align-items:stretch;gap:0;padding:4px 12px;margin-top:-4px">'+(pl.length?pl.map(function(u){return '<div class="onr">'+(u.online?'<i></i>':'<i style="opacity:.2;box-shadow:none"></i>')+'<span><span data-pn="'+sEsc(u.me?'Ты':u.name)+'" style="display:inline">'+sEsc(u.name)+'</span>'+(u.me?' (ты)':'')+'</span><small>ур. '+u.level+' · сила '+u.pw+'</small></div>'}).join(''):'<p class="qinfo" style="text-align:center;margin:8px 0">'+(real?(err||'Пока никого'):'Список игроков виден при входе через платформу')+'</p>')+'</div>'}
+    if(real&&!D&&!err)h+='<p class="qinfo" style="text-align:center">Загрузка игроков…</p>';
+    if(err&&real)h+='<p class="qinfo" style="text-align:center">'+err+'</p>';
+    L.innerHTML=h+'</div>';L.classList.add('on');
+    document.getElementById('lgsX').onclick=function(){L.classList.remove('on')};
+    [].forEach.call(L.querySelectorAll('[data-lg]'),function(x){x.onclick=function(){var k=+x.dataset.lg;open=open===k?-1:k;var sb=L.querySelector('.lb'),sc=sb?sb.scrollTop:0;draw();var nb=L.querySelector('.lb');if(nb)nb.scrollTop=sc}})}
+  draw();
+  if(real)plCl.rpc('g_leagues').then(function(q){if(q&&!q.error&&q.data){D=q.data;err=''}else err='Список игроков появится после обновления сервера';if(L.classList.contains('on'))draw()}).catch(function(){err='Нет связи';if(L.classList.contains('on'))draw()})}
 function showFriends(){var L=document.getElementById('frl')||mkLay('frl'),real=RELEASE&&PLATST&&plCl;
   function draw(){var inc=FR.inc||[],fr=(FR.fr||[]).slice().sort(function(a,b){return (b.online-a.online)||(b.level-a.level)}),out=FR.out||[];
     var h=inc.map(function(r){return '<div class="onreq"><b>🤝 '+sEsc(r.name)+' (ур. '+r.level+') хочет дружить</b><div class="fqr"><button class="b" data-y="'+r.id+'">Принять</button><button class="g" data-n="'+r.id+'">Отклонить</button></div></div>'}).join('');if(real){
