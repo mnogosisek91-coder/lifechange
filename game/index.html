@@ -277,8 +277,8 @@ button.b .ic,.cc button .ic,button.g .ic{filter:drop-shadow(0 0 1px #3a2200) dro
 #adv .sq{display:grid;gap:10px}
 #adv .ad{display:grid;grid-template-columns:128px minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
 #adv .ad.l5{border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.25)}
-#adv .ad .im{height:170px;display:flex;align-items:flex-end;justify-content:center}
-#adv .ad .im img{max-width:100%;max-height:100%;object-fit:contain;filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
+#adv .ad .im{height:170px;position:relative;overflow:hidden;min-width:0}
+#adv .ad .im img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
 #adv .ad b{font-size:15px;color:var(--gold)}
 #adv .ad .rc{font-size:12px;color:var(--mut)}
 #adv .stars{color:var(--gold);letter-spacing:2px;font-size:14px;margin:2px 0}
@@ -1971,9 +1971,9 @@ function aboutEdit(W,title,txt,ph,save,done,cancel){W.innerHTML='<div class="pbi
   document.getElementById('abOk').onclick=function(){if(busy)return;busy=1;document.getElementById('abE').textContent='';save(t.value,function(r){busy=0;done(r)},function(err){busy=0;document.getElementById('abE').textContent=bioErr(err)})}}
 function bioShow(W,bio,me){W.innerHTML='<div class="pbio"><b>О СЕБЕ</b><span>'+(bio?sEsc(bio):'<span style="opacity:.6">'+(me?'Расскажи о себе в паре слов: чем занят, к чему идёшь.':'Игрок пока ничего не написал.')+'</span>')+'</span>'+(me?'<div class="pe"><button class="g" id="pbEd">✏️ '+(bio?'Изменить':'Написать')+'</button></div>':'')+'</div>';
   if(me)document.getElementById('pbEd').onclick=function(){aboutEdit(W,'О СЕБЕ',bio,'Например: качаю привычки, 40 дней без сладкого',function(v,ok,fail){plCl.rpc('g_bio_set',{p_text:v}).then(function(q){if(q.error)return fail(q.error);ok(q.data)}).catch(function(){fail({})})},function(r){bioShow(W,r,1)},function(){bioShow(W,bio,1)})}}
-function pfReal(n,p){if(!PLATST||!plCl||!CLS())return;var nm=p.me?myNick():n;
+function pfReal(n,p){if(!PLATST||!plCl||!CLS())return;setTimeout(function(){var i=document.getElementById('pfDr');if(i)i.style.visibility=''},3500);var nm=p.me?myNick():n;
   plCl.rpc('g_profile',{p_name:nm}).then(function(q){var d=q&&q.data,W=document.getElementById('pfBioW');if(!W||W.dataset.n!==n||q.error||!d)return;
-    if(!p.me){var st=document.getElementById('pfStats');if(st)st.innerHTML=d.card?pfStatsHtml(d.card):'<p class="qinfo" style="text-align:center;margin:14px 0">Игрок ещё не обновил игру. Характеристики появятся, когда он зайдёт в неё снова.</p>';var h=document.querySelector('#pf .pfh span');if(h)h.textContent='Ур. '+d.level;var im=document.querySelector('#pf .pfh img');if(im)im.src=dragSrc(d.dk);
+    if(!p.me){var st=document.getElementById('pfStats');if(st)st.innerHTML=d.card?pfStatsHtml(d.card):'<p class="qinfo" style="text-align:center;margin:14px 0">Игрок ещё не обновил игру. Характеристики появятся, когда он зайдёт в неё снова.</p>';var h=document.querySelector('#pf .pfh span');if(h)h.textContent='Ур. '+d.level;var im=document.querySelector('#pf .pfh img');if(im){im.src=dragSrc(d.dk);im.style.visibility=''}
       var ps=document.querySelector('#pf .pfs');if(ps)ps.innerHTML=(d.cn?(UIIMG[d.ce]?IC(d.ce)+' ':'🛡️ ')+sEsc(d.cn):'Без клана')+' · '+(d.card?lgIc(leagueOf(d.card.pw).k)+leagueOf(d.card.pw).n+' · ':'')+socAgo(d.ago)+(d.adm?' <em class="modb adm">ADMIN</em>':d.mod?' <em class="modb">MOD</em>':'')}
     bioShow(W,d.bio,p.me);
     if(d.cn&&d.ca){W.insertAdjacentHTML('beforeend','<div class="pbio"><b>О КЛАНЕ «'+sEsc(d.cn).toUpperCase()+'»</b>'+sEsc(d.ca)+'</div>')}
@@ -2057,7 +2057,7 @@ function pfStatsHtml(c){var eq=(c.eq||[]).map(function(x){return {a:ABYID[x[0]],
   return '<div class="pfg"><div>Боевая мощь<b>'+c.pw+'</b></div><div>Рекорд раундов<b>'+c.best+'</b></div><div>Сила<b>ур. '+c.s+' / '+DSMAX+'</b></div><div>Здоровье<b>ур. '+c.h+' / '+DSMAX+'</b></div><div>Броня<b>ур. '+c.a+' / '+DSMAX+'</b></div><div>Заклинаний<b>'+(c.sp||0)+'</b></div></div>'+
    '<div class="sec" style="margin:12px 0 6px">АРТЕФАКТЫ</div><div class="pfa">'+(eq.length?eq.map(function(x){return '<div style="text-align:center;font-size:10px;width:64px">'+artIc(x.a,1)+'<div>'+x.a.n+'</div><div style="opacity:.7">ур. '+x.l+'</div></div>'}).join(''):'<span style="opacity:.6;font-size:13px">Не надеты</span>')+'</div>'}
 function showProfile(n){var p=pProf(n);if(p.me&&PLATST&&CLS())tipSeq('prof');var fr=(P.fr||[]).indexOf(n)>=0,L=document.getElementById('pf')||mkLay('pf','l2');
-  L.innerHTML='<div class="lh"><b>Профиль игрока</b><button id="pfX">Закрыть</button></div><div class="lb"><div class="pfh"><img alt="" src="'+dragSrc(p.key)+'"><span>Ур. '+p.lv+'</span></div><div class="pfn">'+sEsc(p.me?'Ты':p.n)+'</div><div class="pfs">'+(p.clan?'🛡️ '+sEsc(p.clan):'Без клана')+' · '+lgIc(p.lk)+p.lg+'</div><div id=\"pfBioW\" data-n=\"'+sEsc(n)+'\"></div>'+(p.me?'':'<div class=\"pfa\" id=\"pfFrW\" data-n=\"'+sEsc(n)+'\" style=\"flex-direction:column;align-items:stretch;margin:8px 0\"></div><div class=\"pfa\" id=\"pfDmW\" style=\"gap:8px;margin:0 0 8px\"></div>')+'<div id=\"pfStats\">'+(p.me||!(PLATST&&plCl&&CLS())?pfStatsHtml(p.me?cardObj():{pw:p.pw,best:p.best,s:p.s,h:p.h,a:p.a,sp:0,eq:p.eq.map(function(a){return [a.id,1]})}):'<p class="qinfo" style="text-align:center">Загрузка…</p>')+'</div>'+(p.me?'':'')+'</div>';
+  L.innerHTML='<div class="lh"><b>Профиль игрока</b><button id="pfX">Закрыть</button></div><div class="lb"><div class="pfh"><img alt="" id="pfDr" '+(!p.me&&PLATST&&plCl&&CLS()?'style="visibility:hidden" ':'')+'src="'+dragSrc(p.key)+'"><span>Ур. '+p.lv+'</span></div><div class="pfn">'+sEsc(p.me?'Ты':p.n)+'</div><div class="pfs">'+(p.clan?'🛡️ '+sEsc(p.clan):'Без клана')+' · '+lgIc(p.lk)+p.lg+'</div><div id=\"pfBioW\" data-n=\"'+sEsc(n)+'\"></div>'+(p.me?'':'<div class=\"pfa\" id=\"pfFrW\" data-n=\"'+sEsc(n)+'\" style=\"flex-direction:column;align-items:stretch;margin:8px 0\"></div><div class=\"pfa\" id=\"pfDmW\" style=\"gap:8px;margin:0 0 8px\"></div>')+'<div id=\"pfStats\">'+(p.me||!(PLATST&&plCl&&CLS())?pfStatsHtml(p.me?cardObj():{pw:p.pw,best:p.best,s:p.s,h:p.h,a:p.a,sp:0,eq:p.eq.map(function(a){return [a.id,1]})}):'<p class="qinfo" style="text-align:center">Загрузка…</p>')+'</div>'+(p.me?'':'')+'</div>';
   dmTop(L);L.classList.add('on');document.getElementById('pfX').onclick=function(){L.classList.remove('on')};pfReal(n,p);
   if(!p.me){dmProfBtns(n);frBtn(n);if(PLATST&&plCl&&CLS())frLoad(function(){frBtn(n)})}}
 document.addEventListener('click',function(e){var t=e.target.closest&&e.target.closest('[data-pn]');if(t){e.stopPropagation();showProfile(t.dataset.pn)}});
@@ -2401,7 +2401,7 @@ function gfShow(){var m=P.giftMsg;if(!m||mode!=='home'||ov.classList.contains('o
   screen('<h2>Подарок</h2><p>Администрация LifeChange дарит тебе:</p><p style="font-size:18px;margin:8px 0;line-height:1.6">'+(m.g?'+'+m.g+' золота<br>':'')+(m.x?'+'+m.x+' опыта дракона':'')+'</p>'+(m.n?'<p style="opacity:.8">«'+mEsc(m.n)+'»</p>':'')+'<button class="b" id="gfOk">Спасибо!</button>');document.getElementById('gfOk').onclick=hideScreen}
 /* Настоящие игроки, онлайн и чат (сервер: g_ping, g_players_list, chat_get, chat_send) */
 var socTm=0,socBan=false,chMsgs={g:[],c:[]},chN=0;
-function socKey(){try{return pStage(dLevel().l)+'_'+(P.dcol||'violet')}catch(e){return 'baby_violet'}}
+function socKey(){try{if(RELEASE&&MYDK&&MYDK!=='king_gold')return MYDK;return pStage(dLevel().l)+'_'+(P.dcol||'violet')}catch(e){return 'baby_violet'}}
 function socPlat(){if(!PLATST)return;var h=document.getElementById('home');if(!h)return;
   if(!document.getElementById('onbtn')){var o=document.createElement('button');o.id='onbtn';o.className='tvbld';o.innerHTML=tvBtnH('–');o.onclick=showTavern;h.appendChild(o);tvBadge()}bagBtn(h);
   socPing();if(!socTm)socTm=setInterval(function(){if(!document.hidden)socPing()},45000)}
