@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Установить LifeChange на телефон</title>
+<meta name="description" content="Установите приложение LifeChange на телефон в один клик: челленджи, привычки, искры и призы всегда под рукой.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://lifechange.uz/install/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#0b1020">
+<link rel="icon" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Установить LifeChange">
+<meta property="og:description" content="Приложение платформы дисциплины и полезных привычек — в один клик.">
+<meta property="og:image" content="https://lifechange.uz/og-image.png">
+<meta property="og:url" content="https://lifechange.uz/install/">
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(700px 500px at 85% 0%,rgba(99,102,241,.35),transparent 60%),radial-gradient(600px 500px at 0% 100%,rgba(251,191,36,.15),transparent 60%),#0b1020;color:#e5e7eb;font:16px/1.5 Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;display:flex;justify-content:center}
+.w{width:100%;max-width:460px;padding:28px 20px 40px;text-align:center}
+.lang{position:absolute;top:14px;right:14px;font-size:14px;color:#cbd5e1;border:1px solid #334155;border-radius:10px;padding:5px 10px;background:none;cursor:pointer}
+.icon{width:104px;height:104px;border-radius:26px;box-shadow:0 14px 40px rgba(99,102,241,.45);margin:18px auto 14px;display:block}
+h1{font-size:28px;line-height:1.2;margin:4px 0 6px;color:#fff}h1 b{color:#fbbf24}
+.sub{color:#94a3b8;margin:0 0 22px}
+.btn{display:block;width:100%;border:0;cursor:pointer;background:linear-gradient(135deg,#6366f1,#818cf8);color:#fff;font-family:inherit;font-weight:700;font-size:18px;line-height:1.2;text-align:center;border-radius:16px;padding:18px 20px;box-shadow:0 10px 28px rgba(99,102,241,.4);text-decoration:none}
+.btn.gold{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#0b1020;box-shadow:0 10px 28px rgba(251,191,36,.35)}
+.btn.ghost{background:none;border:1px solid #334155;color:#cbd5e1;box-shadow:none;font-weight:600;font-size:16px;margin-top:12px}
+.card{background:#111a33;border:1px solid #1e293b;border-radius:18px;padding:16px 18px;margin:14px 0;text-align:left}
+.step{display:flex;gap:14px;align-items:flex-start;margin:12px 0}
+.n{flex:none;width:30px;height:30px;border-radius:9px;background:#6366f1;color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center}
+.step b{color:#fff}.k{display:inline-block;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:1px 8px;margin:0 2px;color:#fff;white-space:nowrap}
+.perks{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 0 22px}
+.perks span{background:#1e1b4b;color:#c7d2fe;border-radius:999px;padding:4px 12px;font-size:13px}
+.ok{color:#34d399;font-weight:700}
+.small{font-size:13px;color:#64748b;margin-top:22px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<button class="lang" id="langBtn" onclick="setLang(L==='ru'?'uz':'ru')">O‘zbekcha</button>
+<div class="w">
+  <img class="icon" src="/icon-512.png" alt="LifeChange">
+  <h1 data-t="title">Установи <b>LifeChange</b> на телефон</h1>
+  <p class="sub" data-t="sub">Челленджи, искры ⚡ и призы — в один тап с главного экрана</p>
+  <div class="perks"><span data-t="p1">⚡ Быстрый запуск</span><span data-t="p2">🔔 Напоминания</span><span data-t="p3">📱 Как обычное приложение</span></div>
+
+  <!-- Готово: уже установлено / открыто как приложение -->
+  <div id="vInstalled" hidden>
+    <p class="ok" data-t="installed">✅ LifeChange уже установлен на этом устройстве</p>
+    <a class="btn gold" href="/?src=install" data-t="open">Открыть LifeChange</a>
+  </div>
+
+  <!-- Android / компьютер с поддержкой установки в один клик -->
+  <div id="vOneTap" hidden>
+    <button class="btn gold" id="installBtn" data-t="install">📲 Установить приложение</button>
+    <p class="small" id="doneMsg" hidden data-t="done">Готово! Ищи значок LifeChange на главном экране 🎉</p>
+  </div>
+
+  <!-- Встроенный браузер Instagram / Telegram / TikTok и т.п. -->
+  <div id="vInApp" hidden>
+    <div class="card">
+      <p style="margin:0 0 6px;color:#fff;font-weight:700" data-t="inappT">Сначала откройте страницу в браузере</p>
+      <p style="margin:0;color:#94a3b8;font-size:14px" data-t="inappD">Из Instagram, Telegram и других приложений установка не работает — нужен обычный браузер.</p>
+      <div id="inAndroid" hidden>
+        <a class="btn gold" style="margin-top:14px" id="chromeLink" href="#" data-t="openChrome">Открыть в Chrome</a>
+        <div class="step"><div class="n">1</div><div data-t="ia1">Если кнопка не сработала: нажмите <span class="k">⋮</span> вверху справа</div></div>
+        <div class="step"><div class="n">2</div><div data-t="ia2">Выберите <b>«Открыть в браузере»</b> / <b>«Открыть в Chrome»</b></div></div>
+      </div>
+      <div id="inIos" hidden>
+        <div class="step"><div class="n">1</div><div data-t="ii1">Нажмите <span class="k">⋯</span> вверху справа</div></div>
+        <div class="step"><div class="n">2</div><div data-t="ii2">Выберите <b>«Открыть в браузере»</b> или <b>«Открыть в Safari»</b></div></div>
+        <div class="step"><div class="n">3</div><div data-t="ii3">На открывшейся странице следуйте подсказке</div></div>
+      </div>
+    </div>
+    <button class="btn ghost" id="copyBtn" data-t="copy">Скопировать ссылку</button>
+  </div>
+
+  <!-- iPhone / iPad в Safari -->
+  <div id="vIos" hidden>
+    <div class="card">
+      <div class="step"><div class="n">1</div><div data-t="i1">Нажмите кнопку <b>«Поделиться»</b> <span class="k">⬆️</span> внизу экрана</div></div>
+      <div class="step"><div class="n">2</div><div data-t="i2">Пролистайте и выберите <b>«На экран «Домой»»</b> <span class="k">➕</span></div></div>
+      <div class="step"><div class="n">3</div><div data-t="i3">Нажмите <b>«Добавить»</b> — значок LifeChange появится на экране</div></div>
+    </div>
+    <p class="small" id="iosNotSafari" hidden data-t="iosNS">В Chrome на iPhone кнопка «Поделиться» ⬆️ находится вверху, в строке адреса. Если не получается — откройте эту ссылку в Safari.</p>
+  </div>
+
+  <!-- Остальные браузеры -->
+  <div id="vManual" hidden>
+    <div class="card">
+      <div class="step"><div class="n">1</div><div data-t="m1">Откройте меню браузера <span class="k">⋮</span></div></div>
+      <div class="step"><div class="n">2</div><div data-t="m2">Выберите <b>«Установить приложение»</b> или <b>«Добавить на главный экран»</b></div></div>
+    </div>
+  </div>
+
+  <a class="btn ghost" href="/?src=install" id="justOpen" data-t="justOpen">Или просто открыть сайт</a>
+  <p class="small">lifechange.uz · LifeChange by SuLen</p>
+</div>
+<script>
+var T={uz:{
+ title:"<b>LifeChange</b>’ni telefoningizga o‘rnating",sub:"Chellenjlar, uchqunlar ⚡ va sovg‘alar — bosh ekrandan bir bosishda",
+ p1:"⚡ Tez ochiladi",p2:"🔔 Eslatmalar",p3:"📱 Oddiy ilovadek",installed:"✅ LifeChange bu qurilmada allaqachon o‘rnatilgan",open:"LifeChange’ni ochish",
+ install:"📲 Ilovani o‘rnatish",done:"Tayyor! Bosh ekranda LifeChange belgisini qidiring 🎉",
+ inappT:"Avval sahifani brauzerda oching",inappD:"Instagram, Telegram va boshqa ilovalar ichidan o‘rnatib bo‘lmaydi — oddiy brauzer kerak.",
+ openChrome:"Chrome’da ochish",ia1:"Tugma ishlamasa: yuqori o‘ngdagi <span class=k>⋮</span> ni bosing",ia2:"<b>«Brauzerda ochish»</b> / <b>«Chrome’da ochish»</b> ni tanlang",
+ ii1:"Yuqori o‘ngdagi <span class=k>⋯</span> ni bosing",ii2:"<b>«Brauzerda ochish»</b> yoki <b>«Safari’da ochish»</b> ni tanlang",ii3:"Ochilgan sahifadagi ko‘rsatmaga amal qiling",
+ copy:"Havolani nusxalash",i1:"Ekran pastidagi <b>«Ulashish»</b> <span class=k>⬆️</span> tugmasini bosing",i2:"Pastga suring va <b>«Bosh ekranga»</b> <span class=k>➕</span> ni tanlang",i3:"<b>«Qo‘shish»</b> ni bosing — LifeChange belgisi ekranda paydo bo‘ladi",
+ iosNS:"iPhone’dagi Chrome’da «Ulashish» ⬆️ tugmasi yuqorida, manzil qatorida. Agar chiqmasa — havolani Safari’da oching.",
+ m1:"Brauzer menyusini oching <span class=k>⋮</span>",m2:"<b>«Ilovani o‘rnatish»</b> yoki <b>«Bosh ekranga qo‘shish»</b> ni tanlang",justOpen:"Yoki shunchaki saytni ochish"}};
+var RU={};document.querySelectorAll('[data-t]').forEach(function(e){RU[e.dataset.t]=e.innerHTML});
+var L='ru';
+function setLang(l){L=l;var d=l==='uz'?T.uz:RU;document.querySelectorAll('[data-t]').forEach(function(e){if(d[e.dataset.t])e.innerHTML=d[e.dataset.t]});
+ document.documentElement.lang=l;document.getElementById('langBtn').textContent=l==='uz'?'Русский':'O‘zbekcha';document.title=l==='uz'?'LifeChange’ni telefonga o‘rnatish':'Установить LifeChange на телефон';
+ try{localStorage.setItem('lc_lang',l)}catch(e){}}
+try{var q=new URLSearchParams(location.search).get('lang')||localStorage.getItem('lc_lang');if(q==='uz')setLang('uz')}catch(e){}
+
+var ua=navigator.userAgent||'';
+var isIOS=/iPhone|iPad|iPod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+var isAndroid=/Android/i.test(ua);
+var inApp=/Instagram|FBAN|FBAV|FB_IAB|Telegram|TikTok|musical_ly|Bytedance|Line\/|MicroMessenger|; wv\)/i.test(ua);
+var isSafari=isIOS&&/Safari/i.test(ua)&&!/CriOS|FxiOS|EdgiOS|YaBrowser|OPiOS/i.test(ua);
+var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||navigator.standalone===true;
+var src='';try{src=new URLSearchParams(location.search).get('src')||''}catch(e){}
+function show(id){['vInstalled','vOneTap','vInApp','vIos','vManual'].forEach(function(v){document.getElementById(v).hidden=(v!==id)})}
+var deferred=null;
+function choose(){
+ if(standalone){show('vInstalled');document.getElementById('justOpen').hidden=true;return}
+ if(inApp){show('vInApp');document.getElementById(isIOS?'inIos':'inAndroid').hidden=false;
+   if(!isIOS){var h=location.host+location.pathname+location.search;document.getElementById('chromeLink').href='intent://'+h+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(location.href)+';end'}
+   return}
+ if(deferred){show('vOneTap');return}
+ if(isIOS){show('vIos');if(!isSafari)document.getElementById('iosNotSafari').hidden=false;return}
+ show('vManual');
+}
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;choose()});
+window.addEventListener('appinstalled',function(){deferred=null;show('vOneTap');document.getElementById('installBtn').hidden=true;document.getElementById('doneMsg').hidden=false});
+document.getElementById('installBtn').onclick=function(){if(!deferred)return;deferred.prompt();deferred.userChoice.then(function(r){if(r&&r.outcome==='accepted'){document.getElementById('installBtn').hidden=true;document.getElementById('doneMsg').hidden=false}deferred=null})};
+document.getElementById('copyBtn').onclick=function(){var u=location.href;function ok(){document.getElementById('copyBtn').textContent=L==='uz'?'✅ Nusxalandi':'✅ Ссылка скопирована'}
+ if(navigator.clipboard)navigator.clipboard.writeText(u).then(ok,function(){prompt('',u)});else prompt('',u)};
+if(src){document.querySelectorAll('a[href^="/?src=install"]').forEach(function(a){a.href='/?src='+encodeURIComponent(src)})}
+choose();
+// Android Chrome может прислать beforeinstallprompt чуть позже; ручная подсказка показывается сразу и заменится кнопкой
+if('serviceWorker' in navigator&&location.protocol==='https:')navigator.serviceWorker.register('/sw.js').catch(function(){});
+</script>
+</body>
+</html>
