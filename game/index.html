@@ -2214,12 +2214,15 @@ function adSheet(){var L=adCur,S=advS(),h='<h2>'+L.n+'</h2><div class="sub">Вы
   adE('adCx').onclick=adClose;
   adE('adGo').onclick=function(){var S=advS();if(!adSel||adBusy(adSel)||!S.own[adSel])return;var t=L.h*3600*1000;S.run.push({id:S.uid++,loc:L.id,adv:adSel,end:Date.now()+t,total:t,done:false});save();adClose();adLoc();adSquad()}}
 function adClose(){var o=adE('adOv');if(o)o.classList.remove('on')}
+function adBpHave(k,got){var S=advS(),id=k.slice(3);return (S.inv[k]||0)+((got&&got[k])||0)>0||!!S.craft[id]||!!S.done[id]}
+function adBpFree(got){return ['bp_amulet','bp_staff','bp_heart','bp_scepter'].filter(function(k){return !adBpHave(k,got)})}
+function adBpFix(){var S=advS(),g=0;['bp_amulet','bp_staff','bp_heart','bp_scepter'].forEach(function(k){var id=k.slice(3),have=S.inv[k]||0,keep=(S.craft[id]||S.done[id])?0:1,ex=have-keep;if(ex>0){S.inv[k]=keep;g+=ex}});if(g){P.gems+=g*10;S.dupNote='Лишние чертежи ('+g+') обменяны на '+g*10+' 💎';save();hud()}}
 function adInc(k,n){var S=advS();S.inv[k]=(S.inv[k]||0)+n}
 function adTake(id){var S=advS(),r=S.run.filter(function(x){return x.id===id})[0];if(!r||!r.done)return;
   var a=adById(r.adv),L=AD_LOC.filter(function(l){return l.id===r.loc})[0];
   var FN={1:1,2:1,3:2,4:2,5:3},EX={1:.2,2:.5,3:.3,4:.6,5:.4},finds=FN[a.lv]+(Math.random()<EX[a.lv]?1:0),got={};
   for(var i=0;i<finds;i++){var k;
-    if(L.id==='temple'&&Math.random()<0.04+a.lv*0.04){k=['bp_amulet','bp_staff','bp_heart'][Math.floor(Math.random()*3)];if(a.lv>=4&&Math.random()<0.3)k='bp_scepter';got[k]=(got[k]||0)+1;continue}
+    if(L.id==='temple'&&Math.random()<0.04+a.lv*0.04){var fr=adBpFree(got).filter(function(x){return x!=='bp_scepter'||a.lv>=4}),sc=fr.indexOf('bp_scepter')>=0;if(sc&&Math.random()>=0.3)fr=fr.filter(function(x){return x!=='bp_scepter'});if(fr.length){k=fr[Math.floor(Math.random()*fr.length)];got[k]=(got[k]||0)+1;continue}}
     var sp=Math.random()<0.12+a.lv*0.04;k=AD_DROP[L.id][sp?1:0];
     var q=1+((!sp&&a.lv>=3&&Math.random()<.35)||(sp&&a.lv===5&&Math.random()<.4)?1:0);got[k]=(got[k]||0)+q}
   S.run=S.run.filter(function(x){return x.id!==id});
@@ -2253,8 +2256,8 @@ function adTick(){var S=P.adv;if(!S||!S.run)return;var now=Date.now(),ch=false,n
     if(ch||cd){try{tvBadge()}catch(e){}save();if(open){adE('adV1')&&adLoc();adE('adV2')&&adSquad();if(cd)adForge()}}}
 setInterval(adTick,1000);
 function adTab_(n){adTab=n;[1,2,3].forEach(function(i){adE('adV'+i).classList.toggle('hide',n!==i);adE('adT'+i).classList.toggle('on',n===i)});if(n===1)adLoc();if(n===2)adSquad();if(n===3)adForge()}
-function advOpen(){advS();var L=adE('adv')||mkLay('adv','l2');
-  L.innerHTML='<div class="lh"><b>Авантюристы</b><button id="advX">Назад</button></div><div class="lb"><p class="sub" style="margin:2px 0 8px">Отправляй героев в походы за материалами и куй из них артефакты, которые усиливают дракона.</p><div class="sum" id="adSum"></div><div class="tabs"><button id="adT1" class="on">Походы</button><button id="adT2">Отряд</button><button id="adT3">Кузница</button></div><div id="adV1"></div><div id="adV2" class="hide"></div><div id="adV3" class="hide"></div></div><div class="ov" id="adOv"><div class="sheet" id="adSheet"></div></div>';
+function advOpen(){advS().dupNote=0;adBpFix();var L=adE('adv')||mkLay('adv','l2');
+  L.innerHTML='<div class="lh"><b>Авантюристы</b><button id="advX">Назад</button></div><div class="lb"><p class="sub" style="margin:2px 0 8px">Отправляй героев в походы за материалами и куй из них артефакты, которые усиливают дракона.</p>'+(advS().dupNote?'<p class="sub" style="margin:0 0 8px;color:#ffd166">'+advS().dupNote+'</p>':'')+'<div class="sum" id="adSum"></div><div class="tabs"><button id="adT1" class="on">Походы</button><button id="adT2">Отряд</button><button id="adT3">Кузница</button></div><div id="adV1"></div><div id="adV2" class="hide"></div><div id="adV3" class="hide"></div></div><div class="ov" id="adOv"><div class="sheet" id="adSheet"></div></div>';
   L.classList.add('on');adE('advX').onclick=function(){L.classList.remove('on')};
   adE('adOv').onclick=function(e){if(e.target===adE('adOv'))adClose()};
   [1,2,3].forEach(function(i){adE('adT'+i).onclick=function(){adTab_(i)}});
