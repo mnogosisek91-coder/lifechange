@@ -275,10 +275,10 @@ button.b .ic,.cc button .ic,button.g .ic{filter:drop-shadow(0 0 1px #3a2200) dro
 #adv .bar{height:8px;border-radius:6px;background:#0b1028;overflow:hidden;border:1px solid var(--line);margin-top:4px}
 #adv .bar i{display:block;height:100%;background:linear-gradient(90deg,#ffd166,#f5a524);width:0}
 #adv .sq{display:grid;gap:10px}
-#adv .ad{display:grid;grid-template-columns:128px minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
+#adv .ad{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px}
 #adv .ad.l5{border-color:var(--gold);box-shadow:0 0 14px rgba(255,209,102,.25)}
-#adv .ad .im{height:170px;position:relative;overflow:hidden;min-width:0}
-#adv .ad .im img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;object-position:50% 100%;filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
+#adv .ad .im{height:170px;position:relative;overflow:visible;min-width:0}
+#adv .ad .im img{position:absolute;left:50%;top:0;width:auto;max-width:none;height:100%;transform:translateX(-50%);filter:drop-shadow(0 4px 5px rgba(0,0,0,.5))}
 #adv .ad b{font-size:15px;color:var(--gold)}
 #adv .ad .rc{font-size:12px;color:var(--mut)}
 #adv .stars{color:var(--gold);letter-spacing:2px;font-size:14px;margin:2px 0}
@@ -610,7 +610,7 @@ function uiConv(root){
 function duelSlots(n){var L=[[[.74,.62]],[[.68,.55],[.82,.7]],[[.66,.5],[.84,.6],[.7,.75]]];return L[Math.min(3,Math.max(1,n))-1].map(function(q){return {x:W*q[0],y:H*q[1]}})}
 function duelInit(o){var sp=bLv('spring');st.duel=true;st.dmax=Math.round((100+dLevel().l+10*sp+10*bLv('lair')+10*dsE('h')+shT())*(1+A('hp'))*((o.lives||10)/10));st.shield=Math.min(6,Math.round(A('sh')));st.dhp=st.dmax;st.dhit=0;st.lives=10;st.cfg.lives=10;
   st.dw=0;st.dwn=o.waves;st.dboss=o.boss;st.dlv=o.lv;st.dch=o.ch;st.dwait=1.4;st.cfg.edm=(2.2+.4*Math.min(o.ch-1,8)+.15*Math.max(0,o.ch-9)+.06*(o.lv-1))*HARDD}
-function bossK(){var ch=st.dch||1,C=CAMP[ch-1];return 75*(120+28*ch)/(2300*(C.hp+C.hpg*9)*HARDH)*(ch===6?.8:ch===18?1.3:ch===19?1.6:ch>20?2+.2*(ch-20):ch>=20?2:1)}
+function bossK(){var ch=st.dch||1,C=CAMP[ch-1];return (st.camp&&!st.rv&&st.cbk?st.cbk:1)*75*(120+28*ch)/(2300*(C.hp+C.hpg*9)*HARDH)*(ch===6?.8:ch===18?1.3:ch===19?1.6:ch>20?2+.2*(ch-20):ch>=20?2:1)}
 function dspawn(def,boss,slot){var e={d:def,age:0,x:W+60+Math.random()*50,sx:slot.x,y:slot.y,l:0,hp:def.hp*st.hpm*(st.rv?1:EHP)*(boss?bossK():(0.9+Math.random()*0.3)*(1+.09*Math.max(0,(st.dch||1)-6))),sp:0,stun:0,slow:0,poison:0,frost:0,push:0,boss:!!boss,wob:Math.random()*6,hit:0,lunge:0};
   e.ai=(boss?3.4:Math.min(3.2,Math.max(1.6,3.6-def.sp/40)))/(st.cfg.spd||1)*(1+.08*PS('aura'));e.atk=1.2+Math.random()*1.4;e.max=e.hp;st.en.push(e)}
 function duelNext(){if(st.bossSpawned)return;
@@ -701,7 +701,8 @@ function campStars(ch){var a=(P.camp&&P.camp[ch])||[],n=0;for(var i=0;i<10;i++)n
 function campOpen(ch,lv){P.camp=P.camp||{};if(ch===1&&lv===1)return true;if(lv>1)return ((P.camp[ch]||[])[lv-2]||0)>0;return ch>1&&((P.camp[ch-1]||[])[9]||0)>0}
 function campNext(){for(var c=1;c<=CAMP.length;c++)for(var l=1;l<=10;l++){if(campOpen(c,l)&&!((P.camp[c]||[])[l-1]))return [c,l]}return [CAMP.length,10]}
 function campFirstRw(ch,lv){var r={gold:40+12*lv+60*(ch-1)};if(lv===10){r.sparks=2;r.gems=1}return r}
-function startCamp(ch,lv){hideScreen();startRound();st.cfg=campCfg(ch,lv);st.hpm=st.cfg.hpm;st.camp={ch:ch,lv:lv};st.cu={};st.campNew=!(P.camp&&P.camp[ch]&&P.camp[ch][lv-1]);duelInit({ch:ch,lv:lv,waves:3+Math.floor((lv-1)/3),boss:lv===10});
+function campEasy(ch){return ch<=10?.55+.05*(ch-1):1}
+function startCamp(ch,lv){hideScreen();startRound();st.cfg=campCfg(ch,lv);st.hpm=st.cfg.hpm;st.camp={ch:ch,lv:lv};st.cu={};st.campNew=!(P.camp&&P.camp[ch]&&P.camp[ch][lv-1]);duelInit({ch:ch,lv:lv,waves:3+Math.floor((lv-1)/3),boss:lv===10});var ez=campEasy(ch);st.hpm*=ez;st.cfg.edm*=ez;st.cbk=.35;
   st.fx=[{x:W/2,y:H*.3,t:0,txt:lv===10?'Босс: '+CAMP[ch-1].bn:'Уровень '+lv,col:lv===10?'#ff6b6b':'#ffd166',big:1}];hud()}
 function campDone(){return ((P.camp&&P.camp[CAMP.length]||[])[9]||0)>0}
 function campEnd(win){var cp=st.camp,rw={};
@@ -1379,7 +1380,7 @@ function hud(){qBadge();trNav();clBadge();
 
 /* ---- экраны ---- */
 var ov=document.getElementById('ov'),ovbox=document.getElementById('ovbox');
-function screen(html,page){ov.dataset.bg=mode;ovbox.innerHTML=html;ov.classList.add('on');ov.classList.toggle('page',!!page);ovbox.scrollTop=0}
+var scrClk=0,scrHk=0;function screen(html,page){if(!scrHk){scrHk=1;ovbox.addEventListener('click',function(){scrClk=Date.now()},true)}var k0=ovbox.dataset.sk,y0=ovbox.scrollTop,was=ov.classList.contains('on');ov.dataset.bg=mode;ovbox.innerHTML=html;var h2=ovbox.querySelector('h2'),k=mode+'|'+(h2?h2.textContent:'');ovbox.dataset.sk=k;ov.classList.add('on');ov.classList.toggle('page',!!page);ovbox.scrollTop=(was&&k0===k&&Date.now()-scrClk<2500)?y0:0}
 function hideScreen(){ov.classList.remove('on');ov.classList.remove('page');if(mode==='clan'){try{setMode('home');hud();renderBuildings()}catch(e){}}[].forEach.call(navEl.children,function(x){x.classList.toggle('on',x.dataset.m===mode)})}
 function resRow(nh){return '<div class="res" id="resrow"><span>🪙 '+fK(P.gold)+'</span>'+(nh?'':'<span>🔥 '+fK(P.heat||0)+'</span>')+'<span>💎 '+fK(P.gems)+'</span></div>'}
 function sIcon(id){return '<img alt="" src="'+SKIMG[id]+'">'}
@@ -1818,15 +1819,15 @@ function showShop(reward){
   screen('<div class="hdr"><h2>Магазин</h2></div>'+resRow()+
     '<div id="rwBox" style="min-height:8px">'+(reward||'')+'</div>'+
     '<div class="sec">СУНДУКИ</div><div class="cards">'+cards+'</div>'+
-    '<div class="sec">ЗА САМОЦВЕТЫ</div><div class="cards"><div class="cc"><div class="ci">💎</div><div class="ct"><b>Обмен самоцветов</b><span>1 💎 → 100 🪙. Впиши, сколько обменять</span><div class="exr"><input id="exN" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="Сколько самоцветов обменять"><button class="g" id="exAll">Все</button></div><small id="exT"></small></div><button data-x="g2c" id="exGo">Обменять</button></div>'+ex+'</div>',true);
+    '<div class="sec">ЗА САМОЦВЕТЫ</div><div class="cards"><div class="cc"><div class="ci">💎</div><div class="ct"><b>Обмен самоцветов</b><span>1 💎 → 500 🪙. Впиши, сколько обменять</span><div class="exr"><input id="exN" type="number" inputmode="numeric" min="1" step="1" value="1" aria-label="Сколько самоцветов обменять"><button class="g" id="exAll">Все</button></div><small id="exT"></small></div><button data-x="g2c" id="exGo">Обменять</button></div>'+ex+'</div>',true);
   (function(){var i=document.getElementById('exN'),t=document.getElementById('exT'),go=document.getElementById('exGo'),al=document.getElementById('exAll');if(!i)return;
     function nv(){var n=Math.floor(+i.value);return n>0?n:0}
-    function upd(){var n=nv(),ok=n>=1&&n<=P.gems;t.textContent=n?(n>P.gems?'Не хватает самоцветов (есть '+P.gems+')':'Получишь '+(n*100)+' 🪙'):'Впиши число';t.style.color=n>P.gems?'#ffb4b4':'';go.disabled=!ok}
+    function upd(){var n=nv(),ok=n>=1&&n<=P.gems;t.textContent=n?(n>P.gems?'Не хватает самоцветов (есть '+P.gems+')':'Получишь '+(n*500)+' 🪙'):'Впиши число';t.style.color=n>P.gems?'#ffb4b4':'';go.disabled=!ok}
     i.oninput=upd;al.onclick=function(){i.value=Math.max(0,Math.floor(P.gems));upd()};upd()})();
   [].forEach.call(ovbox.querySelectorAll('button.ib'),function(b){b.onclick=function(e){e.stopPropagation();showOdds(b.dataset.i)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-k]'),function(b){b.onclick=function(){buyChest(b.dataset.k)}});
   [].forEach.call(ovbox.querySelectorAll('button[data-x]'),function(b){b.onclick=function(){
-    if(b.dataset.x==='g2c'){var n=Math.floor(+(document.getElementById('exN')||{}).value);if(!(n>=1)||n>P.gems)return;P.gems-=n;P.gold+=100*n}else if(b.dataset.x==='g2h'&&P.gems>=4){P.gems-=4;P.heat=(P.heat||0)+3}else return;save();hud();showShop('<div class="reveal" style="justify-content:center"><b>Обмен выполнен</b></div>')}})}
+    var exM='';if(b.dataset.x==='g2c'){var n=Math.floor(+(document.getElementById('exN')||{}).value);if(!(n>=1)||n>P.gems)return;P.gems-=n;P.gold+=500*n;exM='Обмен выполнен: +'+(500*n)+' 🪙'}else if(b.dataset.x==='g2h'&&P.gems>=4){P.gems-=4;P.heat=(P.heat||0)+3}else return;save();hud();showShop(exM?'':'<div class="reveal" style="justify-content:center"><b>Обмен выполнен</b></div>');if(exM){var xt=document.getElementById('exT');if(xt){xt.textContent=exM;xt.style.color='#7ee2a8'}}}})}
 function buyChest(k){
   var c=CH[k],cost=chCost(k);if(P[c.cur]<cost)return;
   P[c.cur]-=cost;if(k==='wood')P.chests++;
