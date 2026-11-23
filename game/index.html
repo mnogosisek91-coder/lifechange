@@ -1881,6 +1881,7 @@ function draw(){
   else if(bg&&bg.complete&&bg.naturalWidth){var s=Math.max(W/bg.naturalWidth,H/bg.naturalHeight),bw=bg.naturalWidth*s,bh=bg.naturalHeight*s;ctx.drawImage(bg,(W-bw)/2,(H-bh)/2,bw,bh)}
   else{ctx.fillStyle='#2b3a55';ctx.fillRect(0,0,W,H)}
   ctx.fillStyle=mode==='battle'?'rgba(8,10,24,.06)':'rgba(8,10,24,.0)';ctx.fillRect(0,0,W,H);
+  if(mode==='battle'&&BEAMFX.ok&&st.beams&&st.beams.length){var bdm=0;st.beams.forEach(function(b){bdm=Math.max(bdm,Math.min(1,b.t/.2,(b.life-b.t)/.35))});if(bdm>0){ctx.fillStyle='rgba(4,6,18,'+(.55*bdm).toFixed(3)+')';ctx.fillRect(-40,-40,W+80,H+80)}}
   var dp=dragonPos();
   if(mode!=='battle'){drawHome();return}
   // дорожки и выход
