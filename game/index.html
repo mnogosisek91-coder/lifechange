@@ -1192,7 +1192,7 @@ function castSpell(id){
   }else if(id==='bloodveil'){
     st.veil=endT(lvl(id))*(1+A('dur'));st.veilMax=st.veil;st.veilP=veilP(lvl(id));st.vacc=0;st.rings.push({x:dp.x,y:dp.y,t:0,life:.8,maxR:W*.3,col:'255,70,100',w:7});st.em.push({type:'heal',t:0,dur:.7});st.fx.push({x:dp.x,y:dp.y-H*.14,t:0,txt:'Жажда жизни',col:'#ff7a95'});
   }else if(id==='beam'){
-    beamFxLoad();var bmd=(95+rb*12)*m;st.beams=st.beams||[];st.beams.push({t:0,life:BEAMFX.ok?2.2:.8,y:dp.y});
+    beamFxLoad();var bmd=(95+rb*12)*m;st.beams=st.beams||[];st.beams.push({t:0,life:BEAMFX.ok?1.7:.8,y:dp.y});
     en.forEach(function(e){st.later.push({t:.25,fn:function(){if(e.hp>0){dmg(e,bmd,'#bff3ff','beam');burst(e.x,e.y-20,'s',16)}}})});
     st.shake=.5;st.flashB=.2;st.fx.push({x:W/2,y:H*.3,t:0,txt:'Драконий луч!',col:'#bff3ff',big:1,sz:30});
   }else if(id==='endure'){
