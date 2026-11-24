@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex"><title>Восстановление прогресса — Хранитель привычек</title>
+<style>
+body{margin:0;background:#0f172a;color:#f8fafc;font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;padding:18px}
+h1{font-size:21px;margin:0 0 6px}p{color:#cbd5e1;margin:6px 0 14px}
+.c{background:#1e1b4b;border:1px solid #4f46e5;border-radius:14px;padding:14px;margin:12px 0}
+.c.cur{border-color:#fbbf24}.t{font-weight:700;margin-bottom:6px}.s{color:#cbd5e1;font-size:14px}
+button{margin-top:10px;width:100%;padding:12px;border:0;border-radius:10px;background:#fbbf24;color:#1e1b4b;font-weight:800;font-size:15px}
+button:disabled{background:#475569;color:#cbd5e1}.ok{color:#7ee2a8;font-weight:700}a{color:#a5b4fc}
+</style></head><body>
+<h1>🐉 Восстановление прогресса</h1>
+<p>Здесь видны все сохранения игры на этом телефоне. Выберите то, где ваш прогресс, и перенесите его в текущий аккаунт. Текущее сохранение перед этим копируется в резерв, ничего не удаляется.</p>
+<div id="L"></div>
+<p><a href="./">← Вернуться в игру</a></p>
+<script>
+(function(){
+var K0='ldd_demo_v1',L=document.getElementById('L');
+function g(k){try{return localStorage.getItem(k)}catch(e){return null}}
+var cur=g('ldd_cur'),curKey=cur?K0+'_'+cur:K0,slots=[];
+try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k===K0||k.indexOf(K0+'_')===0||k.indexOf('ldd_backup_')===0){var v=g(k);try{var o=JSON.parse(v);if(o&&typeof o==='object')slots.push({k:k,o:o,v:v})}catch(e){}}}}catch(e){}
+function score(o){return (o.xp||0)+(o.gold||0)/10+(o.gems||0)*50+((o.unlocked||[]).length)*1000+(o.best||0)*100}
+slots.sort(function(a,b){return score(b.o)-score(a.o)});
+if(!slots.length){L.innerHTML='<div class="c">На этом телефоне в этом браузере сохранений не найдено. Попробуйте открыть эту страницу тем же способом, каким раньше играли (иконка на экране, Safari, Chrome или Telegram).</div>';return}
+function camp(o){var c=o.camp||o.cmp||null;if(c&&typeof c==='object'){var m=0;for(var x in c){var n=parseInt(x);if(n>m)m=n}return m?(' · глав открыто: '+m):''}return ''}
+slots.forEach(function(s,i){var o=s.o,d=document.createElement('div'),isCur=s.k===curKey;
+ d.className='c'+(isCur?' cur':'');
+ d.innerHTML='<div class="t">'+(isCur?'Текущий аккаунт':(s.k.indexOf('ldd_backup_')===0?'Резервная копия':'Сохранение №'+(i+1)))+'</div>'+
+ '<div class="s">Опыт: '+(o.xp||0)+' · Золото: '+(o.gold||0)+' · Самоцветы: '+(o.gems||0)+' · Магий открыто: '+((o.unlocked||[]).length)+' · Лучшая волна: '+(o.best||0)+camp(o)+'</div>';
+ if(!isCur){var b=document.createElement('button');b.textContent='Перенести этот прогресс в текущий аккаунт';
+  b.onclick=function(){if(!confirm('Перенести этот прогресс в текущий аккаунт? Текущее сохранение будет сохранено в резерв.'))return;
+   try{var old=g(curKey);if(old)localStorage.setItem('ldd_backup_'+Date.now(),old);localStorage.setItem(curKey,s.v);
+    b.disabled=true;b.textContent='Готово';var p=document.createElement('div');p.className='ok';p.textContent='✔ Прогресс перенесён. Откройте игру заново.';d.appendChild(p)}catch(e){alert('Не получилось: '+e.message)}};
+  d.appendChild(b)}
+ L.appendChild(d)});
+})();
+</script></body></html>
