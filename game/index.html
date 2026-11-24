@@ -583,7 +583,7 @@ function acctSwitch(uid){try{uid=String(uid||'').replace(/[^a-zA-Z0-9-]/g,'');if
 function defP(){return {gold:0,heat:0,sparks:0,gems:0,unlocked:['bolt','heal'],lv:{},chests:0,round:0,best:0,b:{lair:1},clan:null,tc:Date.now(),adv:{own:{1:1},run:[],inv:{},craft:{},done:{},uid:1}}}
 function load(){try{var s=localStorage.getItem(KEY);if(s){var o=Object.assign(defP(),JSON.parse(s));if(o.sparks){o.gold=(o.gold||0)+o.sparks*40;o.sparks=0}return o}}catch(e){}return defP()}
 function eggUpd(){var e=document.getElementById('egg');if(e)e.classList.toggle('on',!!P.egg)}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}if(window.kpSoon)window.kpSoon()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(P))}catch(e){}if(window.kpSoon)window.kpSoon();if(window.cloudSoon)window.cloudSoon()}
 var P=load();
 var UIIMG={"coin": "assets/3546b9783a.webp", "spark": "assets/7d3201d54e.webp", "gem": "assets/9d36ccdde1.webp", "heart": "assets/bbb7e799d5.webp", "shield": "assets/4a669ae2e2.webp", "paw": "assets/c7d2bf7408.webp", "chestW": "assets/b0ab4c1296.webp", "chestS": "assets/e9f9aa41af.webp", "chestR": "assets/2cccc70bcb.webp", "trophy": "assets/bd912244e8.webp", "home": "assets/7cb3b8b803.webp", "shop": "assets/c980bc43c5.webp", "book": "assets/387b69db03.webp", "quest": "assets/a94b6fcf46.webp", "lock": "assets/2b49186ebf.webp", "hammer": "assets/fa87be3ea3.webp", "swords": "assets/b98601e1f8.webp", "dragon": "assets/bed53b9981.webp", "orb": "assets/4150b9fb48.webp", "skull": "assets/f70d247cba.webp", "heat": "assets/73594e417c.webp", "foe": "assets/c4007e65ac.webp", "bossq": "assets/a647bf5e7e.webp", "emb1": "assets/a1bb0fdbbc.webp", "emb2": "assets/fcfc85c834.webp", "emb3": "assets/0c078a72ca.webp", "emb4": "assets/979a5668a7.webp", "emb5": "assets/febe871cdd.webp", "emb6": "assets/e89d5cced8.webp", "emb7": "assets/a80bb35e32.webp", "emb8": "assets/5a0c228215.webp", "emb9": "assets/0c25ea6863.webp", "emb10": "assets/e051283f41.webp", "clan": "assets/18b28e66eb.webp", "rk1": "assets/c7f1350ac6.webp", "rk2": "assets/1aee120aa6.webp", "rk3": "assets/8909aec98a.webp", "rk4": "assets/7e1a3d413c.webp", "rk5": "assets/bb35acd8cb.webp"};
 UIIMG.star='assets/20bdd2e11e.webp';function IC(n){return '<img class="ic" alt="" src="'+UIIMG[n]+'">'}
@@ -2354,7 +2354,19 @@ function plGate(k,x){var e=document.getElementById('egg'),b=document.getElementB
   if(T[3]){b.style.display='';b.textContent=T[3];b.onclick=k==='err'?function(){platInit()}:function(){location.href='/'}}else b.style.display='none';
   e.classList.add('on')}
 function myNick(){return (PLATST&&PLATST.name)||'Дракон'}
-function plOk(st){PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet',name:st.name||''};setTimeout(function(){try{dmUnStart();dmBlLoad()}catch(e){}},1500);document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit();socPlat();clSync();gfCheck()}
+/* Облачное сохранение игры: прогресс хранится в Supabase и привязан к аккаунту. Берём больший прогресс (телефон или облако) */
+var CLOUD={ok:0,t:0,busy:0,last:0};
+function cloudScore(o){o=o||{};var c=0,cp=o.camp||{};for(var k in cp){(cp[k]||[]).forEach(function(v){if(v>0)c+=v})}var ad=0;try{ad=Object.keys((o.adv&&o.adv.done)||{}).length}catch(e){}
+  return Math.floor((o.xp||0)+((o.unlocked||[]).length)*1000+c*100+(o.best||0)*10+ad*50)}
+function cloudPush(){if(!CLOUD.ok||!plCl||CLOUD.busy)return;var sc=cloudScore(P),js;try{js=JSON.parse(JSON.stringify(P))}catch(e){return}
+  CLOUD.busy=1;plCl.rpc('game_save',{p_data:js,p_score:sc}).then(function(){CLOUD.busy=0;CLOUD.last=Date.now()},function(){CLOUD.busy=0})}
+window.cloudSoon=function(){if(!CLOUD.ok||CLOUD.t)return;CLOUD.t=setTimeout(function(){CLOUD.t=0;cloudPush()},5000)};
+function cloudInit(){if(!plCl||CLOUD.ok)return;
+  plCl.rpc('game_load').then(function(q){if(!q||q.error)return;var d=q.data,ls=cloudScore(P);
+    if(d&&d.data&&typeof d.score==='number'&&d.score>ls){var rk='ldd_cloud_rl',dn=0;try{dn=sessionStorage.getItem(rk)}catch(e){}if(!dn){try{sessionStorage.setItem(rk,'1');localStorage.setItem(KEY,JSON.stringify(d.data));location.reload();return}catch(e){}}}
+    CLOUD.ok=1;cloudPush();
+    document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')cloudPush()})}).catch(function(){})}
+function plOk(st){cloudInit();PLATST={v:Math.max(3,st.stage||3),color:st.color||'violet',name:st.name||''};setTimeout(function(){try{dmUnStart();dmBlLoad()}catch(e){}},1500);document.getElementById('egg').classList.remove('on');if(window.dsync)window.dsync();updateDPill();kpSync(1);modInit();socPlat();clSync();gfCheck()}
 /* Общий кошелёк с платформой: самоцветы = баланс платформы, тепло из игры уходит дракону (до 2 в день) */
 var kpBusy=0,kpT=0;
 window.kpSoon=function(){if(!PLATST||kpT)return;kpT=setTimeout(function(){kpT=0;kpSync()},900)};
