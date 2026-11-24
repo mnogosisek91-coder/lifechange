@@ -6890,6 +6890,38 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
   setTimeout(renderGroups, 1600); setTimeout(renderGroups, 4100);
 })();
 </script>
+<script id="lcFreeLine">
+// ===================== Плашка «Все челленджи бесплатно» под заголовками 6 старых групп (только для бесплатного тарифа) =====================
+(function(){
+  const T = { ru: '🎁 Все челленджи бесплатно · одновременно один из группы', uz: "🎁 Barcha chellenjlar bepul · bir vaqtda guruhdan bittasi", en: '🎁 All challenges are free · one from this group at a time' };
+  const GR = ['A', 'B', 'C', 'D', 'E', 'F'];
+  const lm = () => { try { return langMode(); } catch(e) { return 'ru'; } };
+  function grpEl(g){
+    const ks = (CH_GROUPS && CH_GROUPS[g]) || [];
+    for(const k of ks){ const b = document.querySelector('#tab-challenges [onclick*="\'' + k + '\'"]'); const d = b && b.closest('details.grp'); if(d) return d; }
+    return null;
+  }
+  function render(){
+    let free = true; try { free = typeof userPlan === 'undefined' || userPlan === 'free'; } catch(e) {}
+    const txt = T[lm()] || T.ru;
+    GR.forEach(g => {
+      const d = grpEl(g); if(!d) return;
+      const sm = d.querySelector(':scope > summary'); if(!sm) return;
+      let el = d.querySelector(':scope > .lc-free-line');
+      if(!free) { if(el) el.remove(); return; }
+      if(!el) { el = document.createElement('div'); el.className = 'lc-free-line'; el.setAttribute('data-notr', ''); sm.insertAdjacentElement('afterend', el); }
+      if(el.previousElementSibling !== sm) sm.insertAdjacentElement('afterend', el);
+      if(el.dataset.t !== txt) { el.dataset.t = txt; el.textContent = txt; try { if(typeof window.lcIcons === 'function') window.lcIcons(el); } catch(e) {} }
+    });
+  }
+  try { const st = document.createElement('style'); st.textContent = '#tab-challenges .lc-free-line{margin:4px 0 14px;padding:9px 12px;border-radius:12px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.45);color:#a7f3d0;font-size:.88rem;font-weight:600;line-height:1.35}#tab-challenges .lc-free-line .ic{width:1.15em;height:1.15em;vertical-align:-.2em;margin-right:4px}'; document.head.appendChild(st); } catch(e) {}
+  { const _rl = refreshLocks; refreshLocks = function(){ _rl.apply(this, arguments); try { render(); } catch(e) {} }; }
+  { const _tg = toggleLanguage; toggleLanguage = function(){ _tg.apply(this, arguments); setTimeout(render, 130); }; }
+  { const _sl = window.setLang; if(typeof _sl === 'function') window.setLang = function(){ const r = _sl.apply(this, arguments); setTimeout(render, 150); return r; }; }
+  render(); setTimeout(render, 1600); setTimeout(render, 4200);
+})();
+</script>
+
 
 <script id="lcTop">
 // ===== Верхняя панель главной: погода, «Письмо себе», Telegram +500 =====
