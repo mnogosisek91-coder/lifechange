@@ -1,7 +1,8 @@
 // LifeChange service worker: офлайн-кэш и приём push-сообщений
 // v4: главная страница открывается мгновенно из копии в телефоне, свежая версия скачивается в фоне (видна со следующего запуска).
 //     Все остальные страницы (игра, зелья, психолог, восстановление, uz-страницы) работают как раньше: сначала сеть.
-const CACHE = 'lifechange-v4';
+// v5: сброс кэша картинок — старые файлы дерева (с багом на стволе) могли залипнуть в кэше по старому имени файла.
+const CACHE = 'lifechange-v5';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
 const SCOPE = new URL(self.registration.scope).pathname;          // обычно '/'
 const MAIN_KEY = new URL('index.html', self.registration.scope).href; // одна копия главной
