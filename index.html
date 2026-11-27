@@ -3615,6 +3615,7 @@ async function submitChallengeReport() {
     const r = await rpc('submit_report', { p_challenge: key, p_file_key: fk, p_hash: file ? pendingHash : null, p_file_path: path });
     if(fk) usedFiles.add(fk); reportedToday.add(key);
     if(file && pendingHash) { usedHashes.push(pendingHash); if(usedHashes.length > 300) usedHashes.shift(); pendingHash = null; }
+    try { stats.rep_by = stats.rep_by || {}; stats.rep_by[key] = (stats.rep_by[key] || 0) + 1; stats.rep_total = (stats.rep_total || 0) + 1; } catch(e) {}
     xpAdd(r.gain); points = r.points; histDays.add(srvToday || TODAY); streak = computeStreak();
     if(userPlan === 'free') activeChallenges.add(key);
     syncUI(); initHabitGrid(); tickTimer(); playSound('success'); track('report_accepted');
@@ -6965,10 +6966,6 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
     if(el.style.display !== show) el.style.display = show;
     const f = hiddenByProgram ? 'all' : cur;
     groups.forEach(d => { const c = cat(d); d.classList.toggle('lcf-hide', f !== 'all' && c !== null && c !== f); });
-    if(user && f !== 'all'){
-      const vis = groups.filter(d => !d.classList.contains('lcf-hide') && d.style.display !== 'none');
-      if(vis.length && !vis.some(d => d.open)) vis[0].open = true;
-    }
   }
   try { const st = document.createElement('style'); st.textContent = '#lcFltBar{display:flex;gap:8px;overflow-x:auto;margin:0 0 10px;padding:2px 2px 6px;-webkit-overflow-scrolling:touch;scrollbar-width:none}#lcFltBar::-webkit-scrollbar{display:none}#lcFltBar button{flex:none;padding:8px 15px;border-radius:20px;border:1.5px solid rgba(246,220,154,.35);background:rgba(20,22,48,.88);color:#f6dc9a;font-weight:700;font-family:inherit;font-size:.88rem;cursor:pointer}#lcFltBar button.on{background:linear-gradient(135deg,#f6dc9a,#e9b949);color:#1b1442;border-color:#e9b949}#tab-challenges details.grp.lcf-hide{display:none!important}'; document.head.appendChild(st); } catch(e) {}
   { const _rl = refreshLocks; refreshLocks = function(){ _rl.apply(this, arguments); try { apply(); } catch(e) {} }; }
