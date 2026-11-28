@@ -8974,11 +8974,14 @@ async function dropChallenge(k) {
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const isFree = () => typeof userPlan !== 'undefined' && userPlan === 'free';
   const T = {
-    ru: { st: n => 'Этап ' + n, days: n => n + ' дн.', pro: '🔒 PRO', after: n => 'после этапа ' + n, done: '✅ пройден', cont: 'продолжить', open: 'начать', proMsg: 'Этапы 2 и 3 доступны в PRO. Этап 1 любого челленджа бесплатный.', prev: n => 'Сначала пройдите этап ' + n + ' до конца.', day: (a, b) => 'День ' + a + ' из ' + b, today: 'Сегодня', theme: 'Тема', todo: 'Что сделать', finT: 'Этап пройден! 🎓', finH: 'Отличная работа. Если есть следующий этап, он уже открыт в карточке челленджа.' },
-    uz: { st: n => n + '-bosqich', days: n => n + ' kun', pro: '🔒 PRO', after: n => n + '-bosqichdan keyin', done: '✅ tugallangan', cont: 'davom etish', open: 'boshlash', proMsg: "2 va 3-bosqichlar PRO'da. Har qanday chellenjning 1-bosqichi bepul.", prev: n => 'Avval ' + n + '-bosqichni oxirigacha tugating.', day: (a, b) => a + '-kun, ' + b + ' tadan', today: 'Bugun', theme: 'Mavzu', todo: 'Nima qilish kerak', finT: 'Bosqich tugadi! 🎓', finH: "Ajoyib ish. Keyingi bosqich bo'lsa, u chellenj kartochkasida allaqachon ochiq." },
-    en: { st: n => 'Stage ' + n, days: n => n + ' days', pro: '🔒 PRO', after: n => 'after stage ' + n, done: '✅ completed', cont: 'continue', open: 'start', proMsg: 'Stages 2 and 3 are in PRO. Stage 1 of every challenge is free.', prev: n => 'Finish stage ' + n + ' first.', day: (a, b) => 'Day ' + a + ' of ' + b, today: 'Today', theme: 'Topic', todo: 'What to do', finT: 'Stage completed! 🎓', finH: "Great work. If there's a next stage, it's already open on the challenge card." }
+    ru: { lv: n => 'Уровень ' + n, prevL: n => 'Сначала пройдите уровень ' + n + ' до конца.', afterL: n => 'после уровня ' + n, now: 'сейчас', lvPro: 'Уровни 2 и 3 доступны в PRO. Уровень 1 бесплатный.', st: n => 'Этап ' + n, days: n => n + ' дн.', pro: '🔒 PRO', after: n => 'после этапа ' + n, done: '✅ пройден', cont: 'продолжить', open: 'начать', proMsg: 'Этапы 2 и 3 доступны в PRO. Этап 1 любого челленджа бесплатный.', prev: n => 'Сначала пройдите этап ' + n + ' до конца.', day: (a, b) => 'День ' + a + ' из ' + b, today: 'Сегодня', theme: 'Тема', todo: 'Что сделать', finT: 'Этап пройден! 🎓', finH: 'Отличная работа. Если есть следующий этап, он уже открыт в карточке челленджа.' },
+    uz: { lv: n => n + '-daraja', prevL: n => 'Avval ' + n + '-darajani oxirigacha tugating.', afterL: n => n + '-darajadan keyin', now: 'hozir', lvPro: "2 va 3-darajalar PRO'da. 1-daraja bepul.", st: n => n + '-bosqich', days: n => n + ' kun', pro: '🔒 PRO', after: n => n + '-bosqichdan keyin', done: '✅ tugallangan', cont: 'davom etish', open: 'boshlash', proMsg: "2 va 3-bosqichlar PRO'da. Har qanday chellenjning 1-bosqichi bepul.", prev: n => 'Avval ' + n + '-bosqichni oxirigacha tugating.', day: (a, b) => a + '-kun, ' + b + ' tadan', today: 'Bugun', theme: 'Mavzu', todo: 'Nima qilish kerak', finT: 'Bosqich tugadi! 🎓', finH: "Ajoyib ish. Keyingi bosqich bo'lsa, u chellenj kartochkasida allaqachon ochiq." },
+    en: { lv: n => 'Level ' + n, prevL: n => 'Finish level ' + n + ' first.', afterL: n => 'after level ' + n, now: 'current', lvPro: 'Levels 2 and 3 are in PRO. Level 1 is free.', st: n => 'Stage ' + n, days: n => n + ' days', pro: '🔒 PRO', after: n => 'after stage ' + n, done: '✅ completed', cont: 'continue', open: 'start', proMsg: 'Stages 2 and 3 are in PRO. Stage 1 of every challenge is free.', prev: n => 'Finish stage ' + n + ' first.', day: (a, b) => 'Day ' + a + ' of ' + b, today: 'Today', theme: 'Topic', todo: 'What to do', finT: 'Stage completed! 🎓', finH: "Great work. If there's a next stage, it's already open on the challenge card." }
   };
   const TR = () => T[lm()] || T.ru;
+  // ИИ-направления и языки: у них уже есть этапы/уровни 1–3, карточка показывает текущий; полоска показывает 2 и 3, как везде
+  const CHAINS = [['a2','a3','a4'],['a5','a6','a7'],['a8','a9','a10'],['a11','a12','a13'],['a14','a15','a16'],['a17','a18','a19'],['l1','l5','l9'],['l2','l6','l10'],['l3','l7','l11'],['l4','l8','l12']].map(c => c.map(x => x + '_title'));
+  const CH_OF = {}; CHAINS.forEach(c => c.forEach(k => { CH_OF[k] = c; }));
   // ---------- прогресс ----------
   const SKD = k => 'lc_st_days_' + k;
   const dys = k => { try { return JSON.parse(localStorage.getItem(SKD(k)) || '[]'); } catch(e) { return []; } };
@@ -9008,6 +9011,16 @@ async function dropChallenge(k) {
   }
   // ---------- полоска этапов на карточке ----------
   try { const st = document.createElement('style'); st.textContent = '.lc-stg{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}.lc-stg button{flex:1 1 45%;min-width:120px;padding:7px 8px;border-radius:10px;font-size:.78rem;line-height:1.25;border:1px solid var(--border-color);background:rgba(255,255,255,.04);color:var(--text-primary,#fff);cursor:pointer;text-align:left}.lc-stg button b{display:block;font-size:.82rem}.lc-stg button.on{border-color:var(--gold-color);background:rgba(245,158,11,.10)}.lc-stg button.lk{opacity:.7}.lc-stg button.ok{border-color:#34d399;background:rgba(16,185,129,.10)}'; document.head.appendChild(st); } catch(e) {}
+  function chainBtn(k, curK){
+    const c = CH_OF[k], n = c.indexOf(k) + 1, t = TR(), N = len(k), isL = /^l/.test(k), prev = c[n - 2];
+    let cls = 'on', sub;
+    if(fin(k)) { cls = 'ok'; sub = t.done; }
+    else if(k === curK && !(isFree())) sub = t.now + ' · ' + t.days(N);
+    else if(isFree()) { cls = 'lk'; sub = t.pro + ' · ' + t.days(N); }
+    else if(!fin(prev)) { cls = 'lk'; sub = '🔒 ' + (isL ? t.afterL(n - 1) : t.after(n - 1)); }
+    else sub = (rep(k) > 0 ? t.cont : t.open) + ' · ' + t.days(N);
+    return '<button type="button" class="' + cls + '" onclick="event.stopPropagation();lcStageOpen(\'' + k + '\')"><b>' + (isL ? t.lv(n) : t.st(n)) + '</b>' + esc(sub) + '</button>';
+  }
   function btnHtml(k){
     const d = ST[k], t = TR(), n = d.st, N = len(k);
     let cls = 'on', sub;
@@ -9021,16 +9034,22 @@ async function dropChallenge(k) {
     const tab = document.getElementById('tab-challenges'); if(!tab) return;
     tab.querySelectorAll('details.grp .card').forEach(card => {
       const b = card.querySelector('[onclick*="openChallengeModal("]'); if(!b) return;
-      const m = /openChallengeModal\('([a-z0-9_]+)'\)/.exec(b.getAttribute('onclick') || ''); if(!m || !BY[m[1]]) return;
-      const ks = BY[m[1]].filter(Boolean); if(!ks.length) return;
-      const html = ks.map(btnHtml).join('');
+      const m = /openChallengeModal\('([a-z0-9_]+)'\)/.exec(b.getAttribute('onclick') || ''); if(!m) return;
+      let html;
+      if(CH_OF[m[1]]) html = CH_OF[m[1]].slice(1).map(k => chainBtn(k, m[1])).join('');
+      else { if(!BY[m[1]]) return; const ks = BY[m[1]].filter(Boolean); if(!ks.length) return; html = ks.map(btnHtml).join(''); }
       let box = card.querySelector(':scope > .lc-stg');
       if(!box) { box = document.createElement('div'); box.className = 'lc-stg'; box.setAttribute('data-notr', ''); card.appendChild(box); }
       if(box.dataset.h !== html) { box.dataset.h = html; box.innerHTML = html; }
     });
   }
   window.lcStageOpen = function(k){
-    const d = ST[k]; if(!d) return; const t = TR();
+    const t = TR();
+    if(CH_OF[k]) { const c = CH_OF[k], n = c.indexOf(k) + 1;
+      if(isFree()) { alert(/^l/.test(k) ? t.lvPro : t.proMsg); try { switchTab('plans'); } catch(e) {} return; }
+      if(n > 1 && !fin(c[n - 2])) { const msg = /^l/.test(k) ? t.prevL(n - 1) : t.prev(n - 1); try { toast(msg); } catch(e) { alert(msg); } return; }
+      return openChallengeModal(k); }
+    const d = ST[k]; if(!d) return;
     if(isFree()) { alert(t.proMsg); try { switchTab('plans'); } catch(e) {} return; }
     const p = prevKey(k); if(!fin(p)) { try { toast(t.prev(d.st - 1)); } catch(e) { alert(t.prev(d.st - 1)); } return; }
     openChallengeModal(k);
@@ -9070,6 +9089,8 @@ async function dropChallenge(k) {
   if(document.readyState === 'complete') setTimeout(load, 300); else window.addEventListener('load', () => setTimeout(load, 300));
 })();
 </script>
+
+
 
 </body>
 </html>
