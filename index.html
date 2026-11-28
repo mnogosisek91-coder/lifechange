@@ -6664,7 +6664,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
     const main = ORDER.map(k0 => {
       const k = CHD[k0].dir === 'start' ? k0 : stageOf(CHD[k0].dir);
       const c = CHD[k], n = done(k), fin = n >= N, started = n > 0, locked = c.pro && free;
-      const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7">' + t.fin + '</button>'
+      const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7" data-stk="' + k + '">' + t.fin + '</button>'
         : (locked ? '<button class="btn btn-outline" onclick="openChallengeModal(\'' + k + '\')">' + t.lockPro + '</button>' : '<button class="btn" onclick="openChallengeModal(\'' + k + '\')">' + (started ? t.cont : t.start) + '</button>');
       return '<div class="card"><div><span class="card-tag tag-mind">' + (c.pro ? t.pro : t.free) + '</span><h3 style="margin-bottom:.5rem"><span style="margin-right:6px">' + c.ico + '</span>' + c.title[i] + '</h3><p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:1rem">' + c.short[i] + '</p></div>' + btn + '</div>';
     }).join('');
@@ -6772,7 +6772,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
     const sum = '<summary class="grp-title" data-notr>' + t.grp + ' <span class="grp-count">(' + KEYS.length + ')</span> <span class="grp-hit">NEW</span></summary>';
     const main = KEYS.map(k => {
       const c = CHD[k], n = done(k), fin = n >= N, started = n > 0, locked = c.pro && free;
-      const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7">' + t.fin + '</button>'
+      const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7" data-stk="' + k + '">' + t.fin + '</button>'
         : (locked ? '<button class="btn btn-outline" onclick="openChallengeModal(\'' + k + '\')">' + t.lockPro + '</button>' : '<button class="btn" onclick="openChallengeModal(\'' + k + '\')">' + (started ? t.cont : t.start) + '</button>');
       return '<div class="card"><div><span class="card-tag tag-mind">' + (c.pro ? t.pro : t.free) + '</span><h3 style="margin-bottom:.5rem"><span style="margin-right:6px">' + c.ico + '</span>' + c.title[i] + '</h3><p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:1rem">' + c.short[i] + '</p></div>' + btn + '</div>';
     }).join('');
@@ -6868,7 +6868,7 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
       const sum = '<summary class="grp-title" data-notr>' + esc(g.grp[i]) + ' <span class="grp-count">(' + ks.length + ')</span> <span class="grp-hit">NEW</span></summary>';
       const main = ks.map(k => {
         const c = g.items[k], n = done(k), fin = n >= N, started = n > 0, locked = c.pro && free;
-        const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7">' + t.fin + '</button>'
+        const btn = fin ? '<button class="btn btn-outline" disabled style="opacity:.7" data-stk="' + k + '">' + t.fin + '</button>'
           : (locked ? '<button class="btn btn-outline" onclick="openChallengeModal(\'' + k + '\')">' + t.lockPro + '</button>' : '<button class="btn" onclick="openChallengeModal(\'' + k + '\')">' + (started ? t.cont : t.start) + '</button>');
         return '<div class="card"><div><span class="card-tag tag-mind">' + (c.pro ? t.pro : t.free) + '</span><h3 style="margin-bottom:.5rem"><span style="margin-right:6px">' + c.ico + '</span>' + esc(c.title[i]) + '</h3><p style="color:var(--text-secondary);font-size:.9rem;margin-bottom:1rem">' + esc(c.short[i]) + '</p></div>' + btn + '</div>';
       }).join('');
@@ -9033,8 +9033,9 @@ async function dropChallenge(k) {
   function inject(){
     const tab = document.getElementById('tab-challenges'); if(!tab) return;
     tab.querySelectorAll('details.grp .card').forEach(card => {
-      const b = card.querySelector('[onclick*="openChallengeModal("]'); if(!b) return;
-      const m = /openChallengeModal\('([a-z0-9_]+)'\)/.exec(b.getAttribute('onclick') || ''); if(!m) return;
+      // ключ карточки: из кнопки «Начать/Продолжить» или, у пройденного челленджа, из серой кнопки «Пройдено» (data-stk)
+      const b = card.querySelector('[onclick*="openChallengeModal("]'), f = card.querySelector('[data-stk]');
+      const m = b ? /openChallengeModal\('([a-z0-9_]+)'\)/.exec(b.getAttribute('onclick') || '') : (f ? [0, f.getAttribute('data-stk')] : null); if(!m || !m[1]) return;
       let html;
       if(CH_OF[m[1]]) html = CH_OF[m[1]].slice(1).map(k => chainBtn(k, m[1])).join('');
       else { if(!BY[m[1]]) return; const ks = BY[m[1]].filter(Boolean); if(!ks.length) return; html = ks.map(btnHtml).join(''); }
@@ -9089,6 +9090,7 @@ async function dropChallenge(k) {
   if(document.readyState === 'complete') setTimeout(load, 300); else window.addEventListener('load', () => setTimeout(load, 300));
 })();
 </script>
+
 
 
 
