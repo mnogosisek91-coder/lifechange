@@ -7328,6 +7328,38 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
 })();
 </script>
 
+<script id="lcUpd">
+// ===== Обновление главной: свежая версия пришла в фоне (sw.js v5) =====
+(function() {
+  'use strict';
+  if(!('serviceWorker' in navigator)) return;
+  let touched = false;
+  ['pointerdown', 'keydown', 'touchstart'].forEach(ev => window.addEventListener(ev, () => { touched = true; }, { capture: true, passive: true, once: true }));
+  const T = () => { try { const l = langMode(); return l === 'uz' ? ['Yangilanish chiqdi', 'Yangilash'] : l === 'en' ? ['An update is ready', 'Update'] : ['Вышло обновление', 'Обновить']; } catch(e) { return ['Вышло обновление', 'Обновить']; } };
+  function banner() {
+    if(document.getElementById('lcUpdBar')) return;
+    const t = T(), b = document.createElement('div'); b.id = 'lcUpdBar'; b.setAttribute('data-notr', '');
+    b.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:99999;display:flex;align-items:center;gap:10px;padding:9px 10px 9px 14px;border-radius:14px;background:rgba(30,27,75,.96);border:1px solid rgba(167,139,250,.6);color:#fff;font-size:.88rem;box-shadow:0 8px 24px rgba(0,0,0,.45);white-space:nowrap';
+    b.innerHTML = '<span>🔄 ' + t[0] + '</span><button type="button" style="border:0;border-radius:10px;padding:7px 14px;font-weight:800;background:#f59e0b;color:#111;cursor:pointer;width:auto;min-height:0;font-family:inherit">' + t[1] + '</button><button type="button" aria-label="✕" style="border:0;background:none;color:#fff;opacity:.6;font-size:15px;cursor:pointer;width:auto;min-height:0;padding:2px 4px">✕</button>';
+    const bs = b.querySelectorAll('button');
+    bs[0].onclick = () => location.reload();
+    bs[1].onclick = () => b.remove();
+    document.body.appendChild(b);
+  }
+  function onUpdate() {
+    let recent = false;
+    try { recent = Date.now() - (+sessionStorage.getItem('lc_upd_rl') || 0) < 60000; } catch(e) {}
+    if(!touched && !recent && performance.now() < 15000) {
+      try { sessionStorage.setItem('lc_upd_rl', String(Date.now())); } catch(e) {}
+      location.reload();
+    } else banner();
+  }
+  navigator.serviceWorker.addEventListener('message', e => { if(e.data && e.data.type === 'lc-update') onUpdate(); });
+  try { navigator.serviceWorker.startMessages(); } catch(e) {}
+})();
+</script>
+
+
 
 
 <script id="lcLangAch">

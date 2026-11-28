@@ -1,5 +1,6 @@
 // LifeChange service worker: офлайн-кэш и приём push-сообщений
-// v4: главная страница открывается мгновенно из копии в телефоне, свежая версия скачивается в фоне (видна со следующего запуска).
+// v5: главная страница открывается мгновенно из копии в телефоне, свежая версия скачивается в фоне;
+//     если она новее — страница сама перезагружается (пока человек ничего не нажал) или показывает плашку «Обновить».
 //     Все остальные страницы (игра, зелья, психолог, восстановление, uz-страницы) работают как раньше: сначала сеть.
 const CACHE = 'lifechange-v4';
 const CORE = ['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png'];
@@ -13,13 +14,22 @@ self.addEventListener('fetch', e => {
   if (req.method !== 'GET' || url.origin !== location.origin) return;
   const isMain = req.mode === 'navigate' && (url.pathname === SCOPE || url.pathname === SCOPE + 'index.html');
   if (isMain) {
-    // свежая версия: качаем в фоне и кладём в копию на следующий запуск
-    const net = fetch(req).then(r => {
-      if (r && r.ok && r.type === 'basic' && !r.redirected) { const copy = r.clone(); caches.open(CACHE).then(c => c.put(MAIN_KEY, copy)); }
-      return r;
-    });
-    e.waitUntil(net.then(() => {}, () => {}));
-    e.respondWith(caches.match(MAIN_KEY).then(hit => hit || caches.match('./')).then(hit => hit || net.catch(() => caches.match('index.html'))));
+    // v5: копия открывается мгновенно; свежая версия качается в фоне мимо 10-минутного кэша GitHub.
+    // Если она отличается от копии, кладём её в кэш и сообщаем странице (та перезагрузится сама или покажет «Обновить»).
+    const netP = fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' });
+    e.respondWith(caches.match(MAIN_KEY).then(hit => hit || caches.match('./')).then(hit => hit || netP.then(r => r.clone()).catch(() => caches.match('index.html'))));
+    e.waitUntil((async () => {
+      let r; try { r = await netP; } catch (x) { return; }
+      if (!(r && r.ok && r.type === 'basic' && !r.redirected)) return;
+      const old = await caches.match(MAIN_KEY);
+      let changed = false;
+      if (old) {
+        const ea = old.headers.get('etag'), eb = r.headers.get('etag');
+        if (!(ea && eb && ea === eb)) { try { changed = (await old.text()) !== (await r.clone().text()); } catch (x) {} }
+      }
+      const c = await caches.open(CACHE); await c.put(MAIN_KEY, r);
+      if (changed) { const list = await self.clients.matchAll({ type: 'window', includeUncontrolled: true }); list.forEach(cl => { try { cl.postMessage({ type: 'lc-update' }); } catch (x) {} }); }
+    })().catch(() => {}));
     return;
   }
   const fresh = req.mode === 'navigate' || req.url.includes('notifications.json');
