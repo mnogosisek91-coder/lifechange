@@ -7143,6 +7143,192 @@ try{ var sl = localStorage.getItem('lc_lang'); if(sl === 'en') window.setLang('e
 })();
 </script>
 
+<script id="lcGreet">
+// ===== Ежедневное приветствие на главной (только для вошедших) =====
+(function() {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const PH = [["Маленький шаг сегодня важнее большого плана на завтра", "Bugungi kichik qadam ertangi katta rejadan muhimroq", "A small step today beats a big plan for tomorrow"], ["Не идеально, но сегодня — уже победа", "Mukammal emas, lekin bugun — allaqachon g'alaba", "Not perfect, but today is already a win"], ["Начать заново — это тоже дисциплина", "Qaytadan boshlash ham intizom", "Starting over is discipline too"], ["Мотивация приходит и уходит. Привычка остаётся", "Motivatsiya keladi va ketadi. Odat qoladi", "Motivation comes and goes. Habits stay"], ["Ты не обязан хотеть. Ты обязан начать", "Xohlashing shart emas. Boshlashing shart", "You don't have to feel like it. You just have to start"], ["Одна галочка в день меняет год", "Kuniga bitta belgi yilni o'zgartiradi", "One checkmark a day changes a year"], ["Лень громкая, но решаешь ты", "Dangasalik baland ovozda gapiradi, lekin hal qiluvchi sensan", "Laziness is loud, but you decide"], ["Сделай сегодня то, за что завтра скажешь себе спасибо", "Bugun ertaga o'zingga rahmat aytadigan ishni qil", "Do today what tomorrow-you will thank you for"], ["Пять минут лучше, чем ноль", "Besh daqiqa noldan yaxshiroq", "Five minutes beats zero"], ["Срыв — это не конец. Конец — это когда не встал", "Xato — bu oxiri emas. Oxiri — turmay qolish", "A slip isn't the end. Not getting up is"], ["Сила не в рывке, а в повторении", "Kuch bir siltovda emas, takrorda", "Strength is in repetition, not in one big push"], ["Ты сильнее своих оправданий", "Sen bahonalaringdan kuchliroqsan", "You're stronger than your excuses"], ["Каждый день — новая страница. Пиши аккуратно", "Har bir kun — yangi sahifa. Chiroyli yoz", "Every day is a new page. Write it well"], ["Сначала ты строишь привычки, потом они строят тебя", "Avval sen odatlarni qurasan, keyin ular seni quradi", "First you build habits, then they build you"], ["Не жди понедельника. Сегодня тоже подходит", "Dushanbani kutma. Bugun ham mos", "Don't wait for Monday. Today works too"], ["Прогресс любит тишину и постоянство", "Taraqqiyot sukunat va barqarorlikni yaxshi ko'radi", "Progress loves quiet and consistency"], ["Сравнивай себя только с собой вчерашним", "O'zingni faqat kechagi o'zing bilan solishtir", "Compare yourself only to yesterday's you"], ["Трудно — значит, ты растёшь", "Qiyin — demak, o'syapsan", "If it's hard, you're growing"], ["Дисциплина — это забота о себе будущем", "Intizom — kelajakdagi o'zingga g'amxo'rlik", "Discipline is caring for your future self"], ["Даже медленный шаг — это шаг вперёд", "Sekin qadam ham — oldinga qadam", "Even a slow step is a step forward"], ["Сегодня не нужно быть лучшим. Нужно просто не сдаться", "Bugun eng zo'r bo'lish shart emas. Shunchaki taslim bo'lma", "Today you don't need to be the best. Just don't quit"], ["Хорошие дни строятся из маленьких решений", "Yaxshi kunlar kichik qarorlardan quriladi", "Good days are built from small decisions"], ["Твоя серия — это обещание себе", "Seriyang — o'zingga bergan va'dang", "Your streak is a promise to yourself"], ["Устал — отдохни. Но не бросай", "Charchading — dam ol. Lekin tashlama", "Tired? Rest. But don't quit"], ["Кто делает каждый день, тот обгоняет талантливых", "Har kuni qilgan odam iste'dodlilardan o'zib ketadi", "Showing up daily beats talent"], ["Не ищи идеальный момент. Сделай момент идеальным", "Ideal paytni qidirma. Paytni ideal qil", "Don't wait for the perfect moment. Make it"], ["Один хороший день — случайность. Тридцать — характер", "Bitta yaxshi kun — tasodif. O'ttizta — xarakter", "One good day is luck. Thirty is character"], ["Привычка — это голос, которым ты говоришь с собой каждый день", "Odat — har kuni o'zing bilan gaplashadigan ovozing", "A habit is how you talk to yourself every day"], ["Чем раньше начнёшь, тем раньше увидишь результат", "Qancha erta boshlasang, natijani shuncha erta ko'rasan", "The sooner you start, the sooner you see results"], ["Ты уже прошёл больше, чем думаешь", "Sen o'ylaganingdan ko'proq yo'l bosib o'tding", "You've come further than you think"], ["Тело и голова скажут спасибо через месяц", "Tana va bosh bir oydan keyin rahmat aytadi", "Your body and mind will thank you in a month"], ["Не обещай. Делай", "Va'da berma. Qil", "Don't promise. Do"], ["Одна привычка может потянуть за собой всю жизнь", "Bitta odat butun hayotni ortidan ergashtirishi mumkin", "One habit can pull your whole life forward"], ["Ты не ленивый. Ты просто ещё не начал", "Sen dangasa emassan. Shunchaki hali boshlamading", "You're not lazy. You just haven't started yet"], ["Сегодняшнее усилие — завтрашняя лёгкость", "Bugungi harakat — ertangi yengillik", "Today's effort is tomorrow's ease"], ["Дисциплина побеждает настроение", "Intizom kayfiyatni yengadi", "Discipline beats mood"], ["Не бойся медленно. Бойся стоять на месте", "Sekinlikdan qo'rqma. Bir joyda turishdan qo'rq", "Don't fear slow. Fear standing still"], ["Ты строишь себя, кирпичик за кирпичиком", "Sen o'zingni g'isht-g'isht qilib quryapsan", "You're building yourself brick by brick"], ["Сделал — отметь. Отметил — гордись", "Qilding — belgila. Belgilading — faxrlan", "Done it? Log it. Logged it? Be proud"], ["Самое трудное — первые две минуты", "Eng qiyini — birinchi ikki daqiqa", "The hardest part is the first two minutes"], ["Каждый отчёт — голос за того, кем ты хочешь стать", "Har bir hisobot — kim bo'lishni xohlasang, o'sha odam uchun ovoz", "Every report is a vote for who you want to become"], ["Не надо быстро. Надо регулярно", "Tez shart emas. Muntazam shart", "Not fast. Regular"], ["Плохой день — не повод для плохой недели", "Yomon kun — yomon hafta uchun sabab emas", "A bad day is no reason for a bad week"], ["Ты здесь — значит, тебе не всё равно", "Sen shu yerdasan — demak, senga befarq emas", "You're here, so you care"], ["Победа над собой — самая тихая и самая важная", "O'zingni yengish — eng jim va eng muhim g'alaba", "Beating yourself is the quietest and biggest win"], ["Утро задаёт тон всему дню", "Tong butun kunning ohangini belgilaydi", "The morning sets the tone for the day"], ["Меньше думай, больше делай", "Kamroq o'yla, ko'proq qil", "Think less, do more"], ["Комфорт — приятное место, но там ничего не растёт", "Qulaylik — yoqimli joy, lekin u yerda hech narsa o'smaydi", "Comfort is nice, but nothing grows there"], ["Через год ты скажешь спасибо за то, что не бросил сегодня", "Bir yildan keyin bugun tashlamaganing uchun rahmat aytasan", "A year from now you'll be glad you didn't quit today"], ["Сила воли — как мышца. Качай её", "Iroda — mushak kabi. Uni chiniqtir", "Willpower is a muscle. Train it"], ["Начни с малого — главное, начни", "Kichikdan boshla — asosiysi, boshla", "Start small — just start"], ["Ты можешь больше, чем вчера", "Sen kechagidan ko'proq qila olasan", "You can do more than yesterday"], ["Отложенное «потом» обычно превращается в «никогда»", "Kechiktirilgan «keyin» ko'pincha «hech qachon»ga aylanadi", "«Later» usually turns into «never»"], ["Хорошая привычка — лучший подарок себе", "Yaxshi odat — o'zingga eng yaxshi sovg'a", "A good habit is the best gift to yourself"], ["Не ругай себя. Просто продолжай", "O'zingni urishma. Shunchaki davom et", "Don't beat yourself up. Just keep going"], ["Сегодня отличный день, чтобы стать чуть лучше", "Bugun biroz yaxshiroq bo'lish uchun ajoyib kun", "Today is a great day to get a little better"], ["Порядок в делах — порядок в голове", "Ishlarda tartib — boshda tartib", "Order in tasks, order in mind"], ["Ты сам выбираешь, кем просыпаться завтра", "Ertaga kim bo'lib uyg'onishni o'zing tanlaysan", "You choose who wakes up tomorrow"], ["Маленькие победы складываются в большие", "Kichik g'alabalar katta g'alabalarga qo'shiladi", "Small wins add up to big ones"], ["Делай не для галочки, а для себя", "Belgi uchun emas, o'zing uchun qil", "Do it for yourself, not for the checkmark"], ["Не сравнивай свою середину с чужим финалом", "O'z o'rtangni birovning finali bilan solishtirma", "Don't compare your middle to someone else's finish"], ["Ты стоишь того, чтобы о себе заботиться", "Sen o'zingga g'amxo'rlik qilishga arziysan", "You're worth taking care of"], ["Привычки не меняются за день, но меняются каждый день", "Odatlar bir kunda o'zgarmaydi, lekin har kuni o'zgaradi", "Habits don't change in a day, but they change daily"], ["Главное — не скорость, а направление", "Asosiysi — tezlik emas, yo'nalish", "Direction matters more than speed"], ["Отдых — часть пути, а не отказ от него", "Dam olish — yo'lning bir qismi, undan voz kechish emas", "Rest is part of the path, not quitting it"], ["Сегодня ты на день ближе к цели", "Bugun maqsadingga bir kun yaqinroqsan", "Today you're one day closer to your goal"], ["Не жди результата сразу. Он копится тихо", "Natijani darhol kutma. U jimgina yig'iladi", "Don't expect results right away. They build quietly"], ["Ты не один на этом пути", "Bu yo'lda sen yolg'iz emassan", "You're not alone on this path"], ["Если не знаешь, с чего начать, — начни с простого", "Nimadan boshlashni bilmasang, oddiydan boshla", "Not sure where to start? Start simple"], ["Выбирай трудное сейчас, чтобы потом было легко", "Keyin oson bo'lishi uchun hozir qiyinini tanla", "Choose hard now so later is easy"], ["Каждый день без срыва — твоя маленькая медаль", "Uzilishsiz har bir kun — sening kichik medaling", "Every day without a slip is your little medal"], ["Ты меняешься, даже если пока не видно", "Hali ko'rinmasa ham, sen o'zgaryapsan", "You're changing, even if it doesn't show yet"], ["Сначала сделай, потом проверь телефон", "Avval qil, keyin telefonni tekshir", "Do it first, check your phone after"], ["Сильные люди тоже устают. Но возвращаются", "Kuchli odamlar ham charchaydi. Lekin qaytib kelishadi", "Strong people get tired too. But they come back"], ["Хочешь другой результат — сделай по-другому", "Boshqa natija xohlasang — boshqacha qil", "Want a different result? Do it differently"], ["Время пройдёт всё равно. Пусть пройдёт с пользой", "Vaqt baribir o'tadi. Foyda bilan o'tsin", "Time passes anyway. Let it pass usefully"], ["Ты — главный проект своей жизни", "Sen — hayotingning asosiy loyihasisan", "You are the main project of your life"], ["Отчёт за минуту — серия на месяц", "Bir daqiqalik hisobot — bir oylik seriya", "One minute report, one month streak"], ["Не бойся начинать с нуля. Ноль — тоже точка отсчёта", "Noldan boshlashdan qo'rqma. Nol ham boshlang'ich nuqta", "Don't fear starting from zero. Zero is a starting point"], ["Делай сегодня, а не «когда-нибудь»", "«Qachondir» emas, bugun qil", "Do it today, not «someday»"], ["Успех — это скучные действия, повторённые много раз", "Muvaffaqiyat — ko'p marta takrorlangan zerikarli harakatlar", "Success is boring actions repeated many times"], ["Не нужно менять всё. Измени одно", "Hammasini o'zgartirish shart emas. Bittasini o'zgartir", "You don't need to change everything. Change one thing"], ["Ты уже молодец, что не сдаёшься", "Taslim bo'lmayotganing uchun allaqachon barakallasan", "You're doing great just by not giving up"], ["Шаг за шагом — и гора уже позади", "Qadam-baqadam — va tog' allaqachon ortda", "Step by step, and the mountain is behind you"], ["Сегодняшний ты — результат вчерашних решений", "Bugungi sen — kechagi qarorlaring natijasi", "Today's you is the result of yesterday's choices"], ["Ставь цель, а не ищи оправдание", "Bahona emas, maqsad qo'y", "Set goals, not excuses"], ["Твоя энергия идёт туда, куда идёт внимание", "Energiyang e'tiboring ketgan joyga ketadi", "Your energy goes where your attention goes"], ["Делай меньше, но каждый день", "Kamroq qil, lekin har kuni", "Do less, but every day"], ["Не откладывай себя на потом", "O'zingni keyinga qoldirma", "Don't put yourself off till later"], ["Ты на правильном пути. Просто иди", "Sen to'g'ri yo'ldasan. Shunchaki yur", "You're on the right path. Just keep walking"]];
+  const L = () => { try { return langMode(); } catch(e) { return 'ru'; } };
+  const pick = a => a[L() === 'uz' ? 1 : L() === 'en' ? 2 : 0];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const dayNum = d => Math.floor(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5);
+  const pad = n => String(n).padStart(2, '0');
+
+  // ---- приветствия по времени суток и дням недели ----
+  const G = {
+    morning: [['Доброе утро', 'Xayrli tong', 'Good morning'], ['Утро, чемпион', 'Tong muborak, chempion', 'Morning, champ'], ['Новый день — новый шанс', 'Yangi kun — yangi imkoniyat', 'New day, new chance'], ['Подъём, герой', 'Turing, qahramon', 'Rise and shine, hero'], ['С добрым утром', 'Xayrli tong', 'Morning'], ['Утро начинается с тебя', 'Tong sendan boshlanadi', 'The morning starts with you']],
+    day: [['Добрый день', 'Xayrli kun', 'Good afternoon'], ['Как день идёт?', 'Kuning qanday o\'tyapti?', 'How\'s the day going?'], ['Привет', 'Salom', 'Hey'], ['Рад тебя видеть', 'Seni ko\'rganimdan xursandman', 'Good to see you'], ['День в разгаре', 'Kun avjida', 'The day is in full swing'], ['Привет, продуктивный', 'Salom, samarali odam', 'Hi, productive one']],
+    evening: [['Добрый вечер', 'Xayrli kech', 'Good evening'], ['Вечер — время итогов', 'Kech — xulosa vaqti', 'Evening is for wrapping up'], ['Привет', 'Salom', 'Hey'], ['Вот и вечер', 'Mana, kech ham kirdi', 'Evening is here'], ['Хорошего вечера', 'Xayrli kech', 'Have a nice evening']],
+    night: [['Ещё не спишь?', 'Hali uxlamadingmi?', 'Still awake?'], ['Сова на связи', 'Boyqush aloqada', 'Night owl online'], ['Доброй ночи', 'Xayrli tun', 'Good night'], ['Поздний привет', 'Kechki salom', 'Late hello']]
+  };
+  const WD = { 1: ['Понедельник — день старта', 'Dushanba — start kuni', 'Monday is for starting'], 5: ['Пятница, но серия не отдыхает', 'Juma, lekin seriya dam olmaydi', 'Friday, but the streak doesn\'t rest'], 6: ['Выходные — тоже дни', 'Dam olish kunlari ham kun', 'Weekends count too'], 0: ['Воскресенье — время для себя', 'Yakshanba — o\'zing uchun vaqt', 'Sunday is time for you'] };
+  // ---- праздники (ММ-ДД или ГГГГ-ММ-ДД) ----
+  const HOL = [
+    { d: ['12-31'], e: '🎄', bg: 'linear-gradient(135deg,#b91c1c,#be185d 55%,#1e3a8a)', t: ['С наступающим', 'Yangi yil arafasi bilan', 'Happy New Year\'s Eve'] },
+    { d: ['01-01', '01-02'], e: '🎄', bg: 'linear-gradient(135deg,#b91c1c,#be185d 55%,#1e3a8a)', t: ['С Новым годом', 'Yangi yil muborak', 'Happy New Year'] },
+    { d: ['01-14'], e: '🛡️', bg: 'linear-gradient(135deg,#065f46,#1e3a8a)', t: ['С Днём защитников Родины', 'Vatan himoyachilari kuni muborak', 'Happy Defenders\' Day'] },
+    { d: ['03-08'], e: '🌷', bg: 'linear-gradient(135deg,#db2777,#f472b6 55%,#7c3aed)', t: ['С 8 Марта', '8-mart muborak', 'Happy Women\'s Day'] },
+    { d: ['03-21', '03-22'], e: '🌷', bg: 'linear-gradient(135deg,#16a34a,#f59e0b 55%,#ec4899)', t: ['С Наврузом', 'Navro\'z muborak', 'Happy Navruz'] },
+    { d: ['2027-03-10', '2028-02-27'], e: '🌙', bg: 'linear-gradient(135deg,#065f46,#0e7490 60%,#1e3a8a)', t: ['С праздником Рамазан хайит', 'Ramazon hayiti muborak', 'Eid Mubarak'] },
+    { d: ['2027-05-17', '2028-05-05'], e: '🌙', bg: 'linear-gradient(135deg,#065f46,#0e7490 60%,#1e3a8a)', t: ['С праздником Курбан хайит', 'Qurbon hayiti muborak', 'Eid al-Adha Mubarak'] },
+    { d: ['09-01'], e: '🇺🇿', bg: 'linear-gradient(135deg,#0284c7,#16a34a)', t: ['С Днём независимости', 'Mustaqillik kuni muborak', 'Happy Independence Day'] },
+    { d: ['10-01'], e: '📚', bg: 'linear-gradient(135deg,#7c3aed,#0e7490)', t: ['С Днём учителя', 'O\'qituvchilar kuni muborak', 'Happy Teachers\' Day'] },
+    { d: ['10-05'], e: '🎂', bg: 'linear-gradient(135deg,#f59e0b,#ec4899 60%,#7c3aed)', t: ['У LifeChange сегодня день рождения 🎉', 'Bugun LifeChange tug\'ilgan kuni 🎉', 'It\'s LifeChange\'s birthday 🎉'], nn: 1 },
+    { d: ['12-08'], e: '🇺🇿', bg: 'linear-gradient(135deg,#0284c7,#16a34a)', t: ['С Днём Конституции', 'Konstitutsiya kuni muborak', 'Happy Constitution Day'] }
+  ];
+  const SLOT = {
+    morning: { e: '☀️', bg: 'linear-gradient(135deg,#f59e0b,#ec4899 60%,#7c3aed)' },
+    day: { e: '🌤️', bg: 'linear-gradient(135deg,#0ea5e9,#6366f1 60%,#7c3aed)' },
+    evening: { e: '🌆', bg: 'linear-gradient(135deg,#7c3aed,#be185d 70%,#1e1b4b)' },
+    night: { e: '🌙', bg: 'linear-gradient(135deg,#1e3a8a,#4c1d95 70%,#0f172a)' }
+  };
+  const TX = {
+    report: ['Сдать отчёт', 'Hisobot topshirish', 'Submit report'], my: ['Мои челленджи', 'Chellenjlarim', 'My challenges'],
+    pick: ['Выбрать челлендж', 'Chellenj tanlash', 'Pick a challenge'], go: ['Продолжить', 'Davom etish', 'Continue'],
+    dragon: ['К дракону', 'Ajdarga', 'To the dragon'], prizes: ['Награды', 'Sovg\'alar', 'Rewards'], later: ['Позже', 'Keyinroq', 'Later'],
+    pro: ['Открыть PRO', 'PRO ochish', 'Get PRO'], close: ['Скрыть до завтра', 'Ertagacha yashirish', 'Hide till tomorrow'],
+    streak: ['Серия', 'Seriya', 'Streak'], doneShort: ['всё сделано ✅', 'hammasi bajarildi ✅', 'all done ✅'], todayLeft: ['отчётов осталось', 'hisobot qoldi', 'reports left']
+  };
+  const dW = n => L() === 'uz' ? n + ' kun' : L() === 'en' ? n + (n === 1 ? ' day' : ' days') : n + ' ' + ((n % 10 === 1 && n % 100 !== 11) ? 'день' : ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) ? 'дня' : 'дней');
+  const hW = n => L() === 'uz' ? n + ' soat' : L() === 'en' ? n + ' h' : n + ' ч';
+  const trT = s => { try { if(L() === 'uz' && UZ_EXACT[s]) return UZ_EXACT[s]; if(L() === 'en' && window.EN_EXACT && EN_EXACT[s]) return EN_EXACT[s]; } catch(e) {} return s; };
+  const chName = k => { try { return trT(CHALLENGES[k].title).replace(/\s*\(.*?\)\s*$/, ''); } catch(e) { return ''; } };
+  const repN = k => { try { return (stats && stats.rep_by && stats.rep_by[k]) || 0; } catch(e) { return 0; } };
+  const chDays = k => { try { return CHALLENGES[k].days || 0; } catch(e) { return 0; } };
+
+  // дата прошлого визита: читаем один раз при загрузке, потом пишем сегодняшнюю
+  let away = 0;
+  try {
+    const last = localStorage.getItem('lc_greet_seen');
+    if(last && last !== TODAY) { const p = last.split('-').map(Number); away = dayNum(new Date()) - dayNum(new Date(p[0], p[1] - 1, p[2])); }
+    localStorage.setItem('lc_greet_seen', TODAY);
+  } catch(e) {}
+  const hidKey = 'lc_greet_hide';
+  const hidden = () => { try { return localStorage.getItem(hidKey) === TODAY; } catch(e) { return false; } };
+
+  function slotOf(h) { return h >= 5 && h < 12 ? 'morning' : h >= 12 && h < 18 ? 'day' : h >= 18 && h < 23 ? 'evening' : 'night'; }
+  function holiday(now) {
+    const md = pad(now.getMonth() + 1) + '-' + pad(now.getDate()), ymd = now.getFullYear() + '-' + md;
+    return HOL.find(h => h.d.includes(md) || h.d.includes(ymd)) || null;
+  }
+  function liveState() {
+    const seen = {}, act = [], add = k => { if(!seen[k] && CHALLENGES[k] && !droppedCh.has(k) && !(chDays(k) && repN(k) >= chDays(k))) { seen[k] = 1; act.push(k); } };
+    activeChallenges.forEach(add);
+    try { const rb = (stats && stats.rep_by) || {}; Object.keys(rb).forEach(k => { if(rb[k] > 0) add(k); }); } catch(e) {}
+    const left = act.filter(k => !reportedToday.has(k));
+    return { act, left };
+  }
+  // главная «живая» строка: самое важное для человека прямо сейчас
+  function live(now) {
+    const s = liveState(), h = now.getHours(), b = x => '<b>' + x + '</b>', q = x => '«' + esc(x) + '»';
+    const ru = L() === 'ru', uz = L() === 'uz';
+    if(away >= 3) {
+      const gap = 5000 - points;
+      return { k: 'away', t: uz ? 'Seni ' + b(dW(away)) + ' ko\'rmadik. Ajdar seni sog\'indi' + (gap > 0 && gap <= 1500 ? ', «Ekspander» sovg\'asigacha atigi ' + b(gap + ' uchqun') + ' qoldi 🎁' : ' 🐉')
+        : !ru ? 'You\'ve been away ' + b(dW(away)) + '. The dragon missed you' + (gap > 0 && gap <= 1500 ? ', and you\'re just ' + b(gap + ' sparks') + ' from the Hand Gripper 🎁' : ' 🐉')
+        : 'Тебя не было ' + b(dW(away)) + '. Дракон заждался' + (gap > 0 && gap <= 1500 ? ', а до эспандера осталось всего ' + b(gap + ' искр') + ' 🎁' : ' 🐉'), btn: ['go', 'dragon'] };
+    }
+    const hist = !!reportedToday.size || Object.keys((stats && stats.rep_by) || {}).some(k => repN(k) > 0);
+    if(!s.act.length && !hist) return { k: 'none', t: uz ? 'Bugun birinchi qadam uchun ajoyib kun. Chellenj tanla — 1-bosqich bepul 🚀' : !ru ? 'Great day for a first step. Pick a challenge — stage 1 is free 🚀' : 'Отличный день для первого шага. Выбери челлендж — этап 1 бесплатный 🚀', btn: ['pick'] };
+    if(s.left.length) {
+      const one = s.left.length === 1 ? ' ' + q(chName(s.left[0])) : '';
+      if(h >= 18 && streak > 0 && !reportedToday.size) {
+        const hh = 24 - h;
+        return { k: 'risk', t: uz ? 'Seriya ' + b(dW(streak)) + ' xavf ostida: bugun hali hisobot yo\'q. Yarim tungacha ' + b(hW(hh)) + ' ⏳' : !ru ? 'Your ' + b(dW(streak)) + ' streak is at risk: no report yet today. ' + b(hW(hh)) + ' till midnight ⏳' : 'Серия ' + b(dW(streak)) + ' под угрозой: сегодня ещё нет отчёта. До полуночи ' + b(hW(hh)) + ' ⏳', btn: ['report', 'later'], go: s.left[0] };
+      }
+      const near = s.act.map(k => [k, chDays(k) - repN(k)]).filter(x => chDays(x[0]) && x[1] > 0 && x[1] <= 3).sort((a, z) => a[1] - z[1])[0];
+      const ser = streak > 0 ? (uz ? 'Seriya ' + b(dW(streak)) + ' 🔥 ' : !ru ? 'Streak ' + b(dW(streak)) + ' 🔥 ' : 'Серия ' + b(dW(streak)) + ' 🔥 ') : '';
+      if(near) return { k: 'near', t: ser + (uz ? 'Yana ' + b(dW(near[1])) + ', va ' + q(chName(near[0])) + ' yopiladi!' : !ru ? b(dW(near[1])) + ' more and ' + q(chName(near[0])) + ' is done!' : 'Ещё ' + b(dW(near[1])) + ', и ' + q(chName(near[0])) + ' закрыт!'), btn: ['report', 'my'], go: near[0] };
+      return { k: 'left', t: ser + (uz ? (one ? 'Bugun' + one + ' bo\'yicha hisobot topshirish qoldi' : 'Bugun topshirilmagan hisobotlar: ' + b(s.left.length)) : !ru ? 'Today' + (one ? ' still to report:' + one : ' reports left: ' + b(s.left.length)) : 'Сегодня' + (one ? ' осталось сдать' + one : ' осталось сдать отчётов: ' + b(s.left.length))) + '.', btn: ['report', 'my'], go: s.left[0] };
+    }
+    // всё сдано (или текущие челленджи пройдены)
+    let extra = '';
+    const st2 = Object.keys(stats && stats.rep_by || {}).find(k => /^[a-z][0-9]+_title$/.test(k) && chDays(k) && repN(k) >= chDays(k) && CHALLENGES[k.replace('_title', 's2_title')] && !repN(k.replace('_title', 's2_title')) && !activeChallenges.has(k.replace('_title', 's2_title')));
+    if(st2) extra = userPlan === 'pro' ? (uz ? ' ' + q(chName(st2)) + ' 2-bosqichi ochiq 🚀' : !ru ? ' Stage 2 of ' + q(chName(st2)) + ' is open 🚀' : ' Этап 2 ' + q(chName(st2)) + ' уже открыт 🚀') : (uz ? ' ' + q(chName(st2)) + ' 2-bosqichi PRO\'da kutyapti' : !ru ? ' Stage 2 of ' + q(chName(st2)) + ' awaits in PRO' : ' Этап 2 ' + q(chName(st2)) + ' ждёт в PRO');
+    else if(points < 5000 && 5000 - points <= 1500) extra = uz ? ' Ekspandergacha ' + b((5000 - points) + ' uchqun') + ' 🎁' : !ru ? ' ' + b((5000 - points) + ' sparks') + ' to the Hand Gripper 🎁' : ' До эспандера ' + b((5000 - points) + ' искр') + ' 🎁';
+    else if(points >= 5000) extra = uz ? ' Ekspander uchun uchqunlar yetadi 🎁' : !ru ? ' You have enough sparks for the Hand Gripper 🎁' : ' Искр уже хватает на эспандер 🎁';
+    if(!s.act.length && !reportedToday.size) return { k: 'next', t: (uz ? 'Joriy chellenjlar yakunlandi 💪 Keyingisini olish vaqti keldi.' : !ru ? 'Current challenges complete 💪 Time to pick the next one.' : 'Текущие челленджи пройдены 💪 Самое время взять следующий.') + extra, btn: st2 && userPlan !== 'pro' ? ['pro', 'pick'] : ['pick', 'dragon'] };
+    const mil = [7, 14, 21, 30, 50, 60, 90, 100, 150, 200, 365].includes(streak);
+    const head = mil ? (uz ? b(dW(streak)) + ' uzluksiz — zo\'r natija! 🏆' : !ru ? b(dW(streak)) + ' in a row — awesome! 🏆' : b(dW(streak)) + ' без пропусков — мощно! 🏆') : (uz ? 'Bugungi hammasi bajarildi, barakalla 💪' + (streak ? ' Seriya ' + b(dW(streak)) + '.' : '') : !ru ? 'All done for today, well done 💪' + (streak ? ' Streak ' + b(dW(streak)) + '.' : '') : 'Всё на сегодня сделано, красава 💪' + (streak ? ' Серия ' + b(dW(streak)) + '.' : ''));
+    return { k: 'done', t: head + extra, btn: st2 && userPlan !== 'pro' ? ['pro', 'dragon'] : !s.act.length ? ['pick', 'dragon'] : ['prizes', 'dragon'], go: st2 ? st2.replace('_title', 's2_title') : null };
+  }
+
+  const css = document.createElement('style');
+  css.textContent = `#lcGreetCard{position:relative;margin:0 0 12px;padding:14px 16px 13px;border-radius:18px;border:1px solid rgba(255,255,255,.14);overflow:hidden;color:#fff;text-align:left;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+  #lcGreetCard::after{content:attr(data-e);position:absolute;right:-6px;top:-10px;font-size:76px;opacity:.16;pointer-events:none}
+  #lcGreetCard h2{margin:0 26px 4px 0;font-size:1.2rem;font-weight:800;line-height:1.25;color:#fff}
+  #lcGreetCard .lg-live{font-size:.9rem;line-height:1.4;margin:0 0 8px}
+  #lcGreetCard .lg-live b{color:#fde68a}
+  #lcGreetCard .lg-q{font-size:.84rem;font-style:italic;opacity:.82;border-left:3px solid rgba(255,255,255,.35);padding-left:9px;margin:0}
+  #lcGreetCard .lg-act{display:flex;gap:8px;margin-top:11px}
+  #lcGreetCard .lg-act button{flex:1;border:0;border-radius:11px;padding:9px 6px;font-weight:700;font-size:.85rem;background:rgba(255,255,255,.95);color:#1e1b4b;cursor:pointer;font-family:inherit;min-height:0}
+  #lcGreetCard .lg-act button.o{background:rgba(255,255,255,.16);color:#fff}
+  #lcGreetCard .lg-x{position:absolute;right:8px;top:6px;background:none;border:0;color:#fff;opacity:.6;font-size:16px;z-index:2;cursor:pointer;padding:4px 6px;width:auto;min-height:0}
+  #lcGreetCard.lg-min{padding:9px 14px;border-radius:14px;cursor:pointer;display:flex;align-items:center;gap:8px;font-size:.86rem}
+  #lcGreetCard.lg-min::after{font-size:40px;top:-8px}
+  #lcGreetCard.lg-min b{color:#fde68a}
+  @media (min-width:900px){#lcGreetCard{max-width:760px;margin-left:auto;margin-right:auto}}`;
+  document.head.appendChild(css);
+
+  const box = document.createElement('div'); box.id = 'lcGreetCard'; box.setAttribute('data-notr', '');
+  function mount() {
+    const home = $('tab-home'); if(!home) return false;
+    const top = $('topBar');
+    if(top && top.parentNode === home) { if(box.nextSibling !== top || box.parentNode !== home) home.insertBefore(box, top); }
+    else if(box.parentNode !== home || home.firstChild !== box) home.insertBefore(box, home.firstChild);
+    return true;
+  }
+  function act(a, info) {
+    if(a === 'report') { const k = info.go; if(k) { try { switchTab('challenges'); openChallengeModal(k); return; } catch(e) {} } switchTab('challenges'); }
+    else if(a === 'my' || a === 'go' || a === 'pick') switchTab('challenges');
+    else if(a === 'dragon') switchTab('pet');
+    else if(a === 'prizes') switchTab('shop');
+    else if(a === 'pro') switchTab('plans');
+    else if(a === 'later') { try { localStorage.setItem(hidKey, TODAY); } catch(e) {} render(); }
+  }
+  function render() {
+    if(!user) { box.remove(); return; }
+    if(!mount()) return;
+    const now = new Date(), slot = slotOf(now.getHours()), hol = holiday(now), dn = dayNum(now);
+    const nm = esc(String(user.name || '').split(' ')[0]);
+    const info = live(now);
+    const sty = hol || SLOT[slot];
+    box.style.background = sty.bg; box.dataset.e = sty.e;
+    if(hidden()) {
+      box.className = 'lg-min';
+      const s = liveState();
+      const tail = !s.act.length ? '' : s.left.length ? pick(TX.todayLeft) + ': <b>' + s.left.length + '</b>' : pick(TX.doneShort);
+      box.innerHTML = '<span>' + sty.e + '</span><span>' + (streak ? pick(TX.streak) + ' <b>' + dW(streak) + '</b>' + (tail ? ' · ' : '') : '') + tail + '</span>';
+      box.onclick = () => { try { localStorage.removeItem(hidKey); } catch(e) {} render(); };
+      if(!streak && !tail) box.remove();
+      return;
+    }
+    box.className = ''; box.onclick = null;
+    let hello;
+    if(hol) hello = pick(hol.t);
+    else { const wd = WD[now.getDay()]; const list = G[slot]; hello = (wd && slot !== 'night' && dn % 2 === 0) ? pick(wd) : pick(list[dn % list.length]); }
+    const m = hello.match(/^([\s\S]*?)([!?])?$/);
+    const head = (hol && hol.nn) ? hello : m[1] + (nm && m[1].indexOf(',') < 0 ? ', ' + nm : '') + (m[2] || '!');
+    const ph = PH[((dn % PH.length) + PH.length) % PH.length];
+    const btns = info.btn.map((a, i) => '<button type="button" data-a="' + a + '"' + (i ? ' class="o"' : '') + '>' + pick(TX[a]) + '</button>').join('');
+    box.innerHTML = '<button type="button" class="lg-x" aria-label="' + pick(TX.close) + '" title="' + pick(TX.close) + '">✕</button><h2>' + head + '</h2><p class="lg-live">' + info.t + '</p><p class="lg-q">«' + esc(pick(ph)) + '»</p><div class="lg-act">' + btns + '</div>';
+    box.querySelector('.lg-x').onclick = e => { e.stopPropagation(); try { localStorage.setItem(hidKey, TODAY); } catch(x) {} render(); };
+    box.querySelectorAll('[data-a]').forEach(b => b.onclick = () => act(b.dataset.a, info));
+  }
+  window.lcGreetRender = render;
+
+  // перерисовка: после загрузки состояния с сервера, после отчёта, при смене языка
+  { const _as = applyState; applyState = function() { const r = _as.apply(this, arguments); setTimeout(render, 50); return r; }; }
+  { const _tg = toggleLanguage; toggleLanguage = function() { _tg.apply(this, arguments); setTimeout(render, 140); }; }
+  try { const home = $('tab-home'); if(home) new MutationObserver(() => { if(user && box.isConnected && $('topBar') && box.nextSibling !== $('topBar')) mount(); }).observe(home, { childList: true }); } catch(e) {}
+  let lastSig = '';
+  setInterval(() => { const sig = (user ? 1 : 0) + '|' + reportedToday.size + '|' + activeChallenges.size + '|' + streak + '|' + points + '|' + new Date().getHours() + '|' + L(); if(sig !== lastSig) { lastSig = sig; render(); } }, 1500);
+  render(); setTimeout(render, 1200);
+})();
+</script>
+
+
 
 <script id="lcLangAch">
 // ===================== Достижения раздела «Языки» =====================
